@@ -1,0 +1,58 @@
+package org.sciborgs1155.robot.led;
+
+import static org.sciborgs1155.robot.led.LEDConstants.LED_LENGTH;
+
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.Command;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+
+// TODO: Update every year. Very important.
+/** Used to tell multiple LEDStrip to do things in a cleaner way. */
+public class LEDs implements AutoCloseable {
+  public final LEDStrip tempStrip;
+
+  public LEDs(LEDStrip strip) {
+    this.tempStrip = strip;
+  }
+
+  public static LEDs create() {
+    LEDStrip tempLED = new LEDStrip(0, LED_LENGTH - 1, false);
+    return new LEDs(tempLED);
+  }
+
+  /** Sets all LEDStrips to a progress gradient. */
+  public Command progressGradient(DoubleSupplier percent, BooleanSupplier atGoal) {
+    return tempStrip.progressGradient(percent, atGoal);
+  }
+
+  /** Blinks all LEDStrips with a given color. */
+  public Command blink(Color color) {
+    return tempStrip.blink(color);
+  }
+
+  /** Sets all LEDStrips to auto. */
+  public Command autos() {
+    return tempStrip.autos();
+  }
+
+  /** Sets all LEDStrips with a given color. */
+  public Command solid(Color color) {
+    return tempStrip.solid(color);
+  }
+
+  /** Sets all LEDStrips to scrolling a given color. */
+  public Command scroll(Color color) {
+    return tempStrip.scrolling(color);
+  }
+
+  /** Sets all the LEDs based on an error. */
+  public Command error(DoubleSupplier error, double tolerance) {
+    return tempStrip.error(error, tolerance);
+  }
+
+  @Override
+  public void close() throws Exception {
+    tempStrip.close();
+  }
+}

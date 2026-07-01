@@ -1,0 +1,319 @@
+package org.sciborgs1155.robot.drive;
+
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Seconds;
+import static org.sciborgs1155.lib.FaultLogger.register;
+import static org.sciborgs1155.robot.Constants.DRIVE_CANIVORE;
+import static org.sciborgs1155.robot.Constants.ODOMETRY_PERIOD;
+import static org.sciborgs1155.robot.Constants.PERIOD;
+
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.ParentDevice;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import java.util.Queue;
+import org.sciborgs1155.lib.TalonUtils;
+import org.sciborgs1155.robot.drive.DriveConstants.ControlMode;
+import org.sciborgs1155.robot.drive.DriveConstants.FFConstants;
+import org.sciborgs1155.robot.drive.DriveConstants.ModuleConstants.Driving;
+import org.sciborgs1155.robot.drive.DriveConstants.ModuleConstants.Turning;
+import org.sciborgs1155.robot.drive.DriveConstants.PIDConstants;
+
+public class TalonModule implements ModuleIO {
+  private final TalonFX driveMotor; // Kraken X60
+  private final TalonFX turnMotor; // Kraken X60
+  private final CANcoder encoder;
+
+  private final VelocityVoltage velocityOut = new VelocityVoltage(0);
+  private final MotionMagicExpoVoltage rotationsIn = new MotionMagicExpoVoltage(0).withSlot(0);
+
+  private final OdometryThread talonThread;
+  private final Queue<Double> position;
+  private final Queue<Double> rotation;
+  private final Queue<Double> timestamp;
+
+  private final SimpleMotorFeedforward driveFF;
+  private final SimpleMotorFeedforward turnFF;
+
+  @Logged private SwerveModuleState setpoint = new SwerveModuleState();
+
+  private final String name;
+
+  /**
+   * Creates a new TalonModule with the specified configuration.
+   *
+   * @param drivePort The CAN ID of the drive motor.
+   * @param turnPort The CAN ID of the turn motor.
+   * @param sensorID The CAN ID of the CANcoder.
+   * @param angularOffset The angular offset of the module's encoder.
+   * @param driveFFConstants The feedforward constants for the drive motor.
+   * @param turnFFConstants The feedforward constants for the turn motor.
+   * @param turnFBConstants The feedback constants for the turn motor.
+   * @param name The name of the module.
+   * @param invert Whether to invert the motor directions.
+   */
+  public TalonModule(
+      int drivePort,
+      int turnPort,
+      int sensorID,
+      Rotation2d angularOffset,
+      FFConstants driveFFConstants,
+      FFConstants turnFFConstants,
+      PIDConstants turnFBConstants,
+      String name,
+      boolean invert) {
+    // drive motor
+    driveMotor = new TalonFX(drivePort, DRIVE_CANIVORE);
+    driveFF =
+        new SimpleMotorFeedforward(
+            driveFFConstants.kS(), driveFFConstants.kV(), driveFFConstants.kA());
+    turnFF =
+        new SimpleMotorFeedforward(
+            turnFFConstants.kS(), turnFFConstants.kV(), turnFFConstants.kA());
+
+    TalonFXConfiguration talonDriveConfig = new TalonFXConfiguration();
+
+    talonDriveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    talonDriveConfig.Feedback.SensorToMechanismRatio =
+        Driving.GEARING / Driving.CIRCUMFERENCE.in(Meters);
+    talonDriveConfig.CurrentLimits.StatorCurrentLimit = Driving.STATOR_LIMIT.in(Amps);
+
+    talonDriveConfig.MotorOutput.Inverted =
+        invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+
+    talonDriveConfig.Slot0.kP = Driving.PID.P;
+    talonDriveConfig.Slot0.kI = Driving.PID.I;
+    talonDriveConfig.Slot0.kD = Driving.PID.D;
+
+    turnMotor = new TalonFX(turnPort, DRIVE_CANIVORE);
+    encoder = new CANcoder(sensorID, DRIVE_CANIVORE);
+
+    CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
+    encoderConfig.MagnetSensor.SensorDirection = Turning.ENCODER_DIRECTION;
+    encoderConfig.MagnetSensor.MagnetOffset = angularOffset.getRotations();
+    encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
+
+    for (int i = 0; i < 5; i++) {
+      StatusCode success = encoder.getConfigurator().apply(encoderConfig);
+      if (success.isOK()) break;
+    }
+
+    // turn motor
+    TalonFXConfiguration talonTurnConfig = new TalonFXConfiguration();
+
+    talonTurnConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    talonTurnConfig.MotorOutput.Inverted =
+        invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+
+    talonTurnConfig.Feedback.SensorToMechanismRatio = Turning.ENCODER_GEARING;
+    talonTurnConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    talonTurnConfig.Feedback.FeedbackRemoteSensorID = sensorID;
+
+    talonTurnConfig.MotionMagic.MotionMagicExpo_kV = Turning.EXPO_KV;
+    talonTurnConfig.MotionMagic.MotionMagicExpo_kA = Turning.EXPO_KA;
+
+    talonTurnConfig.ClosedLoopGeneral.ContinuousWrap = true;
+
+    talonTurnConfig.Slot0.kP = turnFBConstants.kP();
+    talonTurnConfig.Slot0.kI = turnFBConstants.kI();
+    talonTurnConfig.Slot0.kD = turnFBConstants.kD();
+    talonTurnConfig.Slot0.kS = turnFF.getKs();
+    talonTurnConfig.Slot0.kV = turnFF.getKv();
+
+    talonTurnConfig.CurrentLimits.SupplyCurrentLimit = Turning.SUPPLY_LIMIT.in(Amps);
+
+    talonTurnConfig.MotionMagic.MotionMagicCruiseVelocity = 10;
+    talonTurnConfig.MotionMagic.MotionMagicAcceleration = 10;
+
+    for (int i = 0; i < 5; i++) {
+      StatusCode success = driveMotor.getConfigurator().apply(talonDriveConfig);
+      if (success.isOK()) break;
+    }
+
+    for (int i = 0; i < 5; i++) {
+      StatusCode success = turnMotor.getConfigurator().apply(talonTurnConfig);
+      if (success.isOK()) break;
+    }
+
+    // reduces update frequency on unnecessary signals
+    // only reset on robot restart and redeploy or calling motor.resetSignalFrequencies()
+    ParentDevice.optimizeBusUtilizationForAll(driveMotor, turnMotor);
+
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        1 / ODOMETRY_PERIOD.in(Seconds), driveMotor.getPosition(), driveMotor.getVelocity());
+
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        200, turnMotor.getPosition(), turnMotor.getVelocity());
+
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        1 / PERIOD.in(Seconds), driveMotor.getMotorVoltage(), turnMotor.getMotorVoltage());
+
+    register(driveMotor);
+    register(turnMotor);
+    register(encoder);
+
+    TalonUtils.addMotor(driveMotor);
+    TalonUtils.addMotor(turnMotor);
+
+    talonThread = OdometryThread.getInstance();
+
+    position = talonThread.registerSignal(driveMotor.getPosition());
+    rotation = talonThread.registerSignal(turnMotor.getPosition());
+
+    timestamp = talonThread.makeTimestampQueue();
+
+    resetEncoders();
+
+    this.name = name;
+  }
+
+  @Override
+  public String name() {
+    return name;
+  }
+
+  @Override
+  public void setDriveVoltage(double voltage) {
+    driveMotor.setVoltage(voltage);
+  }
+
+  @Override
+  public void setTurnVoltage(double voltage) {
+    turnMotor.setVoltage(voltage);
+  }
+
+  @Override
+  public double drivePosition() {
+    return driveMotor.getPosition().getValueAsDouble();
+  }
+
+  @Override
+  public double driveVelocity() {
+    return driveMotor.getVelocity().getValueAsDouble();
+  }
+
+  @Override
+  public Rotation2d rotation() {
+    return Rotation2d.fromRotations(turnMotor.getPosition().getValueAsDouble());
+  }
+
+  @Override
+  public SwerveModuleState state() {
+    return new SwerveModuleState(driveVelocity(), rotation());
+  }
+
+  @Override
+  public SwerveModulePosition position() {
+    return new SwerveModulePosition(drivePosition(), rotation());
+  }
+
+  @Override
+  public SwerveModuleState desiredState() {
+    return setpoint;
+  }
+
+  @Override
+  public void resetEncoders() {
+    driveMotor.setPosition(0);
+  }
+
+  @Override
+  public void setDriveSetpoint(double velocity) {
+    driveMotor.setControl(
+        velocityOut.withVelocity(velocity).withFeedForward(driveFF.calculate(velocity)));
+  }
+
+  @Override
+  public void setTurnSetpoint(Rotation2d angle) {
+    turnMotor.setControl(rotationsIn.withPosition(angle.getRotations()).withSlot(0));
+  }
+
+  @Override
+  public void updateSetpoint(SwerveModuleState setpoint, ControlMode mode) {
+    Rotation2d rotation = rotation();
+    // Optimize the reference state to avoid spinning further than 90 degrees
+    setpoint.optimize(rotation);
+    // Scale setpoint by cos of turning error to reduce tread wear
+    setpoint.cosineScale(rotation);
+
+    if (mode == ControlMode.OPEN_LOOP_VELOCITY) {
+      setDriveVoltage(driveFF.calculate(setpoint.speedMetersPerSecond));
+    } else {
+      setDriveSetpoint(setpoint.speedMetersPerSecond);
+    }
+
+    setTurnSetpoint(setpoint.angle);
+    this.setpoint = setpoint;
+  }
+
+  @Override
+  public void updateInputsDrive(Rotation2d angle, double voltage) {
+    setDriveVoltage(voltage);
+    setTurnSetpoint(angle);
+    this.setpoint.angle = angle;
+  }
+
+  @Override
+  public void updateInputsTurn(double voltage) {
+    setDriveVoltage(0.0);
+    setTurnVoltage(voltage);
+  }
+
+  @Override
+  public double[][] moduleOdometryData() {
+    Drive.LOCK.lock();
+    try {
+      return new double[][] {
+        position.stream().mapToDouble((Double d) -> d).toArray(),
+        rotation.stream().mapToDouble((Double d) -> d).toArray(),
+        timestamp.stream().mapToDouble((Double d) -> d).toArray()
+      };
+    } finally {
+      Drive.LOCK.unlock();
+    }
+  }
+
+  @Override
+  public SwerveModulePosition[] odometryData() {
+    SwerveModulePosition[] positions = new SwerveModulePosition[20];
+    Drive.LOCK.lock();
+
+    var data = moduleOdometryData();
+
+    for (int i = 0; i < data[0].length; i++) {
+      positions[i] = new SwerveModulePosition(data[0][i], Rotation2d.fromRotations(data[1][i]));
+    }
+
+    position.clear();
+    rotation.clear();
+    timestamp.clear();
+
+    Drive.LOCK.unlock();
+    return positions;
+  }
+
+  @Override
+  public double[] timestamps() {
+    return moduleOdometryData()[2];
+  }
+
+  @Override
+  public void close() {
+    turnMotor.close();
+    driveMotor.close();
+  }
+}
