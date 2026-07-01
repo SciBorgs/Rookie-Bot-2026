@@ -1,5 +1,3 @@
 package org.sciborgs1155.robot.shooter;
 
-public class RealShooter {
-    
-}
+public class RealShooter {}
