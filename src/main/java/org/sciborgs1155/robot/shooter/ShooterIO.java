@@ -20,10 +20,10 @@ public interface ShooterIO {
    * @return The velocity of the flywheel, in radians per sec
    *
    */
-  double flyWheelVelocity();
+  double getFlyWheelVelocity();
 
   /*
-   * Posotion of hood in radian
+   * Posotion of hood in radians
    * @returns the position of hood in radians
    */
   double getHoodPosition();
