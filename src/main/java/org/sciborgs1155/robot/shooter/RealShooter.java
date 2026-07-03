@@ -44,8 +44,10 @@ public class RealShooter implements ShooterIO {
     return wheelMotor.getVelocity().getValueAsDouble();
   }
 
+  /* J 3:40PM Edit: converts double where 1 is a full rotation to radians (check) */
+  
   @Override
-  public double getHoodPosition() {
+  public double getHoodPosition() { 
     var currentSig = hoodMotor.getPosition();
     currentSig.refresh();
     var convertedSig = currentSig.getValueAsDouble();
