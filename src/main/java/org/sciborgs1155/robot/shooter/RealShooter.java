@@ -46,7 +46,6 @@ public class RealShooter implements ShooterIO {
 
   @Override
   public double getHoodPosition() {
-    return None; // for now (must change)
+    return null; // for now (must change)
   }
 }
-;
