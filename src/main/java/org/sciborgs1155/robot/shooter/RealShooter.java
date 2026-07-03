@@ -50,6 +50,6 @@ public class RealShooter implements ShooterIO {
     currentSig.refresh();
     var convertedSig = currentSig.getValueAsDouble();
 
-    return convertedSig*(2 * Math.PI);
+    return convertedSig * (2 * Math.PI);
   }
 }
