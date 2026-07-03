@@ -23,7 +23,7 @@ public class RealShooter implements ShooterIO {
     MotorOutputConfigs configs = new MotorOutputConfigs();
 
     configs.NeutralMode = NeutralModeValue.Brake;
-    configs.Inverted = InvertedValue.CounterClockWise_Postive;
+    configs.Inverted = InvertedValue.CounterClockWise_Positive;
 
     wheelMotor.getConfigurator().apply(configs);
     hoodMotor.getConfigurator().apply(configs);
