@@ -46,9 +46,6 @@ public class RealShooter implements ShooterIO {
 
   @Override
   public double getHoodPosition() {
-    var currentSig = hoodMotor.getPosition();
-    currentSig.refresh();
-
-    return currentSig.getValueAsDouble();
+    return null;
   }
 }
