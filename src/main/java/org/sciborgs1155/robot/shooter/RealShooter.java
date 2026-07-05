@@ -1,6 +1,7 @@
 package org.sciborgs1155.robot.shooter;
 
 import static edu.wpi.first.units.Units.Amps;
+import static org.sciborgs1155.robot.Ports.Shooter.*;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -18,8 +19,8 @@ public class RealShooter implements ShooterIO {
   /* Sets motor configurations */
   public RealShooter() {
 
-    wheelMotor = new TalonFX(1);
-    hoodMotor = new TalonFX(0);
+    wheelMotor = new TalonFX(WHEEL_MOTOR);
+    hoodMotor = new TalonFX(HOOD_MOTOR);
 
     TalonFXConfiguration configs = new TalonFXConfiguration();
 
