@@ -66,4 +66,7 @@ public class SimShooter implements ShooterIO {
   public double getHoodPosition() {
     return simHood.getAngleRads();
   }
+
+  @Override
+  public void close() throws Exception {}
 }

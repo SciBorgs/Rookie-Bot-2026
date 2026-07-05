@@ -65,4 +65,11 @@ public class RealShooter implements ShooterIO {
             / GEAR_RATIO; // gear ratio to covert motor rotations to physical rotations
     return convertedSig * (2 * Math.PI);
   }
+
+  /* shuts the motor after its no longer needed */
+  @Override
+  public void close() throws Exception {
+    wheelMotor.close();
+    hoodMotor.close();
+  }
 }
