@@ -1,13 +1,9 @@
 package org.sciborgs1155.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Radian;
 import static org.sciborgs1155.robot.subsystems.intake.IntakeConstants.CURRENT_LIMIT;
-import static org.sciborgs1155.robot.subsystems.intake.IntakeConstants.EXTENSION;
 import static org.sciborgs1155.robot.subsystems.intake.IntakeConstants.GEARING;
-import static org.sciborgs1155.robot.subsystems.intake.IntakeConstants.GEARING_INTAKE;
-import static org.sciborgs1155.robot.subsystems.intake.IntakeConstants.MAX_ANGLE;
-import static org.sciborgs1155.robot.subsystems.intake.IntakeConstants.ROLLER;
+import static org.sciborgs1155.robot.subsystems.intake.IntakeConstants.PORT;
 
 import org.sciborgs1155.lib.FaultLogger;
 import org.sciborgs1155.lib.TalonUtils;
@@ -18,62 +14,36 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class RealIntake implements IntakeIO{
 
-    TalonFX armMotor;
-    TalonFX intakeMotor;
+    TalonFX motor;
 
     public RealIntake(){
-        armMotor = new TalonFX(EXTENSION);
-        intakeMotor = new TalonFX(ROLLER);
+        motor  = new TalonFX(PORT);
+        TalonFXConfiguration motorConfig = new TalonFXConfiguration();
 
-        TalonFXConfiguration armMotorConfig = new TalonFXConfiguration();
+        motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        motorConfig.CurrentLimits.SupplyCurrentLimit = CURRENT_LIMIT.in(Amps);
+        motorConfig.Feedback.SensorToMechanismRatio = GEARING;
 
-        armMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        armMotorConfig.CurrentLimits.SupplyCurrentLimit = CURRENT_LIMIT.in(Amps);
-        armMotorConfig.Feedback.SensorToMechanismRatio = GEARING;
+        motor.getConfigurator().apply(motorConfig);
+        motor.setVoltage(0);
 
-        TalonFXConfiguration intakeMtorConfig = new TalonFXConfiguration();
-
-        intakeMtorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        intakeMtorConfig.CurrentLimits.SupplyCurrentLimit = CURRENT_LIMIT.in(Amps);
-        intakeMtorConfig.Feedback.SensorToMechanismRatio = GEARING_INTAKE;
-
-        armMotor.getConfigurator().apply(armMotorConfig);
-        armMotor.setPosition(MAX_ANGLE);
-
-        intakeMotor.getConfigurator().apply(intakeMtorConfig);
-        intakeMotor.setVoltage(0);
-
-        TalonUtils.addMotor(armMotor);
-        FaultLogger.register(armMotor);
-
-        TalonUtils.addMotor(intakeMotor);
-        FaultLogger.register(intakeMotor);
+        TalonUtils.addMotor(motor);
+        FaultLogger.register(motor);
     }
-    
+
     @Override
     public void close() throws Exception {
-        intakeMotor.close();
-        armMotor.close();
+        motor.close();
     }
 
     @Override
-    public void setRollerVoltage(double voltage) {
-        intakeMotor.setVoltage(voltage);
+    public void setVoltage(double voltage) {
+        motor.setVoltage(voltage);
     }
 
     @Override
-    public void setArmVoltage(double voltage) {
-        armMotor.setVoltage(voltage);
-    }
-
-    @Override
-    public double getArmPosition() {
-        return armMotor.getPosition().getValue().in(Radian);
-    }
-
-    @Override
-    public double getRollerVelocity() {
-        return intakeMotor.getVelocity().getValueAsDouble();
+    public double getVelocity() {
+        return motor.getVelocity().getValueAsDouble();
     }
 
 }

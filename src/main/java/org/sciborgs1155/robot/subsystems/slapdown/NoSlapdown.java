@@ -1,8 +1,7 @@
-package org.sciborgs1155.robot.subsystems.intake;
+package org.sciborgs1155.robot.subsystems.slapdown;
 
-public class NoIntake implements IntakeIO{
+public class NoSlapdown implements SlapdownIO{
 
-    
     @Override
     public void close() throws Exception {}
 
@@ -10,10 +9,8 @@ public class NoIntake implements IntakeIO{
     public void setVoltage(double voltage) {}
 
     @Override
-    public double getVelocity() {
+    public double position() {
         return 0;
     }
-
-
     
 }

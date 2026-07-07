@@ -1,28 +1,14 @@
 package org.sciborgs1155.robot.subsystems.intake;
 
 public interface IntakeIO extends AutoCloseable{
-    /**
-     * uh this is subject to change
-     * maybe might have intake as separate subsystem
-     * like on the 2026 bot?
-     */
-    /**
-     * @param voltage of the arm extending
-     */
-    void setArmVoltage(double voltage);
 
     /**
-     * @param voltage of roller 
+     * @param voltage of intake 
      */
-    void setRollerVoltage(double voltage);
+    void setVoltage(double voltage);
 
     /**
-     * @return position of arm when extended
+     * @return velocity of intake
      */
-    double getArmPosition();
-
-    /**
-     * @return velocity of roller motor
-     */
-    double getRollerVelocity();
+    double getVelocity();
 }
