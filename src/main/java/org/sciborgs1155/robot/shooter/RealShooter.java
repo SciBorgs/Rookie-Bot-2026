@@ -33,7 +33,7 @@ public class RealShooter implements ShooterIO {
     wheelMotor.getConfigurator().apply(configs);
     hoodMotor.getConfigurator().apply(configs);
 
-    /* Checks the motors */
+    /* Checks the motors for faults */
     FaultLogger.register(wheelMotor);
     FaultLogger.register(hoodMotor);
 
@@ -72,5 +72,6 @@ public class RealShooter implements ShooterIO {
   public void close() throws Exception {
     wheelMotor.close();
     hoodMotor.close();
+
   }
 }
