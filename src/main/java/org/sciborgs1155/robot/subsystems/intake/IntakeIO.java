@@ -19,6 +19,10 @@ public interface IntakeIO extends AutoCloseable{
     /**
      * @return position of arm when extended
      */
-    double arnPosition();
+    double getArmPosition();
 
+    /**
+     * @return velocity of roller motor
+     */
+    double getRollerVelocity();
 }

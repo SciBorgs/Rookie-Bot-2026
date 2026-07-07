@@ -17,11 +17,16 @@ public class NoIntake implements IntakeIO{
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'setArmVoltage'");
     }
+    @Override
+    public double getArmPosition() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getArmPosition'");
+    }
 
     @Override
-    public double arnPosition() {
+    public double getRollerVelocity() {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'arnPosition'");
+        throw new UnsupportedOperationException("Unimplemented method 'getRollerVelocity'");
     }
 
     
