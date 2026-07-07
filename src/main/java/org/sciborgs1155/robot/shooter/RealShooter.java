@@ -14,13 +14,11 @@ import org.sciborgs1155.lib.TalonUtils;
 public class RealShooter implements ShooterIO {
 
   private final TalonFX wheelMotor;
-  private final TalonFX hoodMotor;
 
   /* Sets motor configurations */
   public RealShooter() {
 
     wheelMotor = new TalonFX(WHEEL_MOTOR);
-    hoodMotor = new TalonFX(HOOD_MOTOR);
 
     TalonFXConfiguration configs = new TalonFXConfiguration();
 
@@ -31,15 +29,12 @@ public class RealShooter implements ShooterIO {
     configs.CurrentLimits.SupplyCurrentLimit = SUPPLY_CURRENT_LIMIT.in(Amps);
 
     wheelMotor.getConfigurator().apply(configs);
-    hoodMotor.getConfigurator().apply(configs);
 
     /* Checks the motors */
     FaultLogger.register(wheelMotor);
-    FaultLogger.register(hoodMotor);
 
     /* adds motors to a list of all global motors */
     TalonUtils.addMotor(wheelMotor);
-    TalonUtils.addMotor(hoodMotor);
   }
 
   @Override
@@ -48,29 +43,13 @@ public class RealShooter implements ShooterIO {
   }
 
   @Override
-  public void setHoodVoltage(double voltage) {
-    hoodMotor.setVoltage(voltage);
-  }
-
-  @Override
   public double getFlyWheelVelocity() {
     return wheelMotor.getVelocity().getValueAsDouble();
-  }
-
-  @Override
-  public double getHoodPosition() {
-    var currentSig = hoodMotor.getPosition();
-    currentSig.refresh();
-    var convertedSig =
-        currentSig.getValueAsDouble()
-            / GEAR_RATIO; // gear ratio to covert motor rotations to physical rotations
-    return convertedSig * (2 * Math.PI);
   }
 
   /* shuts the motor after its no longer needed */
   @Override
   public void close() throws Exception {
     wheelMotor.close();
-    hoodMotor.close();
   }
 }

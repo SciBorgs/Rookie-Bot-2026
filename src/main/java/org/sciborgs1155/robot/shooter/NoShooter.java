@@ -8,15 +8,7 @@ public class NoShooter implements ShooterIO {
   public void setFlyWheelVoltage(double voltage) {}
 
   @Override
-  public void setHoodVoltage(double voltage) {}
-
-  @Override
   public double getFlyWheelVelocity() {
-    return 0;
-  }
-
-  @Override
-  public double getHoodPosition() {
     return 0;
   }
 
