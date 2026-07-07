@@ -1,6 +1,6 @@
 package org.sciborgs1155.robot.shooter;
 
-public class NoShooter implements ShooterIO {
+public class NoWheel implements WheelIO {
 
   /* Return 0 or empty */
 

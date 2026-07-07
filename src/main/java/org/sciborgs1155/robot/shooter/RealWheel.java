@@ -11,12 +11,12 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import org.sciborgs1155.lib.FaultLogger;
 import org.sciborgs1155.lib.TalonUtils;
 
-public class RealShooter implements ShooterIO {
+public class RealWheel implements WheelIO {
 
   private final TalonFX wheelMotor;
 
   /* Sets motor configurations */
-  public RealShooter() {
+  public RealWheel() {
 
     wheelMotor = new TalonFX(WHEEL_MOTOR);
 

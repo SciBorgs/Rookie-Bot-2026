@@ -8,11 +8,11 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import org.sciborgs1155.robot.shooter.ShooterConstants.VelocityControl;
 
-public class SimShooter implements ShooterIO {
+public class SimWheel implements WheelIO {
   private final FlywheelSim simFlyWheel;
 
   /* Initalize the fields */
-  public SimShooter() {
+  public SimWheel() {
     simFlyWheel =
         new FlywheelSim(
             LinearSystemId.identifyVelocitySystem(

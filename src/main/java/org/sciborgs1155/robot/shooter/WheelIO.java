@@ -1,6 +1,6 @@
 package org.sciborgs1155.robot.shooter;
 
-public interface ShooterIO extends AutoCloseable {
+public interface WheelIO extends AutoCloseable {
 
   /*
    * sets voltage of flywheel
