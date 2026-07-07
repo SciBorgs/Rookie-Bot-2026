@@ -6,23 +6,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
 
-    RealShooter RealShooter;
-    SimShooter SimShooter;
+    WheelIO hardware;
+
+    public Shooter(WheelIO hardware) {
+        this.hardware = hardware;
+    }
 
     public static Shooter create() {
-        return Robot.isReal() ? new Shooter(new RealShooter()) : new Shooter(new SimShooter());
-
+        return Robot.isReal() ? new Shooter(new RealWheel()) : new Shooter(new SimWheel());
     }
-
-    /* Constructors */
-    public Shooter(RealShooter realShooter) {
-        this.RealShooter = realShooter;
-    }
-
-    public Shooter(SimShooter SimShooter) {
-        this.SimShooter = SimShooter;
-    }
-
-    
-
 }

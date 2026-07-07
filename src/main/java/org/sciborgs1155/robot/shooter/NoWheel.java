@@ -1,6 +1,6 @@
 package org.sciborgs1155.robot.shooter;
 
-public class NoShooter implements ShooterIO {
+public class NoWheel implements WheelIO {
 
   /* Return 0 or empty */
 
@@ -8,15 +8,7 @@ public class NoShooter implements ShooterIO {
   public void setFlyWheelVoltage(double voltage) {}
 
   @Override
-  public void setHoodVoltage(double voltage) {}
-
-  @Override
   public double getFlyWheelVelocity() {
-    return 0;
-  }
-
-  @Override
-  public double getHoodPosition() {
     return 0;
   }
 

@@ -1,8 +1,10 @@
-package org.sciborgs1155.robot.shooter;
+package org.sciborgs1155.robot.hood;
 
 import static edu.wpi.first.units.Units.Amps;
-import static org.sciborgs1155.robot.Ports.Shooter.*;
-import static org.sciborgs1155.robot.shooter.ShooterConstants.*;
+import static org.sciborgs1155.robot.Ports.Shooter.HOOD_MOTOR;
+import static org.sciborgs1155.robot.shooter.ShooterConstants.GEAR_RATIO;
+import static org.sciborgs1155.robot.shooter.ShooterConstants.STATOR_CURRENT_LIMIT;
+import static org.sciborgs1155.robot.shooter.ShooterConstants.SUPPLY_CURRENT_LIMIT;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -11,15 +13,12 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import org.sciborgs1155.lib.FaultLogger;
 import org.sciborgs1155.lib.TalonUtils;
 
-public class RealShooter implements ShooterIO {
-
-  private final TalonFX wheelMotor;
+public class RealHood implements HoodIO {
   private final TalonFX hoodMotor;
 
-  /* Sets motor configurations */
-  public RealShooter() {
+  /* Configurations  */
+  public RealHood() {
 
-    wheelMotor = new TalonFX(WHEEL_MOTOR);
     hoodMotor = new TalonFX(HOOD_MOTOR);
 
     TalonFXConfiguration configs = new TalonFXConfiguration();
@@ -30,31 +29,18 @@ public class RealShooter implements ShooterIO {
     configs.CurrentLimits.StatorCurrentLimit = STATOR_CURRENT_LIMIT.in(Amps);
     configs.CurrentLimits.SupplyCurrentLimit = SUPPLY_CURRENT_LIMIT.in(Amps);
 
-    wheelMotor.getConfigurator().apply(configs);
     hoodMotor.getConfigurator().apply(configs);
 
-    /* Checks the motors for faults */
-    FaultLogger.register(wheelMotor);
+    /* Checks the motors */
     FaultLogger.register(hoodMotor);
 
     /* adds motors to a list of all global motors */
-    TalonUtils.addMotor(wheelMotor);
     TalonUtils.addMotor(hoodMotor);
-  }
-
-  @Override
-  public void setFlyWheelVoltage(double voltage) {
-    wheelMotor.setVoltage(voltage);
   }
 
   @Override
   public void setHoodVoltage(double voltage) {
     hoodMotor.setVoltage(voltage);
-  }
-
-  @Override
-  public double getFlyWheelVelocity() {
-    return wheelMotor.getVelocity().getValueAsDouble();
   }
 
   @Override
@@ -67,11 +53,13 @@ public class RealShooter implements ShooterIO {
     return convertedSig * (2 * Math.PI);
   }
 
-  /* shuts the motor after its no longer needed */
+  @Override
+  public double velocity() {
+    return hoodMotor.getVelocity().getValueAsDouble();
+  }
+
   @Override
   public void close() throws Exception {
-    wheelMotor.close();
     hoodMotor.close();
-
   }
 }
