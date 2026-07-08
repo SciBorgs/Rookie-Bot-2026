@@ -35,15 +35,5 @@ public class ShooterConstants {
     public static final double V = 0.016981;
     public static final double A = 0.0021296;
   }
-
-  /* For hood */
-  public static class AngularControl {
-    public static final double P = 0.03;
-    public static final double I = 0.0;
-    public static final double D = 0.0;
-
-    public static final double S = 0.0;
-    public static final double V = 0.016981;
-    public static final double A = 0.0021296;
-  }
+  
 }
