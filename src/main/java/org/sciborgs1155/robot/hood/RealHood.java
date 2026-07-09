@@ -39,12 +39,12 @@ public class RealHood implements HoodIO {
   }
 
   @Override
-  public void setHoodVoltage(double voltage) {
+  public void setVoltage(double voltage) {
     hoodMotor.setVoltage(voltage);
   }
 
   @Override
-  public double getHoodPosition() {
+  public double getPosition() {
     var currentSig = hoodMotor.getPosition();
     currentSig.refresh();
     var convertedSig =
