@@ -7,12 +7,12 @@ public interface WheelIO extends AutoCloseable {
    * @param voltage The voltage
    */
 
-  void setFlyWheelVoltage(double voltage);
+  void setVoltage(double voltage);
 
   /*
    * velocity of the flywheel (in radians per sec)
    * @return The velocity of the flywheel, in radians per sec
    *
    */
-  double getFlyWheelVelocity();
+  double getVelocity();
 }

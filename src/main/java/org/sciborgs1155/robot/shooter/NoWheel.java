@@ -5,10 +5,10 @@ public class NoWheel implements WheelIO {
   /* Return 0 or empty */
 
   @Override
-  public void setFlyWheelVoltage(double voltage) {}
+  public void setVoltage(double voltage) {}
 
   @Override
-  public double getFlyWheelVelocity() {
+  public double getVelocity() {
     return 0;
   }
 

@@ -38,12 +38,12 @@ public class RealWheel implements WheelIO {
   }
 
   @Override
-  public void setFlyWheelVoltage(double voltage) {
+  public void setVoltage(double voltage) {
     wheelMotor.setVoltage(voltage);
   }
 
   @Override
-  public double getFlyWheelVelocity() {
+  public double getVelocity() {
     return wheelMotor.getVelocity().getValueAsDouble();
   }
 

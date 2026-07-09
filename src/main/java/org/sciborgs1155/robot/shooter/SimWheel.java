@@ -21,13 +21,13 @@ public class SimWheel implements WheelIO {
   }
 
   @Override
-  public void setFlyWheelVoltage(double voltage) {
+  public void setVoltage(double voltage) {
     simFlyWheel.setInputVoltage(voltage); // pases the voltage into the flywheel
     simFlyWheel.update(PERIOD.in(Seconds)); // updates the voltage for 0.02 seconds
   }
 
   @Override
-  public double getFlyWheelVelocity() {
+  public double getVelocity() {
     return simFlyWheel.getAngularVelocityRadPerSec();
   }
 
