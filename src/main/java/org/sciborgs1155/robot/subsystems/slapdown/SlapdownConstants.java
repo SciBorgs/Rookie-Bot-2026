@@ -1,3 +1,5 @@
+package org.sciborgs1155.robot.subsystems.slapdown;
+
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -41,6 +43,7 @@ public class SlapdownConstants {
   public static final Angle MIN_ANGLE = Degrees.of(9.7);
   public static final Angle MAX_ANGLE = Degrees.of(83.7);
   public static final Angle START_ANGLE = MAX_ANGLE;
+
 
   public static final Angle POSITION_TOLERANCE = Radians.of(0.05);
 }

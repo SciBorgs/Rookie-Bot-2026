@@ -7,10 +7,10 @@ public class NoIntake implements IntakeIO{
     public void close() throws Exception {}
 
     @Override
-    public void setVoltage(double voltage) {}
+    public void setPower(double power) {}
 
     @Override
-    public double getVelocity() {
+    public double current() {
         return 0;
     }
 

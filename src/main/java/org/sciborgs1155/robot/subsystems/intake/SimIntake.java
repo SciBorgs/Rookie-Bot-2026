@@ -23,13 +23,13 @@ public class SimIntake implements IntakeIO{
     }
 
     @Override
-    public void setVoltage(double voltage) {
-        intakeSim.setInputVoltage(voltage);
+    public void setPower(double power) {
+        intakeSim.setInput(power);
     }
 
     @Override
-    public double getVelocity() {
-        return intakeSim.getAngularVelocityRPM();
+    public double current() {
+        return intakeSim.getCurrentDrawAmps();
     }
     
     

@@ -3,12 +3,21 @@ package org.sciborgs1155.robot.subsystems.intake;
 public interface IntakeIO extends AutoCloseable{
 
     /**
-     * @param voltage of intake 
+     * @param power of intake 
      */
-    void setVoltage(double voltage);
+    void setPower(double power);
 
     /**
-     * @return velocity of intake
+     * @return output current of intake
      */
-    double getVelocity();
+    double current();
+
+    /**
+     * @return 
+     */
+    /**
+    boolean beambreak();
+
+    
+    */
 }

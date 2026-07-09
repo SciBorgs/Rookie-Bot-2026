@@ -1,6 +1,8 @@
 package org.sciborgs1155.robot.subsystems.slapdown;
 
 public interface SlapdownIO extends AutoCloseable{
+
+    
         /**
      * @param voltage of the arm extending
      */

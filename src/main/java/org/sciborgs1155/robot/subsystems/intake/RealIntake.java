@@ -1,9 +1,8 @@
 package org.sciborgs1155.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Amps;
-import static org.sciborgs1155.robot.subsystems.intake.IntakeConstants.CURRENT_LIMIT;
-import static org.sciborgs1155.robot.subsystems.intake.IntakeConstants.GEARING;
-import static org.sciborgs1155.robot.subsystems.intake.IntakeConstants.PORT;
+import static org.sciborgs1155.robot.subsystems.intake.IntakeConstants.*;
+import static org.sciborgs1155.robot.Ports.Intake.*;
 
 import org.sciborgs1155.lib.FaultLogger;
 import org.sciborgs1155.lib.TalonUtils;
@@ -17,7 +16,7 @@ public class RealIntake implements IntakeIO{
     TalonFX motor;
 
     public RealIntake(){
-        motor  = new TalonFX(PORT);
+        motor  = new TalonFX(ROLLERS);
         TalonFXConfiguration motorConfig = new TalonFXConfiguration();
 
         motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -37,13 +36,13 @@ public class RealIntake implements IntakeIO{
     }
 
     @Override
-    public void setVoltage(double voltage) {
-        motor.setVoltage(voltage);
+    public void setPower(double power) {
+        motor.set(power);
     }
 
     @Override
-    public double getVelocity() {
-        return motor.getVelocity().getValueAsDouble();
+    public double current() {
+        return motor.getTorqueCurrent().getValueAsDouble();
     }
 
 }

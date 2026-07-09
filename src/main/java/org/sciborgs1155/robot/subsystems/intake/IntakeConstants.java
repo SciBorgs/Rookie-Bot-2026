@@ -19,6 +19,4 @@ public class IntakeConstants {
 
   public static final double ACCEL_GAIN = 0;
   public static final double VELOCITY_GAIN = 0;
-
-  public static final int PORT = 0;
 }
