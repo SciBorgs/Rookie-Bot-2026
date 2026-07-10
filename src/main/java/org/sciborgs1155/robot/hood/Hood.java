@@ -29,17 +29,18 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import org.sciborgs1155.robot.hood.HoodConstants.*;
-import org.sciborgs1155.robot.shooter.ShooterConstants.VelocityControl;
+import org.sciborgs1155.robot.hood.HoodConstants.ControlConstants.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.MathUtil;
 
 public class Hood extends SubsystemBase implements AutoCloseable {
 
     private final HoodIO hardware;
-    private final ProfiledPIDController controller = new ProfiledPIDController(VelocityControl.P, VelocityControl.I, VelocityControl.D, new TrapezoidProfile.Constraints(
+    private final ProfiledPIDController controller = new ProfiledPIDController(ControlConstants.P, ControlConstants.I, ControlConstants.D, new TrapezoidProfile.Constraints(
               MAX_VELOCITY.in(RadiansPerSecond), MAX_ACCEL.in(RadiansPerSecondPerSecond)));
-    private final ArmFeedforward ff = new ArmFeedforward(VelocityControl.S, VelocityControl.G, VelocityControl.V, VelocityControl.A);
+    private final ArmFeedforward ff = new ArmFeedforward(ControlConstants.S, ControlConstants.G, ControlConstants.V, ControlConstants.A);
 
     private final SysIdRoutine sysIdRoutine;
     public static Hood create() {
@@ -59,9 +60,32 @@ public class Hood extends SubsystemBase implements AutoCloseable {
         new SysIdRoutine(
             new Config(RAMP_RATE, STEP_VOLTAGE, TIME_OUT),
             new Mechanism(voltage -> hardware.setVoltage(voltage.in(Volts)), null, this));
+
+    SmartDashboard.putData(
+        "Robot/hood/quasistatic forward",
+        sysIdRoutine
+            .quasistatic(Direction.kForward)
+            .until(() -> atPosition(MAX_ANGLE.in(Radians)))
+            .withName("hood quasistatic forward"));
+    SmartDashboard.putData(
+        "Robot/hood/quasistatic backward",
+        sysIdRoutine
+            .quasistatic(Direction.kReverse)
+            .until(() -> atPosition(MIN_ANGLE.in(Radians)))
+            .withName("hood quasistatic backward"));
+    SmartDashboard.putData(
+        "Robot/hood/dynamic forward",
+        sysIdRoutine
+            .dynamic(Direction.kForward)
+            .until(() -> atPosition(MAX_ANGLE.in(Radians)))
+            .withName("hood dynamic forward"));
+    SmartDashboard.putData(
+        "Robot/hood/dynamic backward",
+        sysIdRoutine
+            .dynamic(Direction.kReverse)
+            .until(() -> atPosition(MIN_ANGLE.in(Radians)))
+            .withName("hood dynamic backward"));
     }
-
-
 
     @Logged
     public double angle() {
@@ -75,15 +99,25 @@ public class Hood extends SubsystemBase implements AutoCloseable {
 
     @Logged
     public Command goTo(DoubleSupplier goal) {
-        return run(() -> )
+        return run(() -> update(goal.getAsDouble())).withName("Hood GO");
     }
 
+
+    @Logged
     public void update(double position) {
         double goal = MathUtil.clamp(position, MIN_ANGLE.in(Radians), MAX_ANGLE.in(Radians));
         double PIDCalculations = controller.calculate(angle(), goal);
         double ffCalculations = ff.calculate(controller.getSetpoint().position, controller.getSetpoint().velocity);
+        hardware.setVoltage((PIDCalculations + ffCalculations));
 
     }
+
+    @Logged
+    public boolean atPosition(double angle) {
+        return Math.abs(angle - angle()) < POSITION_TOLERANCE.in(Radians);
+
+    }
+
     @Override
     public void close() throws Exception {
 
