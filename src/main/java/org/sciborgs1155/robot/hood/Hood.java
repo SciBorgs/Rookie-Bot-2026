@@ -6,7 +6,9 @@ import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import static org.sciborgs1155.robot.hood.HoodConstants.DEFAULT_ANGLE;
 import static org.sciborgs1155.robot.hood.HoodConstants.MAX_ACCEL;
+import static org.sciborgs1155.robot.hood.HoodConstants.MAX_ANGLE;
 import static org.sciborgs1155.robot.hood.HoodConstants.MAX_VELOCITY;
+import static org.sciborgs1155.robot.hood.HoodConstants.MIN_ANGLE;
 import static org.sciborgs1155.robot.hood.HoodConstants.POSITION_TOLERANCE;
 import static org.sciborgs1155.robot.hood.HoodConstants.RAMP_RATE;
 import static org.sciborgs1155.robot.hood.HoodConstants.STEP_VOLTAGE;
@@ -30,8 +32,7 @@ import org.sciborgs1155.robot.hood.HoodConstants.*;
 import org.sciborgs1155.robot.shooter.ShooterConstants.VelocityControl;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.units.measure.Angle;
-
-
+import edu.wpi.first.math.MathUtil;
 
 public class Hood extends SubsystemBase implements AutoCloseable {
 
@@ -50,19 +51,21 @@ public class Hood extends SubsystemBase implements AutoCloseable {
         this.hardware = hardware;
 
         
-    controller.setTolerance(POSITION_TOLERANCE.in(Radians));
-    controller.reseta(angle()); //fix
+    controller.setTolerance(POSITION_TOLERANCE.in(Radians)); //how close it needs to needs to be
+    controller.reset(angle());
     setDefaultCommand(goTo(DEFAULT_ANGLE));
 
-        sysIdRoutine =
+    sysIdRoutine =
         new SysIdRoutine(
             new Config(RAMP_RATE, STEP_VOLTAGE, TIME_OUT),
             new Mechanism(voltage -> hardware.setVoltage(voltage.in(Volts)), null, this));
     }
 
+
+
     @Logged
     public double angle() {
-        return hardware.getPosition()
+        return hardware.getPosition();
     }
 
     @Logged
@@ -73,6 +76,12 @@ public class Hood extends SubsystemBase implements AutoCloseable {
     @Logged
     public Command goTo(DoubleSupplier goal) {
         return run(() -> )
+    }
+
+    public void update(double position) {
+        double goal = MathUtil.clamp(position, MIN_ANGLE.in(Radians), MAX_ANGLE.in(Radians));
+        double PIDCalculations = controller.calculate(angle(), goal);
+        double ffCalculations = ff.calculate(controller.getSetpoint().position, controller.getSetpoint().velocity);
 
     }
     @Override
@@ -80,6 +89,5 @@ public class Hood extends SubsystemBase implements AutoCloseable {
 
     }
     
-
 
 }
