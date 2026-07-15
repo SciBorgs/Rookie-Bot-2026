@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import org.sciborgs1155.robot.hood.HoodConstants.*;
-import org.sciborgs1155.robot.hood.HoodConstants.ControlConstants.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -43,6 +42,8 @@ public class Hood extends SubsystemBase implements AutoCloseable {
     private final ArmFeedforward ff = new ArmFeedforward(ControlConstants.S, ControlConstants.G, ControlConstants.V, ControlConstants.A);
 
     private final SysIdRoutine sysIdRoutine;
+
+    /*Creates either an hardware or sim depending if the robot is real  */
     public static Hood create() {
         return Robot.isReal() ? new Hood(new RealHood()) : new Hood(new SimHood());
 
