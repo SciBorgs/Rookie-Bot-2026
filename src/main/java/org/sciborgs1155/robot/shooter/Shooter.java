@@ -109,6 +109,11 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
     return controller.getSetpoint();
   }
 
+  @Logged
+  public double velocity() {
+    return hardware.getVelocity();
+  }
+
   /**
    * Runs shooter at a velcoity
    *
@@ -129,13 +134,6 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
     return runShooter(() -> velocity);
   }
 
-  /**
-   * Does a test command to check if subsystem works
-   *
-   * @param goal Velocity Goal
-   * @return Test Command
-   */
- 
 
   /** closes motor */
   @Override

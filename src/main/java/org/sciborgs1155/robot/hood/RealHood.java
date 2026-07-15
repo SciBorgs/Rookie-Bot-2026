@@ -23,7 +23,6 @@ public class RealHood implements HoodIO {
 
     TalonFXConfiguration configs = new TalonFXConfiguration();
 
-    configs.MotorOutput.NeutralMode = NeutralModeValue.Brake; // stops the motor
     configs.MotorOutput.Inverted =
         InvertedValue.CounterClockwise_Positive; // counterclockwise is postive
     configs.CurrentLimits.StatorCurrentLimit = STATOR_CURRENT_LIMIT.in(Amps);
