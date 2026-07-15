@@ -16,6 +16,7 @@ import static org.sciborgs1155.robot.hood.HoodConstants.TIME_OUT;
 
 import java.util.function.DoubleSupplier;
 
+import org.junit.jupiter.api.AfterEach;
 import org.sciborgs1155.robot.Robot;
 
 import edu.wpi.first.epilogue.Logged;
@@ -94,6 +95,21 @@ public class Hood extends SubsystemBase implements AutoCloseable {
     }
 
     @Logged
+    public double angleSetpoint() {
+        return controller.getSetpoint().position;
+    }
+
+    @Logged
+    public double velocity() {
+        return hardware.velocity();
+    }
+
+    @Logged
+    public double getVelocitySetpoint() {
+        return controller.getSetpoint().velocity;
+    }
+
+    @Logged
     public Command goTo(Angle goal) {
         return goTo(() -> goal.in(Radians));
     }
@@ -103,6 +119,11 @@ public class Hood extends SubsystemBase implements AutoCloseable {
         return run(() -> update(goal.getAsDouble())).withName("Hood GO");
     }
 
+    public Command goToShootingAngle(DoubleSupplier shootingAngle) {
+        return goTo(shootingAngle);
+
+    }
+
 
     @Logged
     public void update(double position) {
@@ -110,6 +131,12 @@ public class Hood extends SubsystemBase implements AutoCloseable {
         double PIDCalculations = controller.calculate(angle(), goal);
         double ffCalculations = ff.calculate(controller.getSetpoint().position, controller.getSetpoint().velocity);
         hardware.setVoltage((PIDCalculations + ffCalculations));
+
+    }
+
+    @Logged 
+    public boolean atGoal() {
+        return controller.atGoal();
 
     }
 
