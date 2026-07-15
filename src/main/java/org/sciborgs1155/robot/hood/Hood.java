@@ -16,7 +16,6 @@ import static org.sciborgs1155.robot.hood.HoodConstants.TIME_OUT;
 
 import java.util.function.DoubleSupplier;
 
-import org.junit.jupiter.api.AfterEach;
 import org.sciborgs1155.robot.Robot;
 
 import edu.wpi.first.epilogue.Logged;
@@ -89,42 +88,67 @@ public class Hood extends SubsystemBase implements AutoCloseable {
             .withName("hood dynamic backward"));
     }
 
+    /**
+     * 
+     * @return the angle of the hood
+     */
     @Logged
     public double angle() {
         return hardware.getPosition();
     }
 
+    /**
+     * 
+     * @return the position of setpoint
+     */
     @Logged
     public double angleSetpoint() {
         return controller.getSetpoint().position;
     }
 
+    /**
+     * 
+     * @return the velcoity of the hood 
+     */
     @Logged
     public double velocity() {
         return hardware.velocity();
     }
 
+    /**
+     * 
+     * @return the velocity of the setpoint
+     */
     @Logged
     public double getVelocitySetpoint() {
         return controller.getSetpoint().velocity;
     }
 
+    /**
+     * Command to set the hood to a angle 
+     * 
+     * @param goal the desired angle
+     * @return command to set hood to goal
+     */
     @Logged
     public Command goTo(Angle goal) {
         return goTo(() -> goal.in(Radians));
     }
 
+    /**
+     * Command to set hoood to an angle using a double supplier 
+     * @param goal The deisred angle as a double supplier
+     * @return A command that will set hood to goal
+     */
     @Logged
     public Command goTo(DoubleSupplier goal) {
         return run(() -> update(goal.getAsDouble())).withName("Hood GO");
     }
 
-    public Command goToShootingAngle(DoubleSupplier shootingAngle) {
-        return goTo(shootingAngle);
-
-    }
-
-
+    /**
+     * Updadtes hood voltage that will set the hood to the desired position based on ff and pid calculations 
+     * @param position The deisred position of the hood
+     */
     @Logged
     public void update(double position) {
         double goal = MathUtil.clamp(position, MIN_ANGLE.in(Radians), MAX_ANGLE.in(Radians));
@@ -134,12 +158,21 @@ public class Hood extends SubsystemBase implements AutoCloseable {
 
     }
 
+    /**
+     * 
+     * @return Boolean depending if it is at goal 
+     */
     @Logged 
     public boolean atGoal() {
         return controller.atGoal();
 
     }
 
+    /**
+     * 
+     * @param angle The deisred angle 
+     * @return Boollean depending if the abs value of its difference is less than position tolerance
+     */
     @Logged
     public boolean atPosition(double angle) {
         return Math.abs(angle - angle()) < POSITION_TOLERANCE.in(Radians);
