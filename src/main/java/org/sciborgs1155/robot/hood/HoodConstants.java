@@ -28,11 +28,9 @@ public class HoodConstants {
   public static final Velocity<VoltageUnit> RAMP_RATE = Volts.of(0.5).per(Second);
   public static final Voltage STEP_VOLTAGE = Volts.of(0.3);
   public static final Time TIME_OUT = Seconds.of(3);
-   public static final Angle POSITION_TOLERANCE = Radians.of(0.01);
+  public static final Angle POSITION_TOLERANCE = Radians.of(0.01);
   public static final Angle SHOOTING_ANGLE_OFFSET = Degrees.of(90);
   public static final Angle DEFAULT_ANGLE = STARTING_ANGLE;
-
-
 
   public static class ControlConstants {
     public static final double P = 10;
@@ -44,4 +42,4 @@ public class HoodConstants {
     public static final double G = 0.1;
     public static final double A = 0;
   }
-  }
+}
