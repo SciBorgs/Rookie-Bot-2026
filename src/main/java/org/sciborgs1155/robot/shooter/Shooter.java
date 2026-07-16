@@ -1,12 +1,10 @@
 package org.sciborgs1155.robot.shooter;
 
+import static edu.wpi.first.units.Units.*;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.IDLE_VELOCITY;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.MAX_VELOCITY;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.MAX_VOLTAGE;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.VELOCITY_TOLERANCE;
-import java.util.function.DoubleSupplier;
-
-import org.sciborgs1155.robot.Robot;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
@@ -16,25 +14,27 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-
+import java.util.function.DoubleSupplier;
+import org.sciborgs1155.robot.Robot;
 import org.sciborgs1155.robot.shooter.ShooterConstants.VelocityControl;
 
 public class Shooter extends SubsystemBase implements AutoCloseable {
 
-    private final WheelIO hardware;
-    private final SysIdRoutine characterization;
+  private final WheelIO hardware;
+  private final SysIdRoutine characterization;
 
-    private final PIDController controller = new PIDController(VelocityControl.P, VelocityControl.I, VelocityControl.D);
-    private final SimpleMotorFeedforward ff = new SimpleMotorFeedforward(VelocityControl.S, VelocityControl.V, VelocityControl.A);
+  private final PIDController controller =
+      new PIDController(VelocityControl.P, VelocityControl.I, VelocityControl.D);
+  private final SimpleMotorFeedforward ff =
+      new SimpleMotorFeedforward(VelocityControl.S, VelocityControl.V, VelocityControl.A);
 
-    public Shooter(WheelIO hardware) {
-        this.hardware = hardware;
-        controller.setTolerance(
+  public Shooter(WheelIO hardware) {
+    this.hardware = hardware;
+    controller.setTolerance(
         VELOCITY_TOLERANCE.in(RadiansPerSecond)); // how close it needs to be to its target speed
 
-        characterization =
+    characterization =
         new SysIdRoutine(
             new SysIdRoutine.Config(Volts.per(Second).of(1), Volts.of(10.0), Seconds.of(11)),
             new SysIdRoutine.Mechanism(
@@ -52,11 +52,11 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
     setDefaultCommand(runShooter(IDLE_VELOCITY.in(RadiansPerSecond)).withName("Idle"));
   }
 
-    public static Shooter create() {
-        return Robot.isReal() ? new Shooter(new RealWheel()) : new Shooter(new SimWheel());
-    }
+  public static Shooter create() {
+    return Robot.isReal() ? new Shooter(new RealWheel()) : new Shooter(new SimWheel());
+  }
 
-    /**
+  /**
    * @return The value of the velocity (in Radians Per Second)
    */
   @Logged
@@ -134,13 +134,9 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
     return runShooter(() -> velocity);
   }
 
-
   /** closes motor */
   @Override
   public void close() throws Exception {
     hardware.close();
   }
 }
-
-
-

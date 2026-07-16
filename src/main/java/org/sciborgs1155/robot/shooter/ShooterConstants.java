@@ -30,8 +30,6 @@ public class ShooterConstants {
   public static final AngularVelocity MAX_VELOCITY = RPM.of(7230);
   public static final double MAX_VOLTAGE = 12.0; // from rebuilt
 
-
-
   /* For Flywheel */
   public static class VelocityControl {
     public static final double P = 0.03;
@@ -42,5 +40,4 @@ public class ShooterConstants {
     public static final double V = 0.016981;
     public static final double A = 0.0021296;
   }
-  
 }
