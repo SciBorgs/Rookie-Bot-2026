@@ -109,11 +109,6 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
     return controller.getSetpoint();
   }
 
-  @Logged
-  public double velocity() {
-    return hardware.getVelocity();
-  }
-
   /**
    * Runs shooter at a velcoity
    *
