@@ -7,21 +7,24 @@ import edu.wpi.first.math.numbers.N2;
 
 public class ShootingAlgorithm {
 
-    /**
-     * Make a interpolating tree map (look up table)
-     * Key is the distance to target
-     * Value is the RPM that is interpolated
-     */
+    /* Interpolating tree map, where key is the distance to target and value is the RPM*/
+    InterpolatingDoubleTreeMap RPMTable = new InterpolatingDoubleTreeMap();
 
-
-    InterpolatingDoubleTreeMap shooterTable = new InterpolatingDoubleTreeMap();
+    /*Interpolating tree map, where key is the distance to target, and value is the time of fight in seconds */
+    InterpolatingDoubleTreeMap ToF = new InterpolatingDoubleTreeMap();
 
     public ShootingAlgorithm() {
 
-        //PLACE HOLDER VALUES FOR NOW 
-        shooterTable.put(1.0, 1500.0);
-        shooterTable.put(2.0, 2500.0);
-        shooterTable.put(3.0, 3800.0);
+        /* Both tables have made up values for now */
+
+        RPMTable.put(1.0, 1500.0);
+        RPMTable.put(2.0, 2500.0);
+        RPMTable.put(3.0, 3800.0);
+
+        ToF.put(3.0, 0.5);
+        ToF.put(9.0, 0.7);
+        ToF.put(18.0, 1.0);
+
     }
 
     /**
@@ -30,7 +33,7 @@ public class ShootingAlgorithm {
      * @return the interpolated RPM using shooterTable, a tree map 
      */
     public double getRPM(double distanceToTarget) {
-        return shooterTable.get(distanceToTarget);
+        return RPMTable.get(distanceToTarget);
     }
 
     /**
@@ -38,11 +41,33 @@ public class ShootingAlgorithm {
      * 
      * @param shooterPosition Positon of shooter as a transaltion3D
      * @param targetPosition Postion of the target as a translation3D
-     * @param shooterVelocity current flywheel velocity
+     * @param shooterVelocity current velocity
      */
-    public void autoAim(Translation3d shooterPosition, Translation3d targetPosition, Vector<N2> shooterVelocity) {
-
+    public double shootWhileMoving(Translation3d shooterPosition, Translation3d targetPosition, Vector<N2> velocity) {
         Translation3d displacementVector = targetPosition.minus(shooterPosition);
+
+        double targetX = targetPosition.getX();
+        double targetY = targetPosition.getY();
+
+        double robotX = shooterPosition.getX();
+        double robotY = shooterPosition.getY();
+
+        double distanceToTarget = targetPosition.getDistance(shooterPosition);
+
+        double timeOfFlight = ToF.get(distanceToTarget);
+
+        double velocityX = velocity.get(0,0); 
+        double velocityY = velocity.get(1, 0);
+
+        double driftX = velocityX * timeOfFlight;
+        double driftY = velocityY * timeOfFlight;
+
+        double virtualTargetX = targetX - driftX;
+        double virtualTargetY =  targetY - driftY;
+
+        double finalAngle = Math.atan2(virtualTargetY- robotY, virtualTargetX - robotX);
+
+        return finalAngle;
 
     }
 
