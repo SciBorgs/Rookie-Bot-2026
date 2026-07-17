@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
@@ -111,4 +112,5 @@ public class FieldConstants {
   }
 
   // List field constants below!
+
 }
