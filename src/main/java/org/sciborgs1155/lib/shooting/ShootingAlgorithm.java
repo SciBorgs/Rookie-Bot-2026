@@ -14,13 +14,17 @@ public class ShootingAlgorithm {
 
     public ShootingAlgorithm() {
 
-        //PLACE HOLDER VALUES FOR NOW
+        //PLACE HOLDER VALUES FOR NOW 
         shooterTable.put(1.0, 1500.0);
         shooterTable.put(2.0, 2500.0);
         shooterTable.put(3.0, 3800.0);
-
     }
 
+    /**
+     * 
+     * @param distanceToTarget The distance to target in some unit (Have to figure it out)
+     * @return the interpolated RPM using shooterTable, a tree map 
+     */
     public double getRPM(double distanceToTarget) {
         return shooterTable.get(distanceToTarget);
 
