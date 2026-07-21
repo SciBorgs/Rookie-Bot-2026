@@ -83,11 +83,11 @@ public class ShootingAlgorithm {
     for (int i = 0; i < 3; i++) {
       double T = ToF.get(distanceToTarget);
 
-      double DriftX = velocityX * T;
-      double DriftY = velocityY * T;
+      double driftX = velocityX * T;
+      double driftY = velocityY * T;
 
-      VirtualTargetX = targetX - DriftX;
-      VirtualTargetY = targetY - DriftY;
+      VirtualTargetX = targetX - driftX;
+      VirtualTargetY = targetY - driftY;
 
       Translation3d VirtualTarget =
           new Translation3d(VirtualTargetX, VirtualTargetY, targetPosition.getZ());
