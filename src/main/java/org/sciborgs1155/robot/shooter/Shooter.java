@@ -101,6 +101,7 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
     return Math.abs(velocity - getVelocity()) < VELOCITY_TOLERANCE.in(RadiansPerSecond);
   }
 
+
   /**
    * @return The setpoint of the Controller
    */
@@ -108,7 +109,6 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
   public double setpoint() {
     return controller.getSetpoint();
   }
-
 
   /**
    * Runs shooter at a velcoity
