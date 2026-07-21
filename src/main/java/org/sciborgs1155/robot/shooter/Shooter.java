@@ -102,7 +102,13 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
   }
 
 
-  //deted this (to test git)
+  /**
+   * @return The setpoint of the Controller
+   */
+  @Logged
+  public double setpoint() {
+    return controller.getSetpoint();
+  }
 
   /**
    * Runs shooter at a velcoity
