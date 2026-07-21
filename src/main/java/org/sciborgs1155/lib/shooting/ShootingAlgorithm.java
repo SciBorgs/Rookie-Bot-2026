@@ -36,6 +36,8 @@ public class ShootingAlgorithm {
         return RPMTable.get(distanceToTarget);
     }
 
+    public record ShootingShot(double virtualDistance, double drivetrainAngle) {}
+
     /**
      * Method to find the velocity as a vector (direction and spped) to run the shooter to shoot accurately
      * 
@@ -43,8 +45,7 @@ public class ShootingAlgorithm {
      * @param targetPosition Postion of the target as a translation3D
      * @param shooterVelocity current velocity
      */
-    public double shootWhileMoving(Translation3d shooterPosition, Translation3d targetPosition, Vector<N2> velocity) {
-        Translation3d displacementVector = targetPosition.minus(shooterPosition);
+    public ShootingShot shootWhileMoving(Translation3d shooterPosition, Translation3d targetPosition, Vector<N2> velocity) {
 
         double targetX = targetPosition.getX();
         double targetY = targetPosition.getY();
@@ -52,22 +53,37 @@ public class ShootingAlgorithm {
         double robotX = shooterPosition.getX();
         double robotY = shooterPosition.getY();
 
+        
         double distanceToTarget = targetPosition.getDistance(shooterPosition);
 
-        double timeOfFlight = ToF.get(distanceToTarget);
+        double tempTimeOfFlight = ToF.get(distanceToTarget);
 
         double velocityX = velocity.get(0,0); 
         double velocityY = velocity.get(1, 0);
 
+        double tempDriftX = velocityX * tempTimeOfFlight;
+        double tempDriftY = velocityY * tempTimeOfFlight;
+
+        double tempVirtualTargetX = targetX - tempDriftX;
+        double tempVirtualTargetY =  targetY - tempDriftY;
+
+        Translation3d tempVirtualTarget = new Translation3d(tempVirtualTargetX, tempVirtualTargetY, targetPosition.getZ());
+
+        double distanceToVirtualTarget = tempVirtualTarget.getDistance(shooterPosition);
+
+        double timeOfFlight = ToF.get(distanceToVirtualTarget);
+
         double driftX = velocityX * timeOfFlight;
         double driftY = velocityY * timeOfFlight;
 
-        double virtualTargetX = targetX - driftX;
-        double virtualTargetY =  targetY - driftY;
+        double finalVirtualTargetX = targetX - driftX;
+        double finalVirtualTargetY = targetY - driftY;
 
-        double finalAngle = Math.atan2(virtualTargetY- robotY, virtualTargetX - robotX);
 
-        return finalAngle;
+        double finalAngle = Math.atan2(finalVirtualTargetY- robotY, finalVirtualTargetX - robotX);
+        double finalVirtualDistance = new Translation3d(finalVirtualTargetX, finalVirtualTargetY, targetPosition.getZ()).getDistance(shooterPosition);
+
+        return new ShootingShot(finalVirtualDistance, finalAngle);
 
     }
 
