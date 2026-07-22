@@ -3,6 +3,7 @@ package org.sciborgs1155.robot.shooter;
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 
@@ -24,20 +25,13 @@ public class ShooterConstants {
   public static final Angle MIN_ANGLE = Degrees.of(15);
   public static final Angle MAX_ANGLE = Degrees.of(15);
   public static final Angle STARING_ANGLE = MIN_ANGLE;
+  public static final AngularVelocity VELOCITY_TOLERANCE = RadiansPerSecond.of(1);
+  public static final AngularVelocity IDLE_VELOCITY = RadiansPerSecond.of(5);
+  public static final AngularVelocity MAX_VELOCITY = RPM.of(7230);
+  public static final double MAX_VOLTAGE = 12.0; // from rebuilt
 
   /* For Flywheel */
   public static class VelocityControl {
-    public static final double P = 0.03;
-    public static final double I = 0.0;
-    public static final double D = 0.0;
-
-    public static final double S = 0.0;
-    public static final double V = 0.016981;
-    public static final double A = 0.0021296;
-  }
-
-  /* For hood */
-  public static class AngularControl {
     public static final double P = 0.03;
     public static final double I = 0.0;
     public static final double D = 0.0;
