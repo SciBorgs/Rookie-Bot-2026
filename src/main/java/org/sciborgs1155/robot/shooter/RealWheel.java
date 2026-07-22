@@ -25,7 +25,7 @@ public class RealWheel implements WheelIO {
 
   private final SparkFlex wheelMotor;
   private final SparkFlexConfig config;
-  RelativeEncoder encoder;
+  private final RelativeEncoder encoder;
 
 
   /* Sets motor configurations */
