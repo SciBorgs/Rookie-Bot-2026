@@ -17,7 +17,7 @@ public class SimWheel implements WheelIO {
         new FlywheelSim(
             LinearSystemId.identifyVelocitySystem(
                 VelocityControl.V, VelocityControl.A), // physical behavior
-            DCMotor.getKrakenX60(1)); // eletrical behavior
+            DCMotor.getNeoVortex(1)); // eletrical behavior
   }
 
   @Override
