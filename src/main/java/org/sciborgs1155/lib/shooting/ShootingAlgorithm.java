@@ -8,60 +8,59 @@ import edu.wpi.first.math.numbers.N2;
 public class ShootingAlgorithm {
 
   /** Interpolating tree map key is the distance to target; value is the RPM */
-  InterpolatingDoubleTreeMap RPMTable = new InterpolatingDoubleTreeMap();
+  InterpolatingDoubleTreeMap rpmTable = new InterpolatingDoubleTreeMap();
 
   /** Interpolating tree map key is the distance to target; value is the Time of Flight */
-  InterpolatingDoubleTreeMap ToF = new InterpolatingDoubleTreeMap();
+  InterpolatingDoubleTreeMap timeOfFlight = new InterpolatingDoubleTreeMap();
 
   /** Interpolating tree map key is the distance to target; Value is Hood Angle */
-  InterpolatingDoubleTreeMap HoodAngleTable = new InterpolatingDoubleTreeMap();
+  InterpolatingDoubleTreeMap hoodAngleTable = new InterpolatingDoubleTreeMap();
 
   public ShootingAlgorithm() {
 
     // Tables have made up values for now
 
-    RPMTable.put(1.0, 1500.0);
-    RPMTable.put(2.0, 2500.0);
-    RPMTable.put(3.0, 3800.0);
+    rpmTable.put(1.0, 1500.0);
+    rpmTable.put(2.0, 2500.0);
+    rpmTable.put(3.0, 3800.0);
 
-    ToF.put(3.0, 0.5);
-    ToF.put(9.0, 0.7);
-    ToF.put(18.0, 1.0);
+    timeOfFlight.put(3.0, 0.5);
+    timeOfFlight.put(9.0, 0.7);
+    timeOfFlight.put(18.0, 1.0);
 
-    HoodAngleTable.put(1.0, 0.3);
-    HoodAngleTable.put(3.0, 0.5);
-    HoodAngleTable.put(9.0, 0.7);
+    hoodAngleTable.put(1.0, 0.3);
+    hoodAngleTable.put(3.0, 0.5);
+    hoodAngleTable.put(9.0, 0.7);
   }
 
   /**
-   * Method to return the desired rpm for the hood
+   * Method to return the desired rpm for flywheel
    *
    * @param distanceToTarget The distance to target in some unit (Have to figure it out)
-   * @return the interpolated RPM using shooterTable, a tree map
+   * @return the interpolated RPM using rpmTable, a tree map
    */
   public double getRPM(double distanceToTarget) {
-    return RPMTable.get(distanceToTarget);
+    return rpmTable.get(distanceToTarget);
   }
 
   /**
    * Method to return the desired hood angle for the hood
    *
    * @param distanceToTarget The distance to target in some unit (Have to figure it out)
-   * @return the interpolated hood angle using HoodTable, a tree m
+   * @return the interpolated hood angle using hoodAngleTable, a tree map
    */
   public double getHoodAngle(double distanceToTarget) {
-    return HoodAngleTable.get(distanceToTarget);
+    return hoodAngleTable.get(distanceToTarget);
   }
 
   // To hold the values
-  public record ShootingShot(double RPM, double drivetrainAngle, double HaveoodAngle) {}
-
+  public record ShootingShot(double RPM, double drivetrainAngle, double hoodAngle) {}
   /**
    * Method to find the rpm, drivetrain angle, hood angle
    *
-   * @param shooterPosition Positon of shooter as a Transaltion3D
-   * @param targetPosition Postion of the target as a Translation3D
-   * @param shooterVelocity current velocity
+   * @param shooterPosition Position of shooter as a Translation3d
+   * @param targetPosition Position of the target as a Translation3d
+   * @param velocity current velocity
    */
   public ShootingShot shootWhileMoving(
       Translation3d shooterPosition, Translation3d targetPosition, Vector<N2> velocity) {
@@ -77,29 +76,29 @@ public class ShootingAlgorithm {
     double velocityX = velocity.get(0, 0);
     double velocityY = velocity.get(1, 0);
 
-    double VirtualTargetX = 0;
-    double VirtualTargetY = 0;
+    double virtualTargetX = 0;
+    double virtualTargetY = 0;
 
     for (int i = 0; i < 3; i++) {
-      double T = ToF.get(distanceToTarget);
+      double flightTime = timeOfFlight.get(distanceToTarget);
 
-      double driftX = velocityX * T;
-      double driftY = velocityY * T;
+      double driftX = velocityX * flightTime;
+      double driftY = velocityY * flightTime;
 
-      VirtualTargetX = targetX - driftX;
-      VirtualTargetY = targetY - driftY;
+      virtualTargetX = targetX - driftX;
+      virtualTargetY = targetY - driftY;
 
-      Translation3d VirtualTarget =
-          new Translation3d(VirtualTargetX, VirtualTargetY, targetPosition.getZ());
+      Translation3d virtualTarget =
+          new Translation3d(virtualTargetX, virtualTargetY, targetPosition.getZ());
 
-      distanceToTarget = VirtualTarget.getDistance(shooterPosition);
+      distanceToTarget = virtualTarget.getDistance(shooterPosition);
     }
 
-    double RPM = getRPM(distanceToTarget);
+    double rpm = getRPM(distanceToTarget);
     double hoodAngle = getHoodAngle(distanceToTarget);
 
-    double finalAngle = Math.atan2(VirtualTargetY - robotY, VirtualTargetX - robotX);
+    double finalAngle = Math.atan2(virtualTargetY - robotY, virtualTargetX - robotX);
 
-    return new ShootingShot(RPM, finalAngle, hoodAngle);
+    return new ShootingShot(rpm, finalAngle, hoodAngle);
   }
 }
