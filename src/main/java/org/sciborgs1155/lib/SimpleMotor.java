@@ -2,7 +2,12 @@ package org.sciborgs1155.lib;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkBase;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.config.SparkBaseConfig;
+
 import java.util.function.DoubleConsumer;
 
 /**
@@ -42,6 +47,18 @@ public class SimpleMotor {
     FaultLogger.register(motor);
     TalonUtils.addMotor(motor);
     motor.getConfigurator().apply(config);
+    return new SimpleMotor(motor::set, motor::setVoltage, motor::close);
+  }
+
+  /**
+   * 
+   * @param motor controller instance with device ID
+   * @param config apply config to motor
+   * @return a new simplemotor that controls a sparkflex motor registerred with fault logger
+   */
+  public static SimpleMotor spark(SparkFlex motor, SparkBaseConfig config){
+    FaultLogger.register(motor);
+    motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     return new SimpleMotor(motor::set, motor::setVoltage, motor::close);
   }
 

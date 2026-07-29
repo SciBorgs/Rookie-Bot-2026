@@ -1,8 +1,11 @@
 package org.sciborgs1155.robot.subsystems.slapdown;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Radians;
@@ -10,25 +13,29 @@ import static org.sciborgs1155.robot.subsystems.slapdown.SlapdownConstants.*;
 import static org.sciborgs1155.robot.Ports.Slapdown.*;
 
 import org.sciborgs1155.lib.FaultLogger;
-import org.sciborgs1155.lib.TalonUtils;
 
 
 public class RealSlapdown implements SlapdownIO{
 
-    TalonFX motor;
+    // place holder variable
+    private static final boolean inverted = false;
+
+
+    SparkFlex motor;
     public RealSlapdown(){
-        motor = new TalonFX(EXTENSION);
+        motor = new SparkFlex(EXTENSION, MotorType.kBrushless);
 
-        TalonFXConfiguration motorConfig = new TalonFXConfiguration();
+        SparkFlexConfig config = new SparkFlexConfig();
 
-        motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        motorConfig.CurrentLimits.SupplyCurrentLimit = CURRENT_LIMIT.in(Amps);
-        motorConfig.Feedback.SensorToMechanismRatio = GEARING;
+        config.smartCurrentLimit((int) CURRENT_LIMIT.in(Amps));
+        config.idleMode(IdleMode.kBrake);
 
-        motor.getConfigurator().apply(motorConfig);
-        motor.setPosition(MAX_ANGLE);
+        // not sure if inverted or not
+        config.inverted(inverted);
 
-        TalonUtils.addMotor(motor);
+        motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        motor.getEncoder().setPosition(MAX_ANGLE.in(Radians));
+
         FaultLogger.register(motor);
     }
 
@@ -44,7 +51,7 @@ public class RealSlapdown implements SlapdownIO{
 
     @Override
     public double position() {
-        return motor.getPosition().getValue().in(Radians);
+        return motor.getEncoder().getPosition();
         }
     
 }
