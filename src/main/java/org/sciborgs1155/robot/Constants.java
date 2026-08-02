@@ -4,12 +4,20 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.CANBus;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
+import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+
+import org.sciborgs1155.lib.Tuning;
 import org.sciborgs1155.robot.drive.DriveConstants;
 
 /**
@@ -39,6 +47,82 @@ public class Constants {
     CHASSIS,
     NONE
   }
+  
+    /** Lookup tables mapping shot distance (meters) to shooter parameters. */
+  public static final class ShootingData {
+    public static final DoubleEntry SIGGYS_CONSTANT =
+        Tuning.entry("Robot/shooting/siggysConstant", 0.0);
+
+    // minimum velocity to use SOTM algorithm rather than stationary. measured in m/s
+    public static final double MINIMUM_VELOCITY = 0.01;
+
+    public static final InterpolatingDoubleTreeMap DISTANCE_TO_RADS =
+        new InterpolatingDoubleTreeMap();
+    public static final InterpolatingDoubleTreeMap DISTANCE_TO_TOF =
+        new InterpolatingDoubleTreeMap();
+    public static final InterpolatingTreeMap<Double, Rotation2d> DISTANCE_TO_HOOD_ANGLE =
+        new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
+    public static final InterpolatingDoubleTreeMap DISTANCE_TO_HORIZONTAL_VELOCITY =
+        new InterpolatingDoubleTreeMap();
+    public static final InterpolatingDoubleTreeMap VELOCITY_TO_RADS =
+        new InterpolatingDoubleTreeMap();
+    public static final InterpolatingTreeMap<Double, Rotation2d> VELOCITY_TO_HOOD_ANGLE =
+        new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
+
+    public static final InterpolatingDoubleTreeMap DISTANCE_TO_RADS_HOOP =
+        new InterpolatingDoubleTreeMap();
+    public static final InterpolatingTreeMap DISTANCE_TO_HOOD_HOOP =
+        new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
+
+    private ShootingData() {}
+
+    /** command that changes siggy's constant */
+    public static Command changeSC(double delta) {
+      return Commands.runOnce(() -> SIGGYS_CONSTANT.set(SIGGYS_CONSTANT.get() + delta));
+    }
+
+    /**
+     * Applies a point to the three linear interpolations.
+     *
+     * @param dist The input distance.
+     * @param degIncline The output degree of incline.
+     * @param speed The
+     * @param tof
+     */
+    public static void put(double dist, double degIncline, double speed, double tof) {
+      Rotation2d hoodAngle = Rotation2d.fromDegrees(degIncline);
+      DISTANCE_TO_HOOD_ANGLE.put(dist, hoodAngle);
+      DISTANCE_TO_RADS.put(dist, speed);
+      DISTANCE_TO_TOF.put(dist, tof);
+
+      double velocity = dist / tof;
+      DISTANCE_TO_HORIZONTAL_VELOCITY.put(dist, velocity);
+      VELOCITY_TO_RADS.put(velocity, speed);
+      VELOCITY_TO_HOOD_ANGLE.put(velocity, hoodAngle);
+    }
+
+    static {
+      put(2.460, 15, 140, 0.98);
+      put(2.555, 15, 147, 1.0);
+      put(3.022, 26, 135, 1.0);
+      put(3.309, 28, 138, 0.98);
+      put(4.079, 30, 147, 1.34);
+      // put(4.766, 34, 166, 1.06);
+
+      // put(2.33, 26, 166.7, 0.96);
+      // put(3.4, 30, 195, 1.05);
+
+      // put(1.37, 15, 135, 0.89);
+      // put(1.873, 18, 148, 1.08);
+      // put(2.518, 27, 130, 0.95);
+      // put(3.605, 30, 153, 1.09);
+      // put(4.58, 34, 173, 1.09);
+      // put(5.67, 38, 195, 1.25);
+    }
+  }
+
+
+
 
   /** The current robot state, as in the type. Remember to update! */
   public static RobotType ROBOT_TYPE = RobotType.FULL;
