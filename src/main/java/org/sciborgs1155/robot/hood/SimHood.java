@@ -36,13 +36,13 @@ public class SimHood implements HoodIO {
   }
 
   @Override
-  public void setHoodVoltage(double voltage) {
+  public void setVoltage(double voltage) {
     simHood.setInputVoltage(voltage);
     simHood.update(PERIOD.in(Seconds));
   }
 
   @Override
-  public double getHoodPosition() {
+  public double getPosition() {
     return simHood.getAngleRads();
   }
 

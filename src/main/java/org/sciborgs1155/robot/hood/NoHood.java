@@ -3,10 +3,10 @@ package org.sciborgs1155.robot.hood;
 public class NoHood implements HoodIO {
 
   @Override
-  public void setHoodVoltage(double voltage) {}
+  public void setVoltage(double voltage) {}
 
   @Override
-  public double getHoodPosition() {
+  public double getPosition() {
     return 0;
   }
 

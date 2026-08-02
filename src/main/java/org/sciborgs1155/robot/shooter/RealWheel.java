@@ -4,35 +4,36 @@ import static edu.wpi.first.units.Units.Amps;
 import static org.sciborgs1155.robot.Ports.Shooter.*;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.*;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
-import org.sciborgs1155.lib.FaultLogger;
-import org.sciborgs1155.lib.TalonUtils;
+import com.revrobotics.PersistMode;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.ResetMode;
+
 
 public class RealWheel implements WheelIO {
 
-  private final TalonFX wheelMotor;
+  private final SparkFlex wheelMotor;
+  private final SparkFlexConfig config;
+  private final RelativeEncoder encoder;
+
 
   /* Sets motor configurations */
   public RealWheel() {
 
-    wheelMotor = new TalonFX(WHEEL_MOTOR);
+    wheelMotor = new SparkFlex(WHEEL_MOTOR, MotorType.kBrushless);
+    encoder = wheelMotor.getEncoder();
 
-    TalonFXConfiguration configs = new TalonFXConfiguration();
+    config = new SparkFlexConfig();
 
-    configs.MotorOutput.Inverted =
-        InvertedValue.CounterClockwise_Positive; // counterclockwise is postive
-    configs.CurrentLimits.StatorCurrentLimit = STATOR_CURRENT_LIMIT.in(Amps);
-    configs.CurrentLimits.SupplyCurrentLimit = SUPPLY_CURRENT_LIMIT.in(Amps);
+    config.inverted(true);
+    config.smartCurrentLimit((int) STATOR_CURRENT_LIMIT.in(Amps)); //Limits motor output/stator current
 
-    wheelMotor.getConfigurator().apply(configs);
+    config.idleMode(IdleMode.kCoast);
 
-    /* Checks the motors for faults */
-    FaultLogger.register(wheelMotor);
-
-    /* adds motors to a list of all global motors */
-    TalonUtils.addMotor(wheelMotor);
+    wheelMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
@@ -42,7 +43,7 @@ public class RealWheel implements WheelIO {
 
   @Override
   public double getVelocity() {
-    return wheelMotor.getVelocity().getValueAsDouble();
+    return encoder.getVelocity() * Math.PI * 2;
   }
 
   /* shuts the motor after its no longer needed */

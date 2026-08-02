@@ -4,56 +4,53 @@ import static edu.wpi.first.units.Units.Amps;
 import static org.sciborgs1155.robot.Ports.Shooter.HOOD_MOTOR;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.GEAR_RATIO;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.STATOR_CURRENT_LIMIT;
-import static org.sciborgs1155.robot.shooter.ShooterConstants.SUPPLY_CURRENT_LIMIT;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
-import org.sciborgs1155.lib.FaultLogger;
-import org.sciborgs1155.lib.TalonUtils;
+import com.revrobotics.PersistMode;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
+
 
 public class RealHood implements HoodIO {
-  private final TalonFX hoodMotor;
+  private final SparkFlex hoodMotor;
+  private final SparkFlexConfig config;
+  private final RelativeEncoder encoder;
 
   /* Configurations  */
   public RealHood() {
 
-    hoodMotor = new TalonFX(HOOD_MOTOR);
+    hoodMotor = new SparkFlex(HOOD_MOTOR, MotorType.kBrushless);
 
-    TalonFXConfiguration configs = new TalonFXConfiguration();
+    encoder = hoodMotor.getEncoder();
 
-    configs.MotorOutput.Inverted =
-        InvertedValue.CounterClockwise_Positive; // counterclockwise is postive
-    configs.CurrentLimits.StatorCurrentLimit = STATOR_CURRENT_LIMIT.in(Amps);
-    configs.CurrentLimits.SupplyCurrentLimit = SUPPLY_CURRENT_LIMIT.in(Amps);
+    config = new SparkFlexConfig();
 
-    hoodMotor.getConfigurator().apply(configs);
+    config.inverted(true);
+    config.smartCurrentLimit((int) STATOR_CURRENT_LIMIT.in(Amps)); 
 
-    /* Checks the motors */
-    FaultLogger.register(hoodMotor);
+    config.idleMode(IdleMode.kCoast);
 
-    /* adds motors to a list of all global motors */
-    TalonUtils.addMotor(hoodMotor);
+    hoodMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
   }
 
   @Override
-  public void setHoodVoltage(double voltage) {
+  public void setVoltage(double voltage) {
     hoodMotor.setVoltage(voltage);
   }
 
   @Override
-  public double getHoodPosition() {
-    var currentSig = hoodMotor.getPosition();
-    currentSig.refresh();
-    var convertedSig =
-        currentSig.getValueAsDouble()
-            / GEAR_RATIO; // gear ratio to covert motor rotations to physical rotations
-    return convertedSig * (2 * Math.PI);
+  public double getPosition() {
+    double position = encoder.getPosition() / GEAR_RATIO; // gear ratio to covert motor rotations to physical rotations
+    return position * (2 * Math.PI);
   }
 
   @Override
   public double velocity() {
-    return hoodMotor.getVelocity().getValueAsDouble();
+    return encoder.getVelocity();
   }
 
   @Override
