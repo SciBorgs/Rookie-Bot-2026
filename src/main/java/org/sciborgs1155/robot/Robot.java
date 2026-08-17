@@ -56,7 +56,7 @@ public class Robot extends CommandRobot {
   private final PowerDistribution pdh = new PowerDistribution();
 
   // SUBSYSTEMS
-  private final Drive drive = Drive.create();
+  Drive drive = new Drive();
   private final Vision vision = Vision.create();
 
   // COMMANDS
@@ -137,66 +137,10 @@ public class Robot extends CommandRobot {
 
   /** Configures trigger -> command bindings. */
   private void configureBindings() {
-    // x and y are switched: we use joystick Y axis to control field x motion
-    InputStream raw_x = InputStream.of(driver::getLeftY).log("/Robot/raw x").negate();
-    InputStream raw_y = InputStream.of(driver::getLeftX).log("/Robot/raw y").negate();
+    drive.setDefaultCommand(drive.drive(driver::getLeftY, driver::getRightY));
 
-    // Apply speed multiplier, deadband, square inputs, and scale translation to max speed
-    InputStream r =
-        InputStream.hypot(raw_x, raw_y)
-            .log("/Robot/raw joystick")
-            .scale(() -> speedMultiplier)
-            .clamp(1.0)
-            .deadband(Constants.DEADBAND, 1.0)
-            .signedPow(2.0)
-            .log("/Robot/processed joystick")
-            .scale(MAX_SPEED.in(MetersPerSecond))
-            .rateLimit(MAX_ACCEL.in(MetersPerSecondPerSecond));
-
-    InputStream theta = InputStream.atan(raw_x, raw_y);
-
-    // Split x and y components of translation input
-    InputStream x =
-        r.scale(theta.map(Math::cos))
-            .log("/Robot/final x"); // .rateLimit(MAX_ACCEL.in(MetersPerSecondPerSecond));
-    InputStream y =
-        r.scale(theta.map(Math::sin))
-            .log("/Robot/final y"); // .rateLimit(MAX_ACCEL.in(MetersPerSecondPerSecond));
-
-    // Apply speed multiplier, deadband, square inputs, and scale rotation to max teleop speed
-    InputStream omega =
-        InputStream.of(driver::getRightX)
-            .negate()
-            .scale(() -> speedMultiplier)
-            .clamp(1.0)
-            .deadband(DEADBAND, 1.0)
-            .signedPow(2.0)
-            .scale(TELEOP_ANGULAR_SPEED.in(RadiansPerSecond))
-            .rateLimit(MAX_ANGULAR_ACCEL.in(RadiansPerSecond.per(Second)));
-
-    drive.setDefaultCommand(drive.drive(x, y, omega).withName("joysticks"));
-
-    if (TUNING) {
-      SignalLogger.enableAutoLogging(false);
-
-      // manual .start() call is blocking, for up to 100ms
-      teleop().onTrue(Commands.runOnce(() -> SignalLogger.start()));
-      disabled().onTrue(Commands.runOnce(() -> SignalLogger.stop()));
-    }
-
-    autonomous().whileTrue(Commands.defer(autos::getSelected, Set.of(drive)).asProxy());
-
-    test().whileTrue(systemsCheck());
-
-    driver.b().whileTrue(drive.zeroHeading());
-    driver
-        .leftBumper()
-        .or(driver.rightBumper())
-        .onTrue(Commands.runOnce(() -> speedMultiplier = Constants.SLOW_SPEED_MULTIPLIER))
-        .onFalse(Commands.runOnce(() -> speedMultiplier = Constants.FULL_SPEED_MULTIPLIER));
-
-    // TODO: Add any additional bindings.
   }
+    
 
   /**
    * Command factory to make both controllers rumble.
