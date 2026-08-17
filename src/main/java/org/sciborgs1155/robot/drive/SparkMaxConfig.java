@@ -1,8 +1,4 @@
 package org.sciborgs1155.robot.drive;
 
-/**
- * SparkMaxConfig
- */
-public class SparkMaxConfig {
-
-}
+/** SparkMaxConfig */
+public class SparkMaxConfig {}
