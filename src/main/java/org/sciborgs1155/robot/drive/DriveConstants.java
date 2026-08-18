@@ -1,8 +1,14 @@
 package org.sciborgs1155.robot.drive;
 
+import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N7;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Mass;
 
 public class DriveConstants {
 
@@ -14,8 +20,12 @@ public class DriveConstants {
   public static final double POSITION_FACTOR = CIRCUMFERANCE * GEARING;
   public static final double VELOCITY_FACTOR = POSITION_FACTOR / 60.0;
   
-  public static final Distance MAX_SPEED = Meters.of(2); //per sec
+  public static final double MAX_SPEED = 2; //meters per sec 
 
+    public static final Distance TRACK_WIDTH = Meters.of(0.7112);
+  public static final double MOI = 7.5;
+  public static final Mass DRIVE_MASS = Kilograms.of(60.0); //kg
+  public static final Matrix<N7, N1> STD_DEVS = VecBuilder.fill(0, 0, 0, 0, 0, 0, 0);
 
   public static final class FF {
     public static final double kS = 1;

@@ -1,11 +1,18 @@
 package org.sciborgs1155.robot.drive;
 
+import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static org.sciborgs1155.robot.Ports.Drive.LEFT_FOLLOWER;
 import static org.sciborgs1155.robot.Ports.Drive.LEFT_LEADER;
 import static org.sciborgs1155.robot.Ports.Drive.RIGHT_FOLLOWER;
 import static org.sciborgs1155.robot.Ports.Drive.RIGHT_LEADER;
+import static org.sciborgs1155.robot.drive.DriveConstants.DRIVE_MASS;
+import static org.sciborgs1155.robot.drive.DriveConstants.GEARING;
 import static org.sciborgs1155.robot.drive.DriveConstants.MAX_SPEED;
+import static org.sciborgs1155.robot.drive.DriveConstants.MOI;
+import static org.sciborgs1155.robot.drive.DriveConstants.STD_DEVS;
+import static org.sciborgs1155.robot.drive.DriveConstants.TRACK_WIDTH;
+import static org.sciborgs1155.robot.drive.DriveConstants.WHEEL_RADIUS;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
@@ -15,19 +22,25 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
 import org.sciborgs1155.robot.Ports;
+import org.sciborgs1155.robot.Robot;
 import org.sciborgs1155.robot.drive.DriveConstants.FF;
 import org.sciborgs1155.robot.drive.DriveConstants.PID;
 
+@Logged
 public class Drive extends SubsystemBase {
 
   private final SparkFlex rightLeader = new SparkFlex(RIGHT_LEADER, MotorType.kBrushless);
@@ -45,6 +58,9 @@ public class Drive extends SubsystemBase {
   private final PIDController rightPIDController = 
     new PIDController(PID.kP, PID.kI, PID.kP);
 
+  private final DifferentialDrivetrainSim driveSim;
+  
+  private final Field2d field2d = new Field2d();
 
   private final DifferentialDriveOdometry odometry;
 
@@ -57,6 +73,16 @@ public class Drive extends SubsystemBase {
     SparkFlexConfig rightFollowerConfig = new SparkFlexConfig();
 
     odometry = new DifferentialDriveOdometry(new Rotation2d(), 0, 0, new Pose2d());
+
+    driveSim = 
+      new DifferentialDrivetrainSim(
+        DCMotor.getNeoVortex(2), 
+        GEARING, 
+        MOI, 
+        DRIVE_MASS.in(Kilograms), 
+        WHEEL_RADIUS.in(Meters), 
+        TRACK_WIDTH.in(Meters), 
+        STD_DEVS); //this is the standard deviation of measurment noise for the sensors 
 
     globalConfig.idleMode(IdleMode.kBrake);
 
@@ -97,8 +123,8 @@ public class Drive extends SubsystemBase {
    */
   private void drive(double leftSpeed, double rightSpeed) {
 
-    final double realLeftSpeed = leftSpeed * MAX_SPEED.in(Meters);
-    final double realRightSpeed = rightSpeed * MAX_SPEED.in(Meters);
+    final double realLeftSpeed = leftSpeed * MAX_SPEED;
+    final double realRightSpeed = rightSpeed * MAX_SPEED;
 
       final double leftFeedforward = feedforward.calculate(realLeftSpeed);
       final double rightFeedforward = feedforward.calculate(realRightSpeed);
@@ -113,6 +139,8 @@ public class Drive extends SubsystemBase {
 
       leftLeader.setVoltage(leftVoltage);
       rightLeader.setVoltage(rightVoltage);
+      driveSim.setInputs(leftVoltage, rightVoltage);
+
   }
 
   /**
@@ -148,7 +176,10 @@ public class Drive extends SubsystemBase {
 
   @Override
   public void periodic() {
-    updateOdometry(gyro.getRotation2d());
+    updateOdometry(Robot.isReal() ? gyro.getRotation2d() : 
+        driveSim.getHeading()); //returns roation2D for simulated robot
+        field2d.setRobotPose(pose());
+
   }
 
   /**
