@@ -1,9 +1,11 @@
 package org.sciborgs1155.robot.drive;
 
+import static edu.wpi.first.units.Units.Meters;
 import static org.sciborgs1155.robot.Ports.Drive.LEFT_FOLLOWER;
 import static org.sciborgs1155.robot.Ports.Drive.LEFT_LEADER;
 import static org.sciborgs1155.robot.Ports.Drive.RIGHT_FOLLOWER;
 import static org.sciborgs1155.robot.Ports.Drive.RIGHT_LEADER;
+import static org.sciborgs1155.robot.drive.DriveConstants.MAX_SPEED;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
@@ -12,6 +14,9 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
@@ -20,6 +25,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
 import org.sciborgs1155.robot.Ports;
+import org.sciborgs1155.robot.drive.DriveConstants.FF;
+import org.sciborgs1155.robot.drive.DriveConstants.PID;
 
 public class Drive extends SubsystemBase {
 
@@ -27,9 +34,17 @@ public class Drive extends SubsystemBase {
   private final SparkFlex rightFollower = new SparkFlex(RIGHT_FOLLOWER, MotorType.kBrushless);
   private final SparkFlex leftLeader = new SparkFlex(LEFT_LEADER, MotorType.kBrushless);
   private final SparkFlex leftFollower = new SparkFlex(LEFT_FOLLOWER, MotorType.kBrushless);
+
   private final RelativeEncoder leftEncoder = leftLeader.getEncoder();
   private final RelativeEncoder rightEncoder = rightLeader.getEncoder();
   private final AnalogGyro gyro = new AnalogGyro(Ports.Drive.GYRO_CHANNEL);
+
+  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(FF.kS, FF.kV);
+  private final PIDController leftPidController = 
+    new PIDController(PID.kP, PID.kI, PID.kP);
+  private final PIDController rightPIDController = 
+    new PIDController(PID.kP, PID.kI, PID.kP);
+
 
   private final DifferentialDriveOdometry odometry;
 
@@ -81,8 +96,23 @@ public class Drive extends SubsystemBase {
    * @param rightSpeed value from -1 to 1, representing percentages of max speed for right motors
    */
   private void drive(double leftSpeed, double rightSpeed) {
-    leftLeader.set(leftSpeed);
-    rightLeader.set(rightSpeed);
+
+    final double realLeftSpeed = leftSpeed * MAX_SPEED.in(Meters);
+    final double realRightSpeed = rightSpeed * MAX_SPEED.in(Meters);
+
+      final double leftFeedforward = feedforward.calculate(realLeftSpeed);
+      final double rightFeedforward = feedforward.calculate(realRightSpeed);
+
+      final double leftPID = 
+        leftPidController.calculate(leftEncoder.getVelocity(), realLeftSpeed);
+      final double rightPID = 
+        rightPIDController.calculate(rightEncoder.getVelocity(), realRightSpeed);
+
+      double leftVoltage = leftPID + leftFeedforward;
+      double rightVoltage = rightPID + rightFeedforward;
+
+      leftLeader.setVoltage(leftVoltage);
+      rightLeader.setVoltage(rightVoltage);
   }
 
   /**
@@ -106,7 +136,7 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Resets Odometry (not sure if this works )
+   * Resets Odometry (not sure if this works) for auton 
    *
    * @param rotation the gyro angle
    * @param robotPose robot position as a pose2d

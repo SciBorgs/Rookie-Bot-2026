@@ -13,4 +13,18 @@ public class DriveConstants {
 
   public static final double POSITION_FACTOR = CIRCUMFERANCE * GEARING;
   public static final double VELOCITY_FACTOR = POSITION_FACTOR / 60.0;
+  
+  public static final Distance MAX_SPEED = Meters.of(2); //per sec
+
+
+  public static final class FF {
+    public static final double kS = 1;
+    public static final double kV = 3;
+  }
+
+  public static final class PID {
+    public static final double kP = 8.5;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+  }
 }
