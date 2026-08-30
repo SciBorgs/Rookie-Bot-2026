@@ -29,7 +29,6 @@ import org.sciborgs1155.lib.CommandRobot;
 import org.sciborgs1155.lib.FaultLogger;
 import org.sciborgs1155.lib.Tracer;
 import org.sciborgs1155.robot.Ports.OI;
-import org.sciborgs1155.robot.commands.Alignment;
 import org.sciborgs1155.robot.commands.Autos;
 import org.sciborgs1155.robot.drive.Drive;
 import org.sciborgs1155.robot.vision.Vision;
@@ -53,7 +52,6 @@ public class Robot extends CommandRobot {
   private final Vision vision = Vision.create();
 
   // COMMANDS
-  private final Alignment align = new Alignment(drive);
 
   @NotLogged private final SendableChooser<Command> autos = Autos.configureAutos(drive);
 
@@ -66,7 +64,6 @@ public class Robot extends CommandRobot {
     configureBindings();
 
     // Warms up pathfinding commands, as the first run could have significant delays.
-    CommandScheduler.getInstance().schedule(align.warmupCommand());
   }
 
   @Override
@@ -87,34 +84,6 @@ public class Robot extends CommandRobot {
 
     FaultLogger.register(pdh);
     SmartDashboard.putData("Auto Chooser", autos);
-
-    if (TUNING) {
-      addPeriodic(
-          () ->
-              log(
-                  "/Robot/camera transforms",
-                  Arrays.stream(vision.cameraTransforms())
-                      .map(
-                          t ->
-                              new Pose3d(
-                                  drive
-                                      .pose3d()
-                                      .getTranslation()
-                                      .plus(
-                                          t.getTranslation()
-                                              .rotateBy(drive.pose3d().getRotation())),
-                                  t.getRotation().plus(drive.pose3d().getRotation())))
-                      .toArray(Pose3d[]::new),
-                  Pose3d.struct),
-          PERIOD.in(Seconds));
-    }
-
-    // Configure pose estimation updates every tick
-    addPeriodic(
-        () ->
-            drive.updateEstimates(
-                vision.estimatedGlobalPoses(drive.gyroHeading(), disabled().getAsBoolean())),
-        PERIOD);
 
     RobotController.setBrownoutVoltage(6.0);
 
@@ -154,16 +123,6 @@ public class Robot extends CommandRobot {
             });
   }
 
-  public Command systemsCheck() {
-    return Commands.sequence(drive.systemsCheck()).withName("Test Mechanisms");
-  }
+ 
 
-  @Override
-  public void close() {
-    super.close();
-    try {
-      drive.close();
-    } catch (Exception e) {
-    }
-  }
 }

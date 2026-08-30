@@ -2,6 +2,8 @@ package org.sciborgs1155.robot.drive;
 
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 import static org.sciborgs1155.robot.Ports.Drive.LEFT_FOLLOWER;
 import static org.sciborgs1155.robot.Ports.Drive.LEFT_LEADER;
 import static org.sciborgs1155.robot.Ports.Drive.RIGHT_FOLLOWER;
@@ -27,7 +29,10 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
@@ -35,6 +40,8 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
+
+import org.sciborgs1155.robot.Constants;
 import org.sciborgs1155.robot.Ports;
 import org.sciborgs1155.robot.Robot;
 import org.sciborgs1155.robot.drive.DriveConstants.FF;
@@ -54,7 +61,7 @@ public class Drive extends SubsystemBase {
 
   private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(FF.kS, FF.kV);
   private final PIDController leftPidController = 
-    new PIDController(PID.kP, PID.kI, PID.kP);
+    new PIDController(PID.kP, PID.kI, PID.kD);
   private final PIDController rightPIDController = 
     new PIDController(PID.kP, PID.kI, PID.kP);
 
@@ -63,6 +70,8 @@ public class Drive extends SubsystemBase {
   private final Field2d field2d = new Field2d();
 
   private final DifferentialDriveOdometry odometry;
+
+  private final DifferentialDriveKinematics kinematics;
 
   /* Sets Motor configs  */
   public Drive() {
@@ -84,6 +93,8 @@ public class Drive extends SubsystemBase {
         TRACK_WIDTH.in(Meters), 
         STD_DEVS); //this is the standard deviation of measurment noise for the sensors 
 
+    kinematics = new DifferentialDriveKinematics(TRACK_WIDTH);
+    
     globalConfig.idleMode(IdleMode.kBrake);
 
     leftFollowerConfig.apply(globalConfig).follow(Ports.Drive.LEFT_LEADER);
@@ -123,8 +134,8 @@ public class Drive extends SubsystemBase {
    */
   private void drive(double leftSpeed, double rightSpeed) {
 
-    final double realLeftSpeed = leftSpeed * MAX_SPEED;
-    final double realRightSpeed = rightSpeed * MAX_SPEED;
+    final double realLeftSpeed = leftSpeed * MAX_SPEED.in(MetersPerSecond);
+    final double realRightSpeed = rightSpeed * MAX_SPEED.in(MetersPerSecond);
 
       final double leftFeedforward = feedforward.calculate(realLeftSpeed);
       final double rightFeedforward = feedforward.calculate(realRightSpeed);
@@ -166,12 +177,11 @@ public class Drive extends SubsystemBase {
   /**
    * Resets Odometry (not sure if this works) for auton 
    *
-   * @param rotation the gyro angle
    * @param robotPose robot position as a pose2d
    */
-  private void resetOdometry(Rotation2d rotation, Pose2d robotPose) {
+  public void resetOdometry(Pose2d robotPose) {
     odometry.resetPosition(
-        rotation, leftEncoder.getPosition(), rightEncoder.getPosition(), robotPose);
+        gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), robotPose);
   }
 
   @Override
@@ -187,5 +197,36 @@ public class Drive extends SubsystemBase {
    */
   public Pose2d pose() {
     return odometry.getPoseMeters();
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    // sim.update() tells the simulation how much time has passed
+    driveSim.update(Constants.PERIOD.in(Seconds));
+    leftEncoder.setPosition(driveSim.getLeftPositionMeters());
+    rightEncoder.setPosition(driveSim.getRightPositionMeters());
+  }
+
+  /**
+   * 
+   * @return the robot chasssis speeds 
+   */
+  public ChassisSpeeds robotRelativeChassisSpeeds() {
+    double leftMotorVelocity = leftEncoder.getVelocity();
+    double rightMotorVelocity = rightEncoder.getVelocity();
+    return kinematics.toChassisSpeeds(
+      new DifferentialDriveWheelSpeeds(leftMotorVelocity, rightMotorVelocity)
+
+    );
+  }
+
+  public void setChassisSpeeds(ChassisSpeeds targetSpeed) {
+    DifferentialDriveWheelSpeeds wheelSpeeds = kinematics.toWheelSpeeds(targetSpeed);
+
+    double leftSpeed = wheelSpeeds.leftMetersPerSecond / MAX_SPEED.in(MetersPerSecond);
+    double rightSpeed = wheelSpeeds.rightMetersPerSecond / MAX_SPEED.in(MetersPerSecond);
+
+    drive(leftSpeed, rightSpeed);
+
   }
 }

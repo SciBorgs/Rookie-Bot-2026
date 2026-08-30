@@ -96,7 +96,6 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
    * @param velocity Target velocity
    * @return true or false
    */
-  @Logged
   public boolean atVelocity(double velocity) {
     return Math.abs(velocity - getVelocity()) < VELOCITY_TOLERANCE.in(RadiansPerSecond);
   }
