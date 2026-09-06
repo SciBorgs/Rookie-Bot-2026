@@ -23,7 +23,6 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -40,7 +39,6 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
-
 import org.sciborgs1155.robot.Constants;
 import org.sciborgs1155.robot.Ports;
 import org.sciborgs1155.robot.Robot;
@@ -60,13 +58,11 @@ public class Drive extends SubsystemBase {
   private final AnalogGyro gyro = new AnalogGyro(Ports.Drive.GYRO_CHANNEL);
 
   private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(FF.kS, FF.kV);
-  private final PIDController leftPidController = 
-    new PIDController(PID.kP, PID.kI, PID.kD);
-  private final PIDController rightPIDController = 
-    new PIDController(PID.kP, PID.kI, PID.kP);
+  private final PIDController leftPidController = new PIDController(PID.kP, PID.kI, PID.kD);
+  private final PIDController rightPIDController = new PIDController(PID.kP, PID.kI, PID.kP);
 
   private final DifferentialDrivetrainSim driveSim;
-  
+
   private final Field2d field2d = new Field2d();
 
   private final DifferentialDriveOdometry odometry;
@@ -83,18 +79,18 @@ public class Drive extends SubsystemBase {
 
     odometry = new DifferentialDriveOdometry(new Rotation2d(), 0, 0, new Pose2d());
 
-    driveSim = 
-      new DifferentialDrivetrainSim(
-        DCMotor.getNeoVortex(2), 
-        GEARING, 
-        MOI, 
-        DRIVE_MASS.in(Kilograms), 
-        WHEEL_RADIUS.in(Meters), 
-        TRACK_WIDTH.in(Meters), 
-        STD_DEVS); //this is the standard deviation of measurment noise for the sensors 
+    driveSim =
+        new DifferentialDrivetrainSim(
+            DCMotor.getNeoVortex(2),
+            GEARING,
+            MOI,
+            DRIVE_MASS.in(Kilograms),
+            WHEEL_RADIUS.in(Meters),
+            TRACK_WIDTH.in(Meters),
+            STD_DEVS); // this is the standard deviation of measurment noise for the sensors
 
     kinematics = new DifferentialDriveKinematics(TRACK_WIDTH);
-    
+
     globalConfig.idleMode(IdleMode.kBrake);
 
     leftFollowerConfig.apply(globalConfig).follow(Ports.Drive.LEFT_LEADER);
@@ -137,21 +133,19 @@ public class Drive extends SubsystemBase {
     final double realLeftSpeed = leftSpeed * MAX_SPEED.in(MetersPerSecond);
     final double realRightSpeed = rightSpeed * MAX_SPEED.in(MetersPerSecond);
 
-      final double leftFeedforward = feedforward.calculate(realLeftSpeed);
-      final double rightFeedforward = feedforward.calculate(realRightSpeed);
+    final double leftFeedforward = feedforward.calculate(realLeftSpeed);
+    final double rightFeedforward = feedforward.calculate(realRightSpeed);
 
-      final double leftPID = 
-        leftPidController.calculate(leftEncoder.getVelocity(), realLeftSpeed);
-      final double rightPID = 
+    final double leftPID = leftPidController.calculate(leftEncoder.getVelocity(), realLeftSpeed);
+    final double rightPID =
         rightPIDController.calculate(rightEncoder.getVelocity(), realRightSpeed);
 
-      double leftVoltage = leftPID + leftFeedforward;
-      double rightVoltage = rightPID + rightFeedforward;
+    double leftVoltage = leftPID + leftFeedforward;
+    double rightVoltage = rightPID + rightFeedforward;
 
-      leftLeader.setVoltage(leftVoltage);
-      rightLeader.setVoltage(rightVoltage);
-      driveSim.setInputs(leftVoltage, rightVoltage);
-
+    leftLeader.setVoltage(leftVoltage);
+    rightLeader.setVoltage(rightVoltage);
+    driveSim.setInputs(leftVoltage, rightVoltage);
   }
 
   /**
@@ -175,7 +169,7 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Resets Odometry (not sure if this works) for auton 
+   * Resets Odometry (not sure if this works) for auton
    *
    * @param robotPose robot position as a pose2d
    */
@@ -186,10 +180,11 @@ public class Drive extends SubsystemBase {
 
   @Override
   public void periodic() {
-    updateOdometry(Robot.isReal() ? gyro.getRotation2d() : 
-        driveSim.getHeading()); //returns roation2D for simulated robot
-        field2d.setRobotPose(pose());
-
+    updateOdometry(
+        Robot.isReal()
+            ? gyro.getRotation2d()
+            : driveSim.getHeading()); // returns roation2D for simulated robot
+    field2d.setRobotPose(pose());
   }
 
   /**
@@ -208,16 +203,13 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * 
-   * @return the robot chasssis speeds 
+   * @return the robot chasssis speeds
    */
   public ChassisSpeeds robotRelativeChassisSpeeds() {
     double leftMotorVelocity = leftEncoder.getVelocity();
     double rightMotorVelocity = rightEncoder.getVelocity();
     return kinematics.toChassisSpeeds(
-      new DifferentialDriveWheelSpeeds(leftMotorVelocity, rightMotorVelocity)
-
-    );
+        new DifferentialDriveWheelSpeeds(leftMotorVelocity, rightMotorVelocity));
   }
 
   public void setChassisSpeeds(ChassisSpeeds targetSpeed) {
@@ -227,6 +219,5 @@ public class Drive extends SubsystemBase {
     double rightSpeed = wheelSpeeds.rightMetersPerSecond / MAX_SPEED.in(MetersPerSecond);
 
     drive(leftSpeed, rightSpeed);
-
   }
 }

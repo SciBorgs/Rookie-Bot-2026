@@ -10,7 +10,6 @@ import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import org.sciborgs1155.robot.drive.DriveConstants;
 
 /**
  * Constants is a globally accessible class for storing immutable values. Every value should be

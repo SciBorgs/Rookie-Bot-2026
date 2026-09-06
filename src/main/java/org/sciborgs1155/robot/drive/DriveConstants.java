@@ -24,22 +24,23 @@ public class DriveConstants {
 
   public static final double POSITION_FACTOR = CIRCUMFERANCE * GEARING;
   public static final double VELOCITY_FACTOR = POSITION_FACTOR / 60.0;
-  
-  public static final LinearVelocity MAX_SPEED = MetersPerSecond.of(2); //meters per sec 
 
-    public static final Distance TRACK_WIDTH = Meters.of(0.7112);
+  public static final LinearVelocity MAX_SPEED = MetersPerSecond.of(2); // meters per sec
+
+  public static final Distance TRACK_WIDTH = Meters.of(0.7112);
   public static final double MOI = 7.5;
-  public static final Mass DRIVE_MASS = Kilograms.of(60.0); //kg
+  public static final Mass DRIVE_MASS = Kilograms.of(60.0); // kg
   public static final Matrix<N7, N1> STD_DEVS = VecBuilder.fill(0, 0, 0, 0, 0, 0, 0);
-  
-  //for auto
+
+  // for auto
   public static final Current STATOR_LIMIT = Amps.of(80); // 120A max slip current
 
   // Coefficient of friction between the drive wheel and the carpet.
   public static final double WHEEL_COF = 1.0;
 
-  public static final Translation2d[] wheelInfo = {new Translation2d(0.0, 1.0), new Translation2d(0.0, -1)}; //fake vales
-  
+  public static final Translation2d[] wheelInfo = {
+    new Translation2d(0.0, 1.0), new Translation2d(0.0, -1)
+  }; // fake vales
 
   public static final class FF {
     public static final double kS = 1;

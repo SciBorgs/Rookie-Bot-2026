@@ -18,16 +18,13 @@ public final class Ports {
     public static final int GYRO_CHANNEL = 1;
   }
 
-    public static final Map<Integer, String> ID_TO_NAME =
+  public static final Map<Integer, String> ID_TO_NAME =
       Map.ofEntries(
           Map.entry(Drive.RIGHT_LEADER, "Right Leader"),
           Map.entry(Drive.RIGHT_FOLLOWER, "Right Follower drive"),
           Map.entry(Drive.LEFT_FOLLOWER, "Left_Follower"),
           Map.entry(Drive.LEFT_LEADER, "Left Leader"),
-          Map.entry(Drive.GYRO_CHANNEL, "Gyro Channel")
-       );
-
-
+          Map.entry(Drive.GYRO_CHANNEL, "Gyro Channel"));
 
   public static final class LEDs {
     public static final int LED_PORT = 9;
