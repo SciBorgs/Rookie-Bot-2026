@@ -23,6 +23,7 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
 
   private final WheelIO hardware;
   private final SysIdRoutine characterization;
+  private double lastVelocityTarget = 0.0;
 
   private final PIDController controller =
       new PIDController(VelocityControl.P, VelocityControl.I, VelocityControl.D);
@@ -56,6 +57,10 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
     return Robot.isReal() ? new Shooter(new RealWheel()) : new Shooter(new SimWheel());
   }
 
+  public static Shooter none() {
+    return new Shooter(new NoWheel());
+  }
+
   /**
    * @return The value of the velocity (in Radians Per Second)
    */
@@ -75,7 +80,8 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
             velocitySetpoint,
             -MAX_VELOCITY.in(RadiansPerSecond),
             MAX_VELOCITY.in(RadiansPerSecond));
-    double ffVolts = ff.calculate(velocity); // feedforward
+    double ffVolts = ff.calculateWithVelocities(lastVelocityTarget, velocity);
+    lastVelocityTarget = velocity;
     double pidVolts = controller.calculate(getVelocity(), velocity);
     hardware.setVoltage(MathUtil.clamp(pidVolts + ffVolts, -MAX_VOLTAGE, MAX_VOLTAGE));
   }
@@ -83,7 +89,7 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
   /**
    * Checks if the PID position is at the velocity setpoint
    *
-   * @return boolean PID position is at setpoint (true/false)
+   * @return PID position is at setpoint
    */
   @Logged
   public boolean atSetpoint() {
