@@ -53,7 +53,9 @@ public final class Ports {
 
   /* PLACE HOLDERS FOR NOW */
   public static final class Shooter {
-    public static final int WHEEL_MOTOR = 2;
-    public static final int HOOD_MOTOR = 3;
+    public static final int WHEEL_MOTOR_LEADER = 2;
+    public static final int WHEEL_MOTOR_FOLLOWER = 3;
+
+    public static final int HOOD_MOTOR = 4;
   }
 }
