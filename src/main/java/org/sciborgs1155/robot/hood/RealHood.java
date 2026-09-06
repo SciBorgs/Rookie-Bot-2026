@@ -27,10 +27,10 @@ public class RealHood implements HoodIO {
 
     config = new SparkFlexConfig();
 
-    config.inverted(true);
+    config.inverted(true); // will delete this if motor doen't need to be inverted (look at CAD)
     config.smartCurrentLimit((int) STATOR_CURRENT_LIMIT.in(Amps));
 
-    config.idleMode(IdleMode.kCoast);
+    config.idleMode(IdleMode.kBrake);
 
     hoodMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }

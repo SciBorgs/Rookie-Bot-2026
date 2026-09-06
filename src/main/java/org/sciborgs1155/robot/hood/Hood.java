@@ -11,6 +11,7 @@ import static org.sciborgs1155.robot.hood.HoodConstants.MAX_VELOCITY;
 import static org.sciborgs1155.robot.hood.HoodConstants.MIN_ANGLE;
 import static org.sciborgs1155.robot.hood.HoodConstants.POSITION_TOLERANCE;
 import static org.sciborgs1155.robot.hood.HoodConstants.RAMP_RATE;
+import static org.sciborgs1155.robot.hood.HoodConstants.STARTING_ANGLE;
 import static org.sciborgs1155.robot.hood.HoodConstants.STEP_VOLTAGE;
 import static org.sciborgs1155.robot.hood.HoodConstants.TIME_OUT;
 
@@ -56,7 +57,7 @@ public class Hood extends SubsystemBase implements AutoCloseable {
     this.hardware = hardware;
 
     controller.setTolerance(POSITION_TOLERANCE.in(Radians)); // how close it needs to needs to be
-    controller.reset(angle());
+    controller.reset(STARTING_ANGLE.in(Radians));
     setDefaultCommand(goTo(DEFAULT_ANGLE));
 
     sysIdRoutine =
@@ -151,8 +152,7 @@ public class Hood extends SubsystemBase implements AutoCloseable {
   public void update(double position) {
     double goal = MathUtil.clamp(position, MIN_ANGLE.in(Radians), MAX_ANGLE.in(Radians));
     double PIDCalculations = controller.calculate(angle(), goal);
-    double ffCalculations =
-        ff.calculate(controller.getSetpoint().position, controller.getSetpoint().velocity);
+    double ffCalculations = ff.calculate(angleSetpoint(), getVelocitySetpoint());
     hardware.setVoltage((PIDCalculations + ffCalculations));
   }
 
@@ -161,6 +161,13 @@ public class Hood extends SubsystemBase implements AutoCloseable {
    */
   public boolean atGoal() {
     return controller.atGoal();
+  }
+
+  /**
+   * @return Position of the goal (angle )
+   */
+  public double angleGoal() {
+    return controller.getGoal().position;
   }
 
   /**

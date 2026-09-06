@@ -16,12 +16,10 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
 public class SimHood implements HoodIO {
 
-  /* SingleJoinedArmSim is for a single pivot rotating arm
-   * It also works for the variable hood as their movements are the same
-   */
+  /** Using SingleJoinedArmSim as same movements (single pivot point) */
   private final SingleJointedArmSim simHood;
 
-  /* Initalize the fields */
+  /* Initalize the field*/
   public SimHood() {
     simHood =
         new SingleJointedArmSim(
