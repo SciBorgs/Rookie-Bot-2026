@@ -2,6 +2,8 @@ package org.sciborgs1155.robot.shooter;
 
 import static edu.wpi.first.units.Units.*;
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -29,6 +31,10 @@ public class ShooterConstants {
   public static final AngularVelocity IDLE_VELOCITY = RadiansPerSecond.of(5);
   public static final AngularVelocity MAX_VELOCITY = RPM.of(7230);
   public static final double MAX_VOLTAGE = 12.0; // from rebuilt
+
+  public static final Transform3d CENTER_TO_SHOOTER =
+      new Transform3d(Inches.of(5.975), Inches.of(5.975), Inches.of(13.375), new Rotation3d());
+
 
   /* For Flywheel */
   public static class VelocityControl {

@@ -1,4 +1,4 @@
-package org.sciborgs1155.robot;
+/*package org.sciborgs1155.robot;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
@@ -22,7 +22,7 @@ import org.sciborgs1155.robot.drive.DriveConstants.Translation;
 import org.sciborgs1155.robot.drive.NoGyro;
 import org.sciborgs1155.robot.drive.SimModule;
 
-/** Swerve test. Currently incomplete and does nothing. */
+/** Swerve test. Currently incomplete and does nothing. /
 public class SwerveTest {
   SimModule frontLeft;
   SimModule frontRight;
@@ -130,7 +130,7 @@ public class SwerveTest {
         //     Rotation2d.fromRotations(Math.random()));
         new Pose2d(5, 5, Rotation2d.k180deg);
 
-    Rotation2d offset = Rotation2d.fromRadians(/*Math.random() * 0.2 - 0.1*/ -0.05);
+    Rotation2d offset = Rotation2d.fromRadians(/*Math.random() * 0.2 - 0.1/ -0.05);
     Translation2d input =
         (target.getTranslation().rotateBy(offset)).div(target.getTranslation().getNorm());
 
@@ -159,3 +159,5 @@ public class SwerveTest {
     assertEquals(drive.pose().getRotation().getSin(), target.getRotation().getSin(), 0.05);
   }
 }
+
+*/

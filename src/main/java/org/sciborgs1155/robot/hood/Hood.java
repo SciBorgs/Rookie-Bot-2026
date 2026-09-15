@@ -128,7 +128,6 @@ public class Hood extends SubsystemBase implements AutoCloseable {
    * @param goal the desired angle
    * @return command to set hood to goal
    */
-  @Logged
   public Command goTo(Angle goal) {
     return goTo(() -> goal.in(Radians));
   }
@@ -139,7 +138,6 @@ public class Hood extends SubsystemBase implements AutoCloseable {
    * @param goal The deisred angle as a double supplier
    * @return A command that will set hood to goal
    */
-  @Logged
   public Command goTo(DoubleSupplier goal) {
     return run(() -> update(goal.getAsDouble())).withName("Hood GO");
   }
@@ -150,7 +148,6 @@ public class Hood extends SubsystemBase implements AutoCloseable {
    *
    * @param position The deisred position of the hood
    */
-  @Logged
   public void update(double position) {
     double goal = MathUtil.clamp(position, MIN_ANGLE.in(Radians), MAX_ANGLE.in(Radians));
     double PIDCalculations = controller.calculate(angle(), goal);
@@ -162,16 +159,14 @@ public class Hood extends SubsystemBase implements AutoCloseable {
   /**
    * @return Boolean depending if it is at goal
    */
-  @Logged
   public boolean atGoal() {
     return controller.atGoal();
   }
 
   /**
    * @param angle The deisred angle
-   * @return Boollean depending if the abs value of its difference is less than position tolerance
+   * @return Boolean depending if the abs value of its difference is less than position tolerance
    */
-  @Logged
   public boolean atPosition(double angle) {
     return Math.abs(angle - angle()) < POSITION_TOLERANCE.in(Radians);
   }

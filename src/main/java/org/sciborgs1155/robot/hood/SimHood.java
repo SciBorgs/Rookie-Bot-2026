@@ -4,7 +4,7 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Seconds;
 import static org.sciborgs1155.robot.Constants.PERIOD;
-import static org.sciborgs1155.robot.hood.HoodConstants.Gear_RATIO;
+import static org.sciborgs1155.robot.hood.HoodConstants.GEAR_RATIO;
 import static org.sciborgs1155.robot.hood.HoodConstants.HOOD_RADIUS;
 import static org.sciborgs1155.robot.hood.HoodConstants.MAX_ANGLE;
 import static org.sciborgs1155.robot.hood.HoodConstants.MOI;
@@ -26,7 +26,7 @@ public class SimHood implements HoodIO {
     simHood =
         new SingleJointedArmSim(
             DCMotor.getKrakenX60(1),
-            Gear_RATIO,
+            GEAR_RATIO,
             MOI,
             HOOD_RADIUS.in(Meters),
             MIN_ANGLE.in(Radians),

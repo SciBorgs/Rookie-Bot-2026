@@ -13,7 +13,6 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
-
 public class RealHood implements HoodIO {
   private final SparkFlex hoodMotor;
   private final SparkFlexConfig config;
@@ -29,12 +28,11 @@ public class RealHood implements HoodIO {
     config = new SparkFlexConfig();
 
     config.inverted(true);
-    config.smartCurrentLimit((int) STATOR_CURRENT_LIMIT.in(Amps)); 
+    config.smartCurrentLimit((int) STATOR_CURRENT_LIMIT.in(Amps));
 
     config.idleMode(IdleMode.kCoast);
 
     hoodMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
   }
 
   @Override
@@ -44,7 +42,9 @@ public class RealHood implements HoodIO {
 
   @Override
   public double getPosition() {
-    double position = encoder.getPosition() / GEAR_RATIO; // gear ratio to covert motor rotations to physical rotations
+    double position =
+        encoder.getPosition()
+            / GEAR_RATIO; // gear ratio to covert motor rotations to physical rotations
     return position * (2 * Math.PI);
   }
 
