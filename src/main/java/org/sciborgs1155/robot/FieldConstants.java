@@ -76,11 +76,9 @@ public class FieldConstants {
         ? translation
         : translation.rotateAround(
             new Translation2d(
-                FieldConstants.LENGTH.in(Meters) / 2.0,
-                FieldConstants.WIDTH.in(Meters) / 2.0),
-                Rotation2d.k180deg);
+                FieldConstants.LENGTH.in(Meters) / 2.0, FieldConstants.WIDTH.in(Meters) / 2.0),
+            Rotation2d.k180deg);
   }
-
 
   /**
    * Reflects width-wise distances through the middle of the field if the alliance is red, otherwise

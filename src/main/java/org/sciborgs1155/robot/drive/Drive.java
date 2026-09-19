@@ -211,24 +211,19 @@ public class Drive extends SubsystemBase {
     return kinematics.toChassisSpeeds(
         new DifferentialDriveWheelSpeeds(leftMotorVelocity, rightMotorVelocity));
   }
-  
 
   /**
-   * 
    * @return the field relative Chassis Speeds
    */
   public ChassisSpeeds fieldRelativeChassisSpeeds() {
     return ChassisSpeeds.fromRobotRelativeSpeeds(robotRelativeChassisSpeeds(), heading());
-
   }
-  
 
   /**
-   * 
    * @return the angle of where the drive is facing
    */
   public Rotation2d heading() {
-    return pose().getRotation(); //yaw
+    return pose().getRotation(); // yaw
   }
 
   public void setChassisSpeeds(ChassisSpeeds targetSpeed) {

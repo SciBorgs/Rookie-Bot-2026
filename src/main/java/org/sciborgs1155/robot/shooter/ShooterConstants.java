@@ -35,7 +35,6 @@ public class ShooterConstants {
   public static final Transform3d CENTER_TO_SHOOTER =
       new Transform3d(Inches.of(5.975), Inches.of(5.975), Inches.of(13.375), new Rotation3d());
 
-
   /* For Flywheel */
   public static class VelocityControl {
     public static final double P = 0.03;

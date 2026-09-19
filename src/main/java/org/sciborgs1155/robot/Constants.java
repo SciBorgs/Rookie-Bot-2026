@@ -60,4 +60,8 @@ public class Constants {
 
   // The name of seperate canivore, set to rio if no seperate canivore
   public static final CANBus DRIVE_CANIVORE = new CANBus("drivetrain");
+
+  public static final class Shooting {
+    public static final double MINIMUM_VELOCITY = 0.01; // meters per sec
+  }
 }
