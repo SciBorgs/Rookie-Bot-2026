@@ -1,12 +1,17 @@
 package org.sciborgs1155.robot.commands;
 
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static org.sciborgs1155.robot.Constants.Shooting.MINIMUM_VELOCITY;
 import static org.sciborgs1155.robot.FieldConstants.allianceReflect;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.CENTER_TO_SHOOTER;
+import static org.sciborgs1155.robot.shooter.ShooterConstants.IDLE_VELOCITY;
+
+import java.util.function.Supplier;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -14,6 +19,10 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.DoubleEntry;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+
+import org.sciborgs1155.lib.InputStream;
 import org.sciborgs1155.lib.LoggingUtils;
 import org.sciborgs1155.lib.Tuning;
 import org.sciborgs1155.robot.commands.shooting.FuelVisualizer;
@@ -92,4 +101,28 @@ public class Shooting {
 
     return new ShooterParams(rads, hoodAngle, targetYaw);
   }
+
+    public Command shootDriving(Translation2d target, InputStream vx, InputStream vy, InputStream omega) {
+        return Commands.waitUntil(
+            () -> 
+            shooter.atSetpoint()
+            && shooter.setpoint() > IDLE_VELOCITY.in(RadiansPerSecond)
+            && hood.atGoal())
+        .andThen(
+            // do other mechenisms in parallel when done
+            Commands.run(
+                () -> {fuelVisualizer != null) fuelVisualizer.launchProjectile();
+            ).deadlineFor()
+
+        )
+    }
+
+    private Command runShooterSuperstructure(Supplier<ShooterParams> params) {
+    return Commands.parallel(
+        shooter.runShooter(() -> params.get().rads),
+        hood.goTo(() -> params.get().hoodAngle),
+        drive.goToYaw(() -> Rotation2d.fromRadians(params.get().turretAngle)));
+  }
+
+
 }
