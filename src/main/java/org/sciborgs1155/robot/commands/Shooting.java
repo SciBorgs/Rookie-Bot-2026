@@ -92,7 +92,7 @@ public class Shooting {
     Vector<N3> shotVector =
         hoodSpeeds.norm() > MINIMUM_VELOCITY
             ? algorithm.calculate(displacement, hoodSpeeds)
-            : null; // TODO: null
+            : null; // TODO: change null
 
     double rads = shotVector.get(0); // hypotenuse
     double hoodAngle = shotVector.get(1);
@@ -111,17 +111,18 @@ public class Shooting {
         .andThen(
             // do other mechenisms in parallel when done
             Commands.run(
-                () -> {fuelVisualizer != null) fuelVisualizer.launchProjectile();
-            ).deadlineFor()
-
-        )
+                () -> {fuelVisualizer != null) 
+                    fuelVisualizer.launchProjectile())
+            .deadlineFor(
+                runShooterSuperStructure(() -> calculateShot(target)),
+                drive.drive());
     }
 
-    private Command runShooterSuperstructure(Supplier<ShooterParams> params) {
+    private Command runShooterSuperstructure(Supplier<ShooterParams> params, InputStream vx) {
     return Commands.parallel(
         shooter.runShooter(() -> params.get().rads),
         hood.goTo(() -> params.get().hoodAngle),
-        drive.goToYaw(() -> Rotation2d.fromRadians(params.get().turretAngle)));
+        Commands.run(() -> drive.pointAtAngle(vx.get(), params.get().driveAngle()), drive));
   }
 
 

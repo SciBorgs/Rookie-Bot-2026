@@ -243,7 +243,7 @@ public class Drive extends SubsystemBase {
   public void pointAtAngle(double vx, double targetAngle) {
     double forwardSpeed = vx * MAX_SPEED.in(MetersPerSecond);
 
-    Rotation2d heading = pose().getRotation();
+    Rotation2d heading = heading();
     double angle = heading.getRadians();
     double rotation = headingPID.calculate(angle, targetAngle);
 
@@ -251,4 +251,5 @@ public class Drive extends SubsystemBase {
 
     setChassisSpeeds(speeds);
   }
+
 }
