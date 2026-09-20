@@ -51,8 +51,10 @@ public final class Ports {
     public static final int LED_PORT = 9;
   }
 
-  public static final class Indexer {
-    public static final int INDEXER_MOTOR_TOP = 98;
-    public static final int INDEXER_MOTOR_BOTTOM = 99;
+  public static final class IndexerPorts {
+    public static final int INDEXER_MOTOR = 99;
+  }
+  public static final class BeambreakPorts {
+    public static final int BEAMBREAK = 98;
   }
 }
