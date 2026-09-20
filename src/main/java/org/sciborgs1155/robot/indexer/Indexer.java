@@ -20,6 +20,9 @@ import org.sciborgs1155.robot.Ports.IndexerPorts;
 
 public class Indexer extends SubsystemBase{
     private final SimpleMotor indexerMotor;
+
+
+
     private final Beambreak beambreak;
     public final Trigger blocked;
 
@@ -36,6 +39,7 @@ public class Indexer extends SubsystemBase{
         this.indexerMotor = indexerMotor;
         this.beambreak = beambreak;
         this.blocked = new Trigger(() -> !beambreak.getState());
+
     }
 
     public static SimpleMotor realIndexerMotor() {
@@ -62,14 +66,20 @@ public class Indexer extends SubsystemBase{
         return runIndexer(0);
     }
     public Command forward(){
-        return runIndexer(IndexerConstants.INDEXER_MAXPOWER);
+        return runIndexer(1);
     }
     public Command reverse(){
-        return runIndexer(-IndexerConstants.INDEXER_MAXPOWER);
+        return runIndexer(-1);
     }
     public Command set(double power){
         double clampedPower = MathUtil.clamp(power, -1.0, 1.0);
         return runIndexer(clampedPower * IndexerConstants.INDEXER_MAXPOWER); //scale by maxpower so it stays linear but also clamped
     }
+
+    public Command forwardUntilBlocked(){
+        return forward().until(blocked);
+    }
+
+
 
 }
