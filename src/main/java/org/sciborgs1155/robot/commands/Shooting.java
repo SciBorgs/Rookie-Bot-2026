@@ -129,7 +129,7 @@ public class Shooting {
                     && shooter.setpoint() > IDLE_VELOCITY.in(RadiansPerSecond)
                     && hood.atGoal())
         .andThen(
-            // TODO: do other mechenisms in parallel when done
+            // TODO: do intake in parallel when done
             Commands.run(
                     () -> {
                       if (fuelVisualizer != null) fuelVisualizer.launchProjectile();
@@ -150,12 +150,12 @@ public class Shooting {
                     && shooter.setpoint() > IDLE_VELOCITY.in(RadiansPerSecond)
                     && hood.atGoal())
         .andThen(
-            // TODO: do other mechenisms in parallel when done
+            // TODO: do intake in parallel when done
             Commands.run(
-                () -> {
+                    () -> {
                       if (fuelVisualizer != null) fuelVisualizer.launchProjectile();
-                    }
-                    .deadlineFor(runShooterSuperstructure(() -> calculateShot(target)))));
+                    })
+                .deadlineFor(runShooterSuperstructure(() -> calculateShot(target))));
   }
 
   /**
