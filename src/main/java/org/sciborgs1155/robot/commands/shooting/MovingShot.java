@@ -1,5 +1,6 @@
 package org.sciborgs1155.robot.commands.shooting;
 
+import static org.sciborgs1155.robot.Constants.Shooting.*;
 import static org.sciborgs1155.robot.Constants.ShootingData.*;
 
 import edu.wpi.first.math.VecBuilder;

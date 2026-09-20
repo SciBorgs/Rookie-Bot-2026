@@ -4,12 +4,17 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.CANBus;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
+import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import org.sciborgs1155.lib.Tuning;
 
 /**
  * Constants is a globally accessible class for storing immutable values. Every value should be
@@ -63,5 +68,28 @@ public class Constants {
 
   public static final class Shooting {
     public static final double MINIMUM_VELOCITY = 0.01; // meters per sec
+    public static final DoubleEntry SIGGYS_CONSTANT =
+        Tuning.entry("Robot/shooting/siggysConstant", 0.0); // offset for flywheel speed
+  }
+
+  public static final class ShootingData {
+
+    public static final InterpolatingDoubleTreeMap DISTANCE_TO_RADS =
+        new InterpolatingDoubleTreeMap();
+    public static final InterpolatingDoubleTreeMap DISTANCE_TO_TOF =
+        new InterpolatingDoubleTreeMap();
+    public static final InterpolatingTreeMap<Double, Rotation2d> DISTANCE_TO_HOOD_ANGLE =
+        new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
+    public static final InterpolatingDoubleTreeMap DISTANCE_TO_HORIZONTAL_VELOCITY =
+        new InterpolatingDoubleTreeMap();
+    public static final InterpolatingDoubleTreeMap VELOCITY_TO_RADS =
+        new InterpolatingDoubleTreeMap();
+    public static final InterpolatingTreeMap<Double, Rotation2d> VELOCITY_TO_HOOD_ANGLE =
+        new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
+
+    public static final InterpolatingDoubleTreeMap DISTANCE_TO_RADS_HOOP =
+        new InterpolatingDoubleTreeMap();
+    public static final InterpolatingTreeMap DISTANCE_TO_HOOD_HOOP =
+        new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
   }
 }

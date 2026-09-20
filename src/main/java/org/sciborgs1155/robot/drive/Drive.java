@@ -231,6 +231,11 @@ public class Drive extends SubsystemBase {
     return pose().getRotation(); // yaw
   }
 
+  /**
+   * Sets speed of drive using target chassis speed
+   *
+   * @param targetSpeed Target Speed
+   */
   public void setChassisSpeeds(ChassisSpeeds targetSpeed) {
     DifferentialDriveWheelSpeeds wheelSpeeds = kinematics.toWheelSpeeds(targetSpeed);
 
@@ -240,8 +245,15 @@ public class Drive extends SubsystemBase {
     drive(leftSpeed, rightSpeed);
   }
 
+  /**
+   * Oreintates drive to target angle
+   *
+   * @param vx Forward speed in meters per sec
+   * @param targetAngle Direction drive should point at
+   */
   public void pointAtAngle(double vx, double targetAngle) {
-    double forwardSpeed = vx * MAX_SPEED.in(MetersPerSecond);
+    double forwardSpeed =
+        vx * MAX_SPEED.in(MetersPerSecond); // Might need to change the speed limit
 
     Rotation2d heading = heading();
     double angle = heading.getRadians();
@@ -251,5 +263,4 @@ public class Drive extends SubsystemBase {
 
     setChassisSpeeds(speeds);
   }
-
 }
