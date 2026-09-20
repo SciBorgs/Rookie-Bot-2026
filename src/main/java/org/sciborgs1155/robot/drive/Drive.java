@@ -42,8 +42,9 @@ import java.util.function.DoubleSupplier;
 import org.sciborgs1155.robot.Constants;
 import org.sciborgs1155.robot.Ports;
 import org.sciborgs1155.robot.Robot;
+import org.sciborgs1155.robot.drive.DriveConstants.DrivePID;
 import org.sciborgs1155.robot.drive.DriveConstants.FF;
-import org.sciborgs1155.robot.drive.DriveConstants.PID;
+import org.sciborgs1155.robot.drive.DriveConstants.HeadingPID;
 
 @Logged
 public class Drive extends SubsystemBase {
@@ -58,8 +59,12 @@ public class Drive extends SubsystemBase {
   private final AnalogGyro gyro = new AnalogGyro(Ports.Drive.GYRO_CHANNEL);
 
   private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(FF.kS, FF.kV);
-  private final PIDController leftPidController = new PIDController(PID.kP, PID.kI, PID.kD);
-  private final PIDController rightPIDController = new PIDController(PID.kP, PID.kI, PID.kP);
+  private final PIDController leftPidController =
+      new PIDController(DrivePID.kP, DrivePID.kI, DrivePID.kD);
+  private final PIDController rightPIDController =
+      new PIDController(DrivePID.kP, DrivePID.kI, DrivePID.kP);
+  private final PIDController headingPID =
+      new PIDController(HeadingPID.kP, HeadingPID.kP, HeadingPID.kP);
 
   private final DifferentialDrivetrainSim driveSim;
 
@@ -233,5 +238,17 @@ public class Drive extends SubsystemBase {
     double rightSpeed = wheelSpeeds.rightMetersPerSecond / MAX_SPEED.in(MetersPerSecond);
 
     drive(leftSpeed, rightSpeed);
+  }
+
+  public void pointAtAngle(double vx, double targetAngle) {
+    double forwardSpeed = vx * MAX_SPEED.in(MetersPerSecond);
+
+    Rotation2d heading = pose().getRotation();
+    double angle = heading.getRadians();
+    double rotation = headingPID.calculate(angle, targetAngle);
+
+    ChassisSpeeds speeds = new ChassisSpeeds(forwardSpeed, 0.0, rotation);
+
+    setChassisSpeeds(speeds);
   }
 }
