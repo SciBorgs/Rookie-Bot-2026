@@ -47,12 +47,11 @@ public class DriveConstants {
     public static final double kV = 3;
   }
 
-  //change values 
+  // change values
   public static final class HeadingPID {
     public static final double kP = 8.5;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
-
   }
 
   public static final class DrivePID {

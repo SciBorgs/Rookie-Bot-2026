@@ -33,7 +33,6 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -60,9 +59,12 @@ public class Drive extends SubsystemBase {
   private final AnalogGyro gyro = new AnalogGyro(Ports.Drive.GYRO_CHANNEL);
 
   private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(FF.kS, FF.kV);
-  private final PIDController leftPidController = new PIDController(DrivePID.kP, DrivePID.kI, DrivePID.kD);
-  private final PIDController rightPIDController = new PIDController(DrivePID.kP, DrivePID.kI, DrivePID.kP);
-  private final PIDController headingPID = new PIDController(HeadingPID.kP, HeadingPID.kP, HeadingPID.kP);
+  private final PIDController leftPidController =
+      new PIDController(DrivePID.kP, DrivePID.kI, DrivePID.kD);
+  private final PIDController rightPIDController =
+      new PIDController(DrivePID.kP, DrivePID.kI, DrivePID.kP);
+  private final PIDController headingPID =
+      new PIDController(HeadingPID.kP, HeadingPID.kP, HeadingPID.kP);
 
   private final DifferentialDrivetrainSim driveSim;
 
@@ -235,5 +237,4 @@ public class Drive extends SubsystemBase {
 
     setChassisSpeeds(speeds);
   }
-
 }
