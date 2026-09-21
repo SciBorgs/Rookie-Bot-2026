@@ -22,7 +22,6 @@ import java.util.function.Supplier;
 import org.sciborgs1155.lib.InputStream;
 import org.sciborgs1155.lib.LoggingUtils;
 import org.sciborgs1155.lib.Tuning;
-import org.sciborgs1155.robot.commands.shooting.FuelVisualizer;
 import org.sciborgs1155.robot.commands.shooting.MovingShot;
 import org.sciborgs1155.robot.commands.shooting.StationaryShooting;
 import org.sciborgs1155.robot.drive.Drive;
@@ -35,7 +34,6 @@ public class Shooting {
   private final MovingShot algorithm = new MovingShot();
   private final Shooter shooter;
   private final Hood hood;
-  private final FuelVisualizer fuelVisualizer;
   private final Drive drive;
   private final StationaryShooting stationaryShooting = new StationaryShooting();
 
@@ -46,10 +44,9 @@ public class Shooting {
 
   private Translation2d lastTarget = new Translation2d();
 
-  public Shooting(Shooter shooter, Hood hood, FuelVisualizer fuelVisualizer, Drive drive) {
+  public Shooting(Shooter shooter, Hood hood, Drive drive) {
     this.shooter = shooter;
     this.hood = hood;
-    this.fuelVisualizer = fuelVisualizer;
     this.drive = drive;
   }
 
@@ -130,11 +127,7 @@ public class Shooting {
                     && hood.atGoal())
         .andThen(
             // TODO: do intake in parallel when done
-            Commands.run(
-                    () -> {
-                      if (fuelVisualizer != null) fuelVisualizer.launchProjectile();
-                    })
-                .deadlineFor(runShooterSuperstructure(() -> calculateShot(target), vx)));
+                (runShooterSuperstructure(() -> calculateShot(target), vx)));
   }
 
   /**
@@ -151,11 +144,7 @@ public class Shooting {
                     && hood.atGoal())
         .andThen(
             // TODO: do intake in parallel when done
-            Commands.run(
-                    () -> {
-                      if (fuelVisualizer != null) fuelVisualizer.launchProjectile();
-                    })
-                .deadlineFor(runShooterSuperstructure(() -> calculateShot(target))));
+                runShooterSuperstructure(() -> calculateShot(target)));
   }
 
   /**
@@ -195,7 +184,6 @@ public class Shooting {
   public Command shootWithTestData() {
     return shooter
         .runShooter(() -> RADS_TEST.get())
-        .alongWith(hood.goTo(() -> HOOD_DEGREES_TEST.get() * Math.PI / 180)) // in radians
-        .alongWith(fuelVisualizer != null ? fuelVisualizer.launchProjectiles() : Commands.none());
+        .alongWith(hood.goTo(() -> HOOD_DEGREES_TEST.get() * Math.PI / 180)); // in radians
   }
 }
