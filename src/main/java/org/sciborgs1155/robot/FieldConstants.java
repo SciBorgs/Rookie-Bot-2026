@@ -71,6 +71,15 @@ public class FieldConstants {
             pose.getRotation().plus(Rotation2d.k180deg));
   }
 
+  public static Translation2d allianceReflect(Translation2d translation) {
+    return alliance() == Alliance.Blue
+        ? translation
+        : translation.rotateAround(
+            new Translation2d(
+                FieldConstants.LENGTH.in(Meters) / 2.0, FieldConstants.WIDTH.in(Meters) / 2.0),
+            Rotation2d.k180deg);
+  }
+
   /**
    * Reflects width-wise distances through the middle of the field if the alliance is red, otherwise
    * does nothing
@@ -111,4 +120,5 @@ public class FieldConstants {
   }
 
   // List field constants below!
+
 }

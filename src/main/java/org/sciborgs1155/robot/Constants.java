@@ -4,13 +4,17 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.CANBus;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
+import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import org.sciborgs1155.robot.drive.DriveConstants;
+import org.sciborgs1155.lib.Tuning;
 
 /**
  * Constants is a globally accessible class for storing immutable values. Every value should be
@@ -56,12 +60,36 @@ public class Constants {
   public static final Time PERIOD = Seconds.of(0.02); // roborio tickrate (s)
   public static final Time ODOMETRY_PERIOD = Seconds.of(1.0 / 100.0); // 10 ms (speedy!)
   public static final double DEADBAND = 0.2;
-  public static final double MAX_RATE =
-      DriveConstants.MAX_ACCEL.baseUnitMagnitude()
-          / DriveConstants.MAX_ANGULAR_SPEED.baseUnitMagnitude();
   public static final double SLOW_SPEED_MULTIPLIER = 0.33;
   public static final double FULL_SPEED_MULTIPLIER = 1.0;
 
   // The name of seperate canivore, set to rio if no seperate canivore
   public static final CANBus DRIVE_CANIVORE = new CANBus("drivetrain");
+
+  public static final class Shooting {
+    public static final double MINIMUM_VELOCITY = 0.01; // meters per sec
+    public static final DoubleEntry SIGGYS_CONSTANT =
+        Tuning.entry("Robot/shooting/siggysConstant", 0.0); // offset for flywheel speed
+  }
+
+  public static final class ShootingData {
+
+    public static final InterpolatingDoubleTreeMap DISTANCE_TO_RADS =
+        new InterpolatingDoubleTreeMap();
+    public static final InterpolatingDoubleTreeMap DISTANCE_TO_TOF =
+        new InterpolatingDoubleTreeMap();
+    public static final InterpolatingTreeMap<Double, Rotation2d> DISTANCE_TO_HOOD_ANGLE =
+        new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
+    public static final InterpolatingDoubleTreeMap DISTANCE_TO_HORIZONTAL_VELOCITY =
+        new InterpolatingDoubleTreeMap();
+    public static final InterpolatingDoubleTreeMap VELOCITY_TO_RADS =
+        new InterpolatingDoubleTreeMap();
+    public static final InterpolatingTreeMap<Double, Rotation2d> VELOCITY_TO_HOOD_ANGLE =
+        new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
+
+    public static final InterpolatingDoubleTreeMap DISTANCE_TO_RADS_HOOP =
+        new InterpolatingDoubleTreeMap();
+    public static final InterpolatingTreeMap DISTANCE_TO_HOOD_HOOP =
+        new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
+  }
 }
