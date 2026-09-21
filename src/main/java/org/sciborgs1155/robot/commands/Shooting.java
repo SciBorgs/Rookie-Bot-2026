@@ -127,7 +127,7 @@ public class Shooting {
                     && hood.atGoal())
         .andThen(
             // TODO: do intake in parallel when done
-                (runShooterSuperstructure(() -> calculateShot(target), vx)));
+            (runShooterSuperstructure(() -> calculateShot(target), vx)));
   }
 
   /**
@@ -144,7 +144,7 @@ public class Shooting {
                     && hood.atGoal())
         .andThen(
             // TODO: do intake in parallel when done
-                runShooterSuperstructure(() -> calculateShot(target)));
+            runShooterSuperstructure(() -> calculateShot(target)));
   }
 
   /**

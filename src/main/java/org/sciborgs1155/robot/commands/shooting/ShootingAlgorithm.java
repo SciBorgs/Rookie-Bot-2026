@@ -19,7 +19,6 @@ public interface ShootingAlgorithm {
    */
   Vector<N3> calculate(Translation3d displacement, Vector<N2> velocity);
 
-
   /**
    * Calculates the direction and speed to run the shooter at to shoot accurately towards the goal.
    * This should take into account both the position of the shooter and the movement of the shooter.
