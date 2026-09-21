@@ -76,10 +76,31 @@ public class Indexer extends SubsystemBase{
         return runIndexer(clampedPower * IndexerConstants.INDEXER_MAXPOWER); //scale by maxpower so it stays linear but also clamped
     }
 
+
+    //new
+
     public Command forwardUntilBlocked(){
         return forward().until(blocked);
     }
 
+    public Command unJamDefault() //stop reversing after a period of time
+    {
+        return reverse()
+            .withTimeout(0.5);
+    }
 
+    public Command unJamSensor(){ //stop reversing once beambreak isn't blocked
+        return reverse()
+            .onlyWhile(blocked);
+    }
+
+    public Command smartUnJam(){ //if sensor is unblocked OR time has passed stop reversing
+        Command raceCommand = 
+            unJamSensor()
+            .raceWith(unJamDefault())
+            .andThen(stop());
+            
+        return raceCommand;
+    }
 
 }
