@@ -10,7 +10,6 @@ import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import org.sciborgs1155.robot.drive.DriveConstants;
 
 /**
  * Constants is a globally accessible class for storing immutable values. Every value should be
@@ -56,9 +55,6 @@ public class Constants {
   public static final Time PERIOD = Seconds.of(0.02); // roborio tickrate (s)
   public static final Time ODOMETRY_PERIOD = Seconds.of(1.0 / 100.0); // 10 ms (speedy!)
   public static final double DEADBAND = 0.2;
-  public static final double MAX_RATE =
-      DriveConstants.MAX_ACCEL.baseUnitMagnitude()
-          / DriveConstants.MAX_ANGULAR_SPEED.baseUnitMagnitude();
   public static final double SLOW_SPEED_MULTIPLIER = 0.33;
   public static final double FULL_SPEED_MULTIPLIER = 1.0;
 
