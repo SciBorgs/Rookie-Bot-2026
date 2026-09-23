@@ -4,8 +4,6 @@ import static java.util.Map.entry;
 
 import java.util.Map;
 
-import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog.State;
-
 public final class Ports {
   // TODO: Add and change all ports as needed.
 
@@ -49,7 +47,6 @@ public final class Ports {
     public static final int REAR_RIGHT_CANCODER = 8;
   }
 
-
   public static final class Slapdown {
     public static final int EXTENSION = 11;
   }
@@ -57,7 +54,6 @@ public final class Ports {
   public static final class Intake {
     public static final int ROLLERS = 12;
   }
-
 
   public static final class LEDs {
     public static final int LED_PORT = 9;
