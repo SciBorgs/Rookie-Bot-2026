@@ -1,8 +1,6 @@
 package org.sciborgs1155.robot.commands.shooting;
 
-import static edu.wpi.first.units.Units.Meters;
-import static org.sciborgs1155.robot.Constants.Robot.ROBOT_TO_SHOOTER;
-import static org.sciborgs1155.robot.Constants.Robot.SHOOTER_LENGTH;
+import static org.sciborgs1155.robot.shooter.ShooterConstants.CENTER_TO_SHOOTER;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -12,39 +10,39 @@ import java.util.function.Supplier;
 import org.sciborgs1155.robot.FieldConstants.Hub;
 
 /**
- * A class that manages the creation, simulation, and logging of simulated FUEL projectiles.
+ * A class that manages the creation, simulation, and logging of simulated Basketball projectiles.
  *
- * @see Fuel
+ * @see Basketball
  */
-public class FuelVisualizer extends ProjectileVisualizer {
+public class BasketballVisualizer extends ProjectileVisualizer {
   /**
-   * A class that manages the creation, simulation, and logging of simulated FUEL projectiles.
+   * A class that manages the creation, simulation, and logging of simulated Basketball projectiles.
    *
-   * @param launchVelocity a supplier that provides the velocity of the FUEL at launch time
+   * @param launchVelocity a supplier that provides the velocity of the Basketball at launch time
    * @param robotPose a supplier that provides the pose of the robot at launch time
    * @param robotVelocity a supplier that provides the velocity of the robot at launch time
    */
-  public FuelVisualizer(
+  public BasketballVisualizer(
       Supplier<double[]> launchVelocity,
       Supplier<Pose3d> robotPose,
       Supplier<ChassisSpeeds> robotVelocity) {
     super(
-        () -> launchTranslation(launchVelocity.get(), robotPose.get()),
+        () -> launchTranslation(robotPose.get()),
         () -> launchVelocity(launchVelocity.get(), robotPose.get(), robotVelocity.get()),
         () -> launchRotation(launchVelocity.get(), robotPose.get()),
         () -> launchRotationalVelocity());
   }
 
   /**
-   * A class that manages the creation, simulation, and logging of simulated FUEL projectiles.
+   * A class that manages the creation, simulation, and logging of simulated Basketball projectiles.
    *
-   * @param launchTranslation a supplier that provides the translation of the FUEL at launch time
-   * @param launchVelocity a supplier that provides the velocity of the FUEL at launch time
-   * @param launchRotation a supplier that provides the rotation of the FUEL at launch time
-   * @param launchRotationalVelocity a supplier that provides the rotational velocity of the FUEL at
+   * @param launchTranslation a supplier that provides the translation of the Basketball at launch time
+   * @param launchVelocity a supplier that provides the velocity of the Basketball at launch time
+   * @param launchRotation a supplier that provides the rotation of the Basketball at launch time
+   * @param launchRotationalVelocity a supplier that provides the rotational velocity of the Basketball at
    *     launch time
    */
-  public FuelVisualizer(
+  public BasketballVisualizer(
       Supplier<double[]> launchTranslation,
       Supplier<double[]> launchVelocity,
       Supplier<double[]> launchRotation,
@@ -59,12 +57,12 @@ public class FuelVisualizer extends ProjectileVisualizer {
       boolean dragEnabled,
       boolean torqueEnabled,
       boolean liftEnabled) {
-    return new Fuel().config(resolution, weightEnabled, dragEnabled, torqueEnabled, liftEnabled);
+    return new Basketball().config(resolution, weightEnabled, dragEnabled, torqueEnabled, liftEnabled);
   }
 
-  protected static double[] launchTranslation(double[] shotVelocity, Pose3d robotPose) {
+  protected static double[] launchTranslation(Pose3d robotPose) {
     double[] robotTranslation = {robotPose.getX(), robotPose.getY(), robotPose.getZ()};
-    return Projectile.add3(robotToFuel(shotVelocity, robotPose), robotTranslation);
+    return Projectile.add3(robotToShooter(robotPose), robotTranslation);
   }
 
   protected static double[] launchVelocity(
@@ -75,7 +73,7 @@ public class FuelVisualizer extends ProjectileVisualizer {
   protected static double[] launchRotation(double[] shotVelocity, Pose3d robotPose) {
     double[] axis = Projectile.rotateAroundZ(shotVelocity, Math.PI / 2.0);
     return Projectile.scale4(
-        new double[] {0, axis[Fuel.X], axis[Fuel.Y], axis[Fuel.Z]},
+        new double[] {0, axis[Basketball.X], axis[Basketball.Y], axis[Basketball.Z]},
         1 / Projectile.norm3(shotVelocity));
   }
 
@@ -87,7 +85,7 @@ public class FuelVisualizer extends ProjectileVisualizer {
    * Converts shooter properties to a shot velocity vector (X, Y, and Z) which is compatible with
    * visualizers.
    *
-   * @param speed the launch speed of the FUEL.
+   * @param speed the launch speed of the Basketball.
    * @param pitch the pitch of the shooter.
    * @param yaw the yaw of the shooter.
    * @param robotPose the pose of the drivetrain.
@@ -95,7 +93,7 @@ public class FuelVisualizer extends ProjectileVisualizer {
    */
   public static double[] shotVelocity(double speed, double pitch, double yaw, Pose3d robotPose) {
     return Projectile.scale3(
-        Fuel.rotateAroundZ(
+        Basketball.rotateAroundZ(
             Projectile.toDirectionVector(pitch, yaw), robotPose.getRotation().getZ()),
         speed);
   }
@@ -118,21 +116,17 @@ public class FuelVisualizer extends ProjectileVisualizer {
         .getData();
   }
 
-  protected static double[] robotToFuel(double[] shotVelocity, Pose3d robotPose) {
-    double[] shooterToFuel =
-        Projectile.scale3(shotVelocity, SHOOTER_LENGTH.in(Meters) / Projectile.norm3(shotVelocity));
-    double[] robotToShooter =
-        Projectile.rotateAroundZ(
-            Projectile.fromTranslation(ROBOT_TO_SHOOTER), robotPose.getRotation().getZ());
-
-    return Projectile.add3(shooterToFuel, robotToShooter);
+  protected static double[] robotToShooter(Pose3d robotPose) {
+    return Projectile.rotateAroundZ(
+        Projectile.fromTranslation(CENTER_TO_SHOOTER.getTranslation()),
+        robotPose.getRotation().getZ());
   }
 
   protected static double[] shooterVelocity(
       double[] shotVelocity, Pose3d robotPose, ChassisSpeeds robotVelocity) {
     double tangentialSpeed =
         robotVelocity.omegaRadiansPerSecond
-            * Projectile.norm3(robotToFuel(shotVelocity, robotPose));
+            * Projectile.norm3(robotToShooter(robotPose));
     double tangentialDirection = robotPose.getRotation().getZ() + Math.PI / 2.0;
 
     double xVelocity =
@@ -143,13 +137,13 @@ public class FuelVisualizer extends ProjectileVisualizer {
     return new double[] {xVelocity, yVelocity, 0};
   }
 
-  /** Models the launch physics of a FUEL projectile. */
-  public static class Fuel extends Projectile {
-    /** Mass of the fuel projectile in kilograms. */
-    protected static final double FUEL_MASS = 0.225;
+  /** Models the launch physics of a Basketball projectile. */
+  public static class Basketball extends Projectile {
+    /** Mass of the Basketball projectile in kilograms. */
+    protected static final double Basketball_MASS = 0.225;
 
-    /** Radius of the fuel projectile in meters. */
-    protected static final double FUEL_RADIUS = 0.075;
+    /** Radius of the Basketball projectile in meters. */
+    protected static final double Basketball_RADIUS = 0.075;
 
     protected static final double SCORE_TOLERANCE = 0;
     protected static final double GRAVITY = -9.80665;
@@ -158,15 +152,15 @@ public class FuelVisualizer extends ProjectileVisualizer {
 
     /** Multiplied by velocity squared to compute drag force. */
     private static final double DRAG_CONSTANT =
-        0.5 * 0.47 * AIR_DENSITY * Math.PI * FUEL_RADIUS * FUEL_RADIUS;
+        0.5 * 0.47 * AIR_DENSITY * Math.PI * Basketball_RADIUS * Basketball_RADIUS;
 
     /** Multiplied by velocity * angular speed to compute lift force. */
     private static final double LIFT_CONSTANT =
-        4 / 3 * 4 * Math.PI * Math.PI * FUEL_RADIUS * FUEL_RADIUS * FUEL_RADIUS * AIR_DENSITY;
+        4 / 3 * 4 * Math.PI * Math.PI * Basketball_RADIUS * Basketball_RADIUS * Basketball_RADIUS * AIR_DENSITY;
 
     /** Multiplied by angular speed to compute torque. */
     private static final double TORQUE_CONSTANT =
-        -8 * Math.PI * AIR_VISCOSITY * Math.pow(FUEL_RADIUS, 3);
+        -8 * Math.PI * AIR_VISCOSITY * Math.pow(Basketball_RADIUS, 3);
 
     @Override
     protected double[] weight() {
@@ -178,22 +172,22 @@ public class FuelVisualizer extends ProjectileVisualizer {
     protected double[] drag() {
       // https://www1.grc.nasa.gov/beginners-guide-to-aeronautics/drag-of-a-sphere/
       return new double[] {
-        velocity[X] * velocity[X] * DRAG_CONSTANT / FUEL_MASS,
-        velocity[Y] * velocity[Y] * DRAG_CONSTANT / FUEL_MASS,
-        velocity[Z] * velocity[Z] * DRAG_CONSTANT / FUEL_MASS
+        velocity[X] * velocity[X] * DRAG_CONSTANT / Basketball_MASS,
+        velocity[Y] * velocity[Y] * DRAG_CONSTANT / Basketball_MASS,
+        velocity[Z] * velocity[Z] * DRAG_CONSTANT / Basketball_MASS
       };
     }
 
     @Override
     protected double torque() {
       // https://physics.wooster.edu/wp-content/uploads/2021/08/Junior-IS-Thesis-Web_1998_Grugel.pdf
-      return rotationalVelocity * TORQUE_CONSTANT / FUEL_MASS;
+      return rotationalVelocity * TORQUE_CONSTANT / Basketball_MASS;
     }
 
     @Override
     protected double[] lift() {
       // https://www1.grc.nasa.gov/beginners-guide-to-aeronautics/ideal-lift-of-a-spinning-ball/
-      return new double[] {0, 0, LIFT_CONSTANT * norm3(velocity) * rotationalVelocity / FUEL_MASS};
+      return new double[] {0, 0, LIFT_CONSTANT * norm3(velocity) * rotationalVelocity / Basketball_MASS};
     }
 
     @Override
@@ -209,10 +203,10 @@ public class FuelVisualizer extends ProjectileVisualizer {
 
       double planarDistance = Math.min(hub1Distance, hub2Distance);
       double verticalDisplacement = Hub.HEIGHT - translation[Z];
-      double scoreRadius = SCORE_TOLERANCE + FUEL_RADIUS + Hub.WIDTH / 2;
+      double scoreRadius = SCORE_TOLERANCE + Basketball_RADIUS + Hub.WIDTH / 2;
 
       return verticalDisplacement < 0
-          && verticalDisplacement > -FUEL_RADIUS
+          && verticalDisplacement > -Basketball_RADIUS
           && planarDistance <= scoreRadius
           && velocity[Z] < 0;
     }
@@ -230,12 +224,12 @@ public class FuelVisualizer extends ProjectileVisualizer {
 
       double planarDistance = Math.min(hub1Distance, hub2Distance);
       double verticalDisplacement = Hub.HEIGHT - translation[Z];
-      double scoreRadius = SCORE_TOLERANCE + FUEL_RADIUS + Hub.WIDTH / 2;
+      double scoreRadius = SCORE_TOLERANCE + Basketball_RADIUS + Hub.WIDTH / 2;
 
-      return (verticalDisplacement > -FUEL_RADIUS
+      return (verticalDisplacement > -Basketball_RADIUS
               && planarDistance > scoreRadius
               && velocity[Z] < 0)
-          || translation[Z] < FUEL_RADIUS;
+          || translation[Z] < Basketball_RADIUS;
     }
   }
 }

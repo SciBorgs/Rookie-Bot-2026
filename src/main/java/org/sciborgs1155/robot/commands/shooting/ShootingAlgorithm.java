@@ -36,14 +36,14 @@ public interface ShootingAlgorithm {
       Supplier<Pose3d> robotPose,
       Supplier<ChassisSpeeds> robotVelocity) {
     return () ->
-        FuelVisualizer.shotVelocity(shootingAlgorithm, robotPose.get(), robotVelocity.get());
+        BasketballVisualizer.shotVelocity(shootingAlgorithm, robotPose.get(), robotVelocity.get());
   }
 
   /**
    * Converts shooter properties to a shot velocity vector (X, Y, and Z) which is compatible with
    * visualizers.
    *
-   * @param speed A supplier for the launch speed of the FUEL.
+   * @param speed A supplier for the launch speed of the Basketball.
    * @param pitch A supplier for the pitch of the shooter.
    * @param yaw A supplier for the yaw of the shooter.
    * @param robotPose A supplier for the pose of the drivetrain.
@@ -52,7 +52,7 @@ public interface ShootingAlgorithm {
   static Supplier<double[]> toShotVelocitySupplier(
       DoubleSupplier speed, DoubleSupplier pitch, DoubleSupplier yaw, Supplier<Pose3d> robotPose) {
     return () ->
-        FuelVisualizer.shotVelocity(
+        BasketballVisualizer.shotVelocity(
             speed.getAsDouble(), pitch.getAsDouble(), yaw.getAsDouble(), robotPose.get());
   }
 

@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 import org.sciborgs1155.lib.InputStream;
 import org.sciborgs1155.lib.LoggingUtils;
 import org.sciborgs1155.lib.Tuning;
-import org.sciborgs1155.robot.commands.shooting.FuelVisualizer;
+import org.sciborgs1155.robot.commands.shooting.BasketballVisualizer;
 import org.sciborgs1155.robot.commands.shooting.MovingShot;
 import org.sciborgs1155.robot.commands.shooting.StationaryShooting;
 import org.sciborgs1155.robot.drive.Drive;
@@ -35,7 +35,7 @@ public class Shooting {
   private final MovingShot algorithm = new MovingShot();
   private final Shooter shooter;
   private final Hood hood;
-  private final FuelVisualizer fuelVisualizer;
+  private final BasketballVisualizer basketballVisualizer;
   private final Drive drive;
   private final StationaryShooting stationaryShooting = new StationaryShooting();
 
@@ -46,10 +46,10 @@ public class Shooting {
 
   private Translation2d lastTarget = new Translation2d();
 
-  public Shooting(Shooter shooter, Hood hood, FuelVisualizer fuelVisualizer, Drive drive) {
+  public Shooting(Shooter shooter, Hood hood, BasketballVisualizer basketballVisualizer, Drive drive) {
     this.shooter = shooter;
     this.hood = hood;
-    this.fuelVisualizer = fuelVisualizer;
+    this.basketballVisualizer = basketballVisualizer;
     this.drive = drive;
   }
 
@@ -132,7 +132,7 @@ public class Shooting {
             // TODO: do intake in parallel when done
             Commands.run(
                     () -> {
-                      if (fuelVisualizer != null) fuelVisualizer.launchProjectile();
+                      if (basketballVisualizer != null) basketballVisualizer.launchProjectile();
                     })
                 .deadlineFor(runShooterSuperstructure(() -> calculateShot(target), vx)));
   }
@@ -153,7 +153,7 @@ public class Shooting {
             // TODO: do intake in parallel when done
             Commands.run(
                     () -> {
-                      if (fuelVisualizer != null) fuelVisualizer.launchProjectile();
+                      if (basketballVisualizer != null) basketballVisualizer.launchProjectile();
                     })
                 .deadlineFor(runShooterSuperstructure(() -> calculateShot(target))));
   }
@@ -196,6 +196,6 @@ public class Shooting {
     return shooter
         .runShooter(() -> RADS_TEST.get())
         .alongWith(hood.goTo(() -> HOOD_DEGREES_TEST.get() * Math.PI / 180)) // in radians
-        .alongWith(fuelVisualizer != null ? fuelVisualizer.launchProjectiles() : Commands.none());
+        .alongWith(basketballVisualizer != null ? basketballVisualizer.launchProjectiles() : Commands.none());
   }
 }

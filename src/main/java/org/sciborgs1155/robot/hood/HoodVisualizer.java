@@ -12,15 +12,15 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 public class HoodVisualizer {
   private final Mechanism2d mech;
   private final MechanismLigament2d hood;
-  private final MechanismLigament2d fuelTrajectory; // ask why it is used
+  private final MechanismLigament2d basketballTrajectory; // ask why it is used
   private final String name;
 
   /**
    * @param name The name
    * @param hoodColor The color of the hood viusalizer
-   * @param fuelTrajColor The color of fuel trajectory
+   * @param basketballTrajColor The color of basketball trajectory
    */
-  public HoodVisualizer(String name, Color8Bit hoodColor, Color8Bit fuelTrajColor) {
+  public HoodVisualizer(String name, Color8Bit hoodColor, Color8Bit basketballTrajColor) {
     this.name = name;
 
     mech = new Mechanism2d(100, 100);
@@ -35,8 +35,8 @@ public class HoodVisualizer {
                 3,
                 hoodColor));
 
-    fuelTrajectory =
-        hood.append(new MechanismLigament2d("Fuel Trajectory", 25, 90, 2, fuelTrajColor));
+    basketballTrajectory =
+        hood.append(new MechanismLigament2d("basketball Trajectory", 25, 90, 2, basketballTrajColor));
   }
 
   /**
