@@ -37,9 +37,9 @@ public class RepulsorFieldPlanner {
   public static final List<Obstacle> WALLS =
       List.of(
           new HorizontalObstacle(0.0, 0.5, true),
-          new HorizontalObstacle(FieldConstants.WIDTH.in(Meters), 0.5, false),
+          new HorizontalObstacle(FieldConstants.FIELD_WIDTH, 0.5, false),
           new VerticalObstacle(0.0, 0.5, true),
-          new VerticalObstacle(FieldConstants.LENGTH.in(Meters), 0.5, false));
+          new VerticalObstacle(FieldConstants.FIELD_LENGTH, 0.5, false));
 
   private final List<Obstacle> fixedObstacles = new ArrayList<>();
   private Optional<Translation2d> goalOpt = Optional.empty();

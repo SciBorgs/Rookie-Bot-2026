@@ -51,7 +51,7 @@ public final class VisionConstants {
   public static final double MAX_HEIGHT = 0.305;
   public static final double MAX_ANGLE = Math.PI;
   public static final double MAX_AMBIGUITY = 0.20;
-  public static final double MAX_DISTANCE = FieldConstants.LENGTH.in(Meters) / 2.0;
+  public static final double MAX_DISTANCE = FieldConstants.FIELD_LENGTH / 2.0;
 
   /** TODO: Modify AprilTag information as needed. */
   // Total of n AprilTags
