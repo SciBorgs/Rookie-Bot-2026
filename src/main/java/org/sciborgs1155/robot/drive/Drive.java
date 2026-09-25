@@ -62,9 +62,9 @@ public class Drive extends SubsystemBase {
   private final PIDController leftPidController =
       new PIDController(DrivePID.kP, DrivePID.kI, DrivePID.kD);
   private final PIDController rightPIDController =
-      new PIDController(DrivePID.kP, DrivePID.kI, DrivePID.kP);
+      new PIDController(DrivePID.kP, DrivePID.kI, DrivePID.kD);
   private final PIDController headingPID =
-      new PIDController(HeadingPID.kP, HeadingPID.kP, HeadingPID.kP);
+      new PIDController(HeadingPID.kP, HeadingPID.kI, HeadingPID.kD);
 
   private final DifferentialDrivetrainSim driveSim;
 
@@ -141,9 +141,9 @@ public class Drive extends SubsystemBase {
     final double leftFeedforward = feedforward.calculate(realLeftSpeed);
     final double rightFeedforward = feedforward.calculate(realRightSpeed);
 
-    final double leftPID = leftPidController.calculate(leftEncoder.getVelocity(), realLeftSpeed);
+    final double leftPID = leftPidController.calculate(leftVelocity(), realLeftSpeed);
     final double rightPID =
-        rightPIDController.calculate(rightEncoder.getVelocity(), realRightSpeed);
+        rightPIDController.calculate(rightVelocity(), realRightSpeed);
 
     double leftVoltage = leftPID + leftFeedforward;
     double rightVoltage = rightPID + rightFeedforward;
@@ -211,10 +211,18 @@ public class Drive extends SubsystemBase {
    * @return the robot chasssis speeds
    */
   public ChassisSpeeds robotRelativeChassisSpeeds() {
-    double leftMotorVelocity = leftEncoder.getVelocity();
-    double rightMotorVelocity = rightEncoder.getVelocity();
+    double leftMotorVelocity = leftVelocity();
+    double rightMotorVelocity = rightVelocity();
     return kinematics.toChassisSpeeds(
         new DifferentialDriveWheelSpeeds(leftMotorVelocity, rightMotorVelocity));
+  }
+
+  private double leftVelocity() {
+    return Robot.isReal() ? leftEncoder.getVelocity() : driveSim.getLeftVelocityMetersPerSecond();
+  }
+
+  private double rightVelocity() {
+    return Robot.isReal() ? rightEncoder.getVelocity() : driveSim.getRightVelocityMetersPerSecond();
   }
 
   /**

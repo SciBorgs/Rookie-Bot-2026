@@ -140,10 +140,10 @@ public class BasketballVisualizer extends ProjectileVisualizer {
   /** Models the launch physics of a Basketball projectile. */
   public static class Basketball extends Projectile {
     /** Mass of the Basketball projectile in kilograms. */
-    protected static final double Basketball_MASS = 0.225;
+    protected static final double Basketball_MASS = 0.61; // Original 0.225
 
     /** Radius of the Basketball projectile in meters. */
-    protected static final double Basketball_RADIUS = 0.075;
+    protected static final double Basketball_RADIUS = 0.118; // Original 0.075
 
     protected static final double SCORE_TOLERANCE = 0;
     protected static final double GRAVITY = -9.80665;
