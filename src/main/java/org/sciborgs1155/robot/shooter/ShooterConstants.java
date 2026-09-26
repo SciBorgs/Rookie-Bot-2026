@@ -31,6 +31,7 @@ public class ShooterConstants {
   public static final AngularVelocity IDLE_VELOCITY = RadiansPerSecond.of(5);
   public static final AngularVelocity MAX_VELOCITY = RPM.of(7230);
   public static final double MAX_VOLTAGE = 12.0; // from rebuilt
+  public static final Distance RADIUS = Inches.of(2);
 
   public static final Transform3d CENTER_TO_SHOOTER =
       new Transform3d(Inches.of(5.975), Inches.of(5.975), Inches.of(13.375), new Rotation3d());

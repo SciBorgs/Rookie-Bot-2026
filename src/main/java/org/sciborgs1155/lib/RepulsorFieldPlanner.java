@@ -1,6 +1,5 @@
 package org.sciborgs1155.lib;
 
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
 import static org.sciborgs1155.lib.LoggingUtils.*;
 

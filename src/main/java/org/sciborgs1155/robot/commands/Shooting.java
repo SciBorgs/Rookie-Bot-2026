@@ -46,7 +46,8 @@ public class Shooting {
 
   private Translation2d lastTarget = new Translation2d();
 
-  public Shooting(Shooter shooter, Hood hood, BasketballVisualizer basketballVisualizer, Drive drive) {
+  public Shooting(
+      Shooter shooter, Hood hood, BasketballVisualizer basketballVisualizer, Drive drive) {
     this.shooter = shooter;
     this.hood = hood;
     this.basketballVisualizer = basketballVisualizer;
@@ -196,6 +197,9 @@ public class Shooting {
     return shooter
         .runShooter(() -> RADS_TEST.get())
         .alongWith(hood.goTo(() -> HOOD_DEGREES_TEST.get() * Math.PI / 180)) // in radians
-        .alongWith(basketballVisualizer != null ? basketballVisualizer.launchProjectiles() : Commands.none());
+        .alongWith(
+            basketballVisualizer != null
+                ? basketballVisualizer.launchProjectiles()
+                : Commands.none());
   }
 }

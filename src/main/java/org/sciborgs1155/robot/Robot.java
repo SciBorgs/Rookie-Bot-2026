@@ -1,5 +1,6 @@
 package org.sciborgs1155.robot;
 
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.wpilibj2.command.button.RobotModeTriggers.*;
 import static org.sciborgs1155.robot.Constants.PERIOD;
@@ -9,6 +10,7 @@ import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -26,8 +28,13 @@ import org.sciborgs1155.lib.FaultLogger;
 import org.sciborgs1155.lib.Tracer;
 import org.sciborgs1155.robot.Ports.OI;
 import org.sciborgs1155.robot.commands.Autos;
+import org.sciborgs1155.robot.commands.shooting.BasketballVisualizer;
+import org.sciborgs1155.robot.commands.shooting.ProjectileVisualizer;
+import org.sciborgs1155.robot.commands.shooting.ShootingAlgorithm;
 import org.sciborgs1155.robot.drive.Drive;
+import org.sciborgs1155.robot.hood.Hood;
 import org.sciborgs1155.robot.shooter.Shooter;
+import org.sciborgs1155.robot.shooter.ShooterConstants;
 import org.sciborgs1155.robot.vision.Vision;
 
 /**
@@ -48,6 +55,20 @@ public class Robot extends CommandRobot {
   Drive drive = new Drive();
   private final Vision vision = Vision.create();
   private final Shooter shooter = Shooter.create();
+  private final Hood hood = Hood.create();
+
+  @NotLogged
+  private final ProjectileVisualizer basketballVisualizer =
+      isReal()
+          ? null
+          : new BasketballVisualizer(
+              ShootingAlgorithm.toShotVelocitySupplier(
+                  () -> shooter.getVelocity() * ShooterConstants.RADIUS.in(Meters),
+                  () -> Math.PI / 2 - hood.angle(),
+                  () -> 0.0,
+                  () -> new Pose3d(drive.pose())),
+              () -> new Pose3d(drive.pose()),
+              drive::robotRelativeChassisSpeeds);
 
   // COMMANDS
 
@@ -60,6 +81,13 @@ public class Robot extends CommandRobot {
     super(PERIOD.in(Seconds));
     configureGameBehavior();
     configureBindings();
+
+    if (!isReal()) {
+      addPeriodic(basketballVisualizer::updateLogging, PERIOD.in(Seconds));
+      addPeriodic(basketballVisualizer::updateLaunchSimulation, ProjectileVisualizer.LAUNCH_PERIOD);
+      addPeriodic(
+          basketballVisualizer::updateTrajectorySimulation, ProjectileVisualizer.TRAJECTORY_PERIOD);
+    }
 
     // Warms up pathfinding commands, as the first run could have significant delays.
   }

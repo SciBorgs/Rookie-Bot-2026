@@ -36,7 +36,8 @@ public class HoodVisualizer {
                 hoodColor));
 
     basketballTrajectory =
-        hood.append(new MechanismLigament2d("basketball Trajectory", 25, 90, 2, basketballTrajColor));
+        hood.append(
+            new MechanismLigament2d("basketball Trajectory", 25, 90, 2, basketballTrajColor));
   }
 
   /**

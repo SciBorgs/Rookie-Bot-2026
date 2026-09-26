@@ -38,11 +38,12 @@ public class BasketballVisualizer extends ProjectileVisualizer {
   /**
    * A class that manages the creation, simulation, and logging of simulated Basketball projectiles.
    *
-   * @param launchTranslation a supplier that provides the translation of the Basketball at launch time
+   * @param launchTranslation a supplier that provides the translation of the Basketball at launch
+   *     time
    * @param launchVelocity a supplier that provides the velocity of the Basketball at launch time
    * @param launchRotation a supplier that provides the rotation of the Basketball at launch time
-   * @param launchRotationalVelocity a supplier that provides the rotational velocity of the Basketball at
-   *     launch time
+   * @param launchRotationalVelocity a supplier that provides the rotational velocity of the
+   *     Basketball at launch time
    */
   public BasketballVisualizer(
       Supplier<double[]> launchTranslation,
@@ -59,7 +60,8 @@ public class BasketballVisualizer extends ProjectileVisualizer {
       boolean dragEnabled,
       boolean torqueEnabled,
       boolean liftEnabled) {
-    return new Basketball().config(resolution, weightEnabled, dragEnabled, torqueEnabled, liftEnabled);
+    return new Basketball()
+        .config(resolution, weightEnabled, dragEnabled, torqueEnabled, liftEnabled);
   }
 
   protected static double[] launchTranslation(Pose3d robotPose) {
@@ -127,8 +129,7 @@ public class BasketballVisualizer extends ProjectileVisualizer {
   protected static double[] shooterVelocity(
       double[] shotVelocity, Pose3d robotPose, ChassisSpeeds robotVelocity) {
     double tangentialSpeed =
-        robotVelocity.omegaRadiansPerSecond
-            * Projectile.norm3(robotToShooter(robotPose));
+        robotVelocity.omegaRadiansPerSecond * Projectile.norm3(robotToShooter(robotPose));
     double tangentialDirection = robotPose.getRotation().getZ() + Math.PI / 2.0;
 
     double xVelocity =
@@ -137,6 +138,11 @@ public class BasketballVisualizer extends ProjectileVisualizer {
         robotVelocity.vyMetersPerSecond + tangentialSpeed * Math.sin(tangentialDirection);
 
     return new double[] {xVelocity, yVelocity, 0};
+  }
+
+  public void periodic() {
+    updateLaunchSimulation();
+    updateTrajectorySimulation();
   }
 
   /** Models the launch physics of a Basketball projectile. */
@@ -158,7 +164,15 @@ public class BasketballVisualizer extends ProjectileVisualizer {
 
     /** Multiplied by velocity * angular speed to compute lift force. */
     private static final double LIFT_CONSTANT =
-        4 / 3 * 4 * Math.PI * Math.PI * Basketball_RADIUS * Basketball_RADIUS * Basketball_RADIUS * AIR_DENSITY;
+        4
+            / 3
+            * 4
+            * Math.PI
+            * Math.PI
+            * Basketball_RADIUS
+            * Basketball_RADIUS
+            * Basketball_RADIUS
+            * AIR_DENSITY;
 
     /** Multiplied by angular speed to compute torque. */
     private static final double TORQUE_CONSTANT =
@@ -189,7 +203,9 @@ public class BasketballVisualizer extends ProjectileVisualizer {
     @Override
     protected double[] lift() {
       // https://www1.grc.nasa.gov/beginners-guide-to-aeronautics/ideal-lift-of-a-spinning-ball/
-      return new double[] {0, 0, LIFT_CONSTANT * norm3(velocity) * rotationalVelocity / Basketball_MASS};
+      return new double[] {
+        0, 0, LIFT_CONSTANT * norm3(velocity) * rotationalVelocity / Basketball_MASS
+      };
     }
 
     @Override

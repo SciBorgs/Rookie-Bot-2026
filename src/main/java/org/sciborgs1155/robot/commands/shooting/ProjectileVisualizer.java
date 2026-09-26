@@ -227,6 +227,7 @@ public abstract class ProjectileVisualizer {
       projectile.periodic();
     }
     Tracer.endTrace();
+    updateLogging();
   }
 
   /** Updates the displayed trajectory of the projectile. */
@@ -234,6 +235,7 @@ public abstract class ProjectileVisualizer {
     Tracer.startTrace("trajectory generation");
     trajectory = trajectoryEnabled ? generateTrajectory() : new Pose3d[0];
     Tracer.endTrace();
+    updateLogging();
   }
 
   /**
