@@ -123,7 +123,8 @@ public class Robot extends CommandRobot {
 
   /** Configures trigger -> command bindings. */
   private void configureBindings() {
-    drive.setDefaultCommand(drive.drive(driver::getLeftY, driver::getRightY));
+    drive.setDefaultCommand(
+        drive.arcadeDrive(() -> -driver.getLeftY(), () -> -driver.getRightX()));
     driver
         .x()
         .whileTrue(
