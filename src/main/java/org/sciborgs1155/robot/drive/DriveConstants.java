@@ -25,7 +25,7 @@ public class DriveConstants {
   public static final double POSITION_FACTOR = CIRCUMFERANCE * GEARING;
   public static final double VELOCITY_FACTOR = POSITION_FACTOR / 60.0;
 
-  public static final LinearVelocity MAX_SPEED = MetersPerSecond.of(2); // meters per sec
+  public static final LinearVelocity MAX_SPEED = MetersPerSecond.of(3.5); // meters per sec
 
   public static final Distance TRACK_WIDTH = Meters.of(0.7112);
   public static final double MOI = 7.5;
