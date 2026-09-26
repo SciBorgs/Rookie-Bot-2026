@@ -22,8 +22,9 @@ import java.util.function.Supplier;
 import org.sciborgs1155.lib.InputStream;
 import org.sciborgs1155.lib.LoggingUtils;
 import org.sciborgs1155.lib.Tuning;
-import org.sciborgs1155.robot.commands.shooting.BasketballVisualizer;
+import org.sciborgs1155.robot.FieldConstants;
 import org.sciborgs1155.robot.commands.shooting.MovingShot;
+import org.sciborgs1155.robot.commands.shooting.ProjectileVisualizer;
 import org.sciborgs1155.robot.commands.shooting.StationaryShooting;
 import org.sciborgs1155.robot.drive.Drive;
 import org.sciborgs1155.robot.hood.Hood;
@@ -31,11 +32,14 @@ import org.sciborgs1155.robot.shooter.Shooter;
 
 public class Shooting {
 
+  public static final Translation2d HUB_TARGET =
+      FieldConstants.Hub.TOP_CENTER_POINT.toTranslation2d();
+
   public static final DoubleEntry LATENCY_TIME = Tuning.entry("/ShootingData/Latency Time", 0.1);
   private final MovingShot algorithm = new MovingShot();
   private final Shooter shooter;
   private final Hood hood;
-  private final BasketballVisualizer basketballVisualizer;
+  private final ProjectileVisualizer basketballVisualizer;
   private final Drive drive;
   private final StationaryShooting stationaryShooting = new StationaryShooting();
 
@@ -47,7 +51,7 @@ public class Shooting {
   private Translation2d lastTarget = new Translation2d();
 
   public Shooting(
-      Shooter shooter, Hood hood, BasketballVisualizer basketballVisualizer, Drive drive) {
+      Shooter shooter, Hood hood, ProjectileVisualizer basketballVisualizer, Drive drive) {
     this.shooter = shooter;
     this.hood = hood;
     this.basketballVisualizer = basketballVisualizer;

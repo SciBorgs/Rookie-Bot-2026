@@ -1,6 +1,7 @@
 package org.sciborgs1155.robot;
 
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.wpilibj2.command.button.RobotModeTriggers.*;
 import static org.sciborgs1155.robot.Constants.PERIOD;
@@ -25,9 +26,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import org.littletonrobotics.urcl.URCL;
 import org.sciborgs1155.lib.CommandRobot;
 import org.sciborgs1155.lib.FaultLogger;
+import org.sciborgs1155.lib.InputStream;
 import org.sciborgs1155.lib.Tracer;
 import org.sciborgs1155.robot.Ports.OI;
 import org.sciborgs1155.robot.commands.Autos;
+import org.sciborgs1155.robot.commands.Shooting;
 import org.sciborgs1155.robot.commands.shooting.BasketballVisualizer;
 import org.sciborgs1155.robot.commands.shooting.ProjectileVisualizer;
 import org.sciborgs1155.robot.commands.shooting.ShootingAlgorithm;
@@ -69,6 +72,8 @@ public class Robot extends CommandRobot {
                   () -> new Pose3d(drive.pose())),
               () -> new Pose3d(drive.pose()),
               drive::robotRelativeChassisSpeeds);
+              
+  private final Shooting shooting = new Shooting(shooter, hood, basketballVisualizer, drive);
 
   // COMMANDS
 
@@ -82,14 +87,6 @@ public class Robot extends CommandRobot {
     configureGameBehavior();
     configureBindings();
 
-    if (!isReal()) {
-      addPeriodic(basketballVisualizer::updateLogging, PERIOD.in(Seconds));
-      addPeriodic(basketballVisualizer::updateLaunchSimulation, ProjectileVisualizer.LAUNCH_PERIOD);
-      addPeriodic(
-          basketballVisualizer::updateTrajectorySimulation, ProjectileVisualizer.TRAJECTORY_PERIOD);
-    }
-
-    // Warms up pathfinding commands, as the first run could have significant delays.
   }
 
   @Override
@@ -120,12 +117,22 @@ public class Robot extends CommandRobot {
     } else {
       DriverStation.silenceJoystickConnectionWarning(true);
       addPeriodic(() -> vision.simulationPeriodic(drive.pose()), PERIOD.in(Seconds));
+      addPeriodic(basketballVisualizer::updateLogging, PERIOD.in(Seconds));
+      addPeriodic(basketballVisualizer::updateLaunchSimulation, ProjectileVisualizer.LAUNCH_PERIOD);
+      addPeriodic(
+          basketballVisualizer::updateTrajectorySimulation, ProjectileVisualizer.TRAJECTORY_PERIOD);
     }
-  }
+    }
 
   /** Configures trigger -> command bindings. */
   private void configureBindings() {
     drive.setDefaultCommand(drive.drive(driver::getLeftY, driver::getRightY));
+
+    InputStream fakeVx = InputStream.of(driver::getLeftY).negate().scale(MAX_SPEED.in(MetersPerSecond));
+
+    operator.x().whileTrue(
+      shooting.shootDriving(Shooting.HUB_TARGET, fakeVx)
+    );
   }
 
   /**
