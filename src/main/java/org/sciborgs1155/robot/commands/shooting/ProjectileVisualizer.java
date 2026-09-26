@@ -1,5 +1,7 @@
 package org.sciborgs1155.robot.commands.shooting;
 
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -19,6 +21,7 @@ import org.sciborgs1155.lib.Tracer;
  * @see Projectile
  */
 @SuppressWarnings("PMD.OneDeclarationPerLine")
+@Logged
 public abstract class ProjectileVisualizer {
   private double airTime, launchResolution, trajectoryResolution, cooldown;
   private int scores, misses;
@@ -303,6 +306,7 @@ public abstract class ProjectileVisualizer {
    *
    * @return the generated trajectory of the projectile
    */
+  @NotLogged
   public Pose3d[] trajectory() {
     return trajectory.clone();
   }

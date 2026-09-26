@@ -50,6 +50,10 @@
       "/SmartDashboard/turn quasistatic backward": "Command",
       "/SmartDashboard/turn quasistatic forward": "Command",
       "Robot/autos": "String Chooser",
+      "Robot/drive/gyro": "Gyro",
+      "Robot/drive/headingPID": "PIDController",
+      "Robot/drive/leftPidController": "PIDController",
+      "Robot/drive/rightPIDController": "PIDController",
       "Robot/drive/rotationController": "PIDController",
       "Robot/drive/translationController": "ProfiledPIDController"
     },

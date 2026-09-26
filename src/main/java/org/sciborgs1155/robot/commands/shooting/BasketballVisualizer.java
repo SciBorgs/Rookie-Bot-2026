@@ -2,6 +2,7 @@ package org.sciborgs1155.robot.commands.shooting;
 
 import static org.sciborgs1155.robot.shooter.ShooterConstants.CENTER_TO_SHOOTER;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -14,6 +15,7 @@ import org.sciborgs1155.robot.FieldConstants.Hub;
  *
  * @see Basketball
  */
+@Logged
 public class BasketballVisualizer extends ProjectileVisualizer {
   /**
    * A class that manages the creation, simulation, and logging of simulated Basketball projectiles.
