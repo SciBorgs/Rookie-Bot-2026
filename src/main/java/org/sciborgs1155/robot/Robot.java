@@ -125,16 +125,17 @@ public class Robot extends CommandRobot {
   private void configureBindings() {
     drive.setDefaultCommand(
         drive.arcadeDrive(() -> -driver.getLeftY(), () -> -driver.getRightX()));
-    driver
-        .x()
+    driver.x()
         .whileTrue(
-            Commands.parallel(
-                    shooter.runShooter(() -> shooting.calculateShot(Shooting.HUB_TARGET).rads()),
-                    hood.goTo(() -> shooting.calculateShot(Shooting.HUB_TARGET).hoodAngle()),
-                    basketballVisualizer != null
-                        ? basketballVisualizer.launchProjectiles()
-                        : Commands.none())
-                .withName("Stream Motion Test"));
+            shooting.shootNoDriving(Shooting.HUB_TARGET)
+                .withName("Stationary Auto-Aim")
+        );
+
+    driver.y() 
+        .whileTrue(
+            shooting.shootDriving(Shooting.HUB_TARGET, () -> -driver.getLeftY())
+                .withName("Dynamic Motion Auto-Aim")
+        );
   }
 
   /**

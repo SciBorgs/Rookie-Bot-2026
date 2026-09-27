@@ -83,6 +83,7 @@ public class Drive extends SubsystemBase {
     SparkFlexConfig rightFollowerConfig = new SparkFlexConfig();
 
     odometry = new DifferentialDriveOdometry(new Rotation2d(), 0, 0, new Pose2d());
+    headingPID.enableContinuousInput(-Math.PI, Math.PI); // - pi, and pi are same point on circle
 
     driveSim =
         new DifferentialDrivetrainSim(
@@ -276,7 +277,7 @@ public class Drive extends SubsystemBase {
 
     Rotation2d heading = heading();
     double angle = heading.getRadians();
-    double rotation = headingPID.calculate(angle, targetAngle);
+    double rotation = headingPID.calculate(angle, targetAngle); 
 
     ChassisSpeeds speeds = new ChassisSpeeds(forwardSpeed, 0.0, rotation);
 

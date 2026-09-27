@@ -70,7 +70,7 @@ public class Shooting {
    */
   public ShooterParams calculateShot(Translation2d target) {
     // reflects the target
-    Translation2d reflectedTarget = allianceReflect(target);
+    Translation2d reflectedTarget = target;
 
     // predicted robot pose using latency time
     Pose2d latencyPose =
@@ -98,7 +98,9 @@ public class Shooting {
             .rotateBy(drive.heading())
             .toVector()
             .times(speeds.omegaRadiansPerSecond);
-    Vector<N2> hoodSpeeds = translationSpeeds.plus(rotationSpeeds);
+    //Vector<N2> hoodSpeeds = translationSpeeds.plus(rotationSpeeds);
+
+    Vector<N2> hoodSpeeds = VecBuilder.fill(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
 
     // get displacement from hood to from target
     Translation2d hoodTranslation = hoodPose.getTranslation();
@@ -114,7 +116,7 @@ public class Shooting {
     // get values
     double rads = shotVector.get(0); // hypotenuse
     double hoodAngle = shotVector.get(1);
-    double targetYaw = shotVector.get(2);
+    double targetYaw = shotVector.get(2); 
     LoggingUtils.log("/ShootingData/Distance", hoodTranslation.getDistance(reflectedTarget));
 
     return new ShooterParams(rads, hoodAngle, targetYaw);
@@ -127,19 +129,26 @@ public class Shooting {
    * @param vx Forward speed for tank drive movement
    * @return Command that runs the shooting while moving
    */
+
+   //TODO: CHECK WHY IT SHOOTS ONLY FOR FIRST FEW TIMES
   public Command shootDriving(Translation2d target, InputStream vx) {
     return Commands.waitUntil(
             () ->
-                shooter.atSetpoint()
+            // tolerance
+                Math.abs(shooter.getVelocity() - shooter.setpoint()) < (shooter.setpoint() * 0.05)
                     && shooter.setpoint() > IDLE_VELOCITY.in(RadiansPerSecond)
-                    && hood.atGoal())
+                    && Math.abs(hood.angle() - hood.angleSetpoint()) < 0.035)
+            .andThen(
+            Commands.waitSeconds(0.15) 
+            )        
         .andThen(
-            // TODO: do intake in parallel when done
-            Commands.run(
-                    () -> {
-                      if (basketballVisualizer != null) basketballVisualizer.launchProjectile();
-                    })
-                .deadlineFor(runShooterSuperstructure(() -> calculateShot(target), vx)));
+            Commands.run(() -> {
+              if (basketballVisualizer != null) basketballVisualizer.launchProjectile();
+            })
+        )
+        .deadlineFor(
+            runShooterSuperstructure(() -> calculateShot(target), vx)
+        );
   }
 
   /**
@@ -148,21 +157,25 @@ public class Shooting {
    * @param target The target
    * @return Command that runs the shooting while stationary
    */
+     //TODO: CHECK WHY IT SHOOTS ONLY FOR FIRST FEW TIMES
   public Command shootNoDriving(Translation2d target) {
     return Commands.waitUntil(
             () ->
-                shooter.atSetpoint()
+                Math.abs(shooter.getVelocity() - shooter.setpoint()) < (shooter.setpoint() * 0.05)
                     && shooter.setpoint() > IDLE_VELOCITY.in(RadiansPerSecond)
-                    && hood.atGoal())
+                    && Math.abs(hood.angle() - hood.angleSetpoint()) < 0.035)
+         .andThen(
+            Commands.waitSeconds(0.15) 
+            ) 
         .andThen(
-            // TODO: do intake in parallel when done
-            Commands.run(
-                    () -> {
-                      if (basketballVisualizer != null) basketballVisualizer.launchProjectile();
-                    })
-                .deadlineFor(runShooterSuperstructure(() -> calculateShot(target))));
+            Commands.run(() -> {
+              if (basketballVisualizer != null) basketballVisualizer.launchProjectile();
+            })
+        )
+        .deadlineFor(
+            runShooterSuperstructure(() -> calculateShot(target)) 
+        );
   }
-
   /**
    * Runs the shoter at the rads, hood at the angle, and drive to point at the target angle (for
    * moving while shooting)
@@ -189,7 +202,7 @@ public class Shooting {
     return Commands.parallel(
         shooter.runShooter(() -> params.get().rads),
         hood.goTo(() -> params.get().hoodAngle),
-        Commands.run(() -> drive.pointAtAngle(0, params.get().driveAngle())));
+        Commands.run(() -> drive.pointAtAngle(0, params.get().driveAngle()), drive));
   }
 
   /**
