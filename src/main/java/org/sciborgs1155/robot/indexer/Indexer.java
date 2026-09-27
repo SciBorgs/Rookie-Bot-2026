@@ -79,15 +79,16 @@ public class Indexer extends SubsystemBase {
   public Command forwardDefault() {
     return forward().withTimeout(0.5);
   }
+
   public Command forwardSensor() {
     return forward().until(blocked);
   }
-
 
   public Command unJamDefault() // stop reversing after a period of time
       {
     return reverse().withTimeout(0.5);
   }
+
   public Command unJamSensor() { // stop reversing once beambreak isn't blocked
     return reverse().onlyWhile(blocked);
   }
