@@ -76,21 +76,30 @@ public class Indexer extends SubsystemBase {
 
   // new
 
-  public Command forwardUntilBlocked() {
+  public Command forwardDefault() {
+    return forward().withTimeout(0.5);
+  }
+  public Command forwardSensor() {
     return forward().until(blocked);
   }
+
 
   public Command unJamDefault() // stop reversing after a period of time
       {
     return reverse().withTimeout(0.5);
   }
-
   public Command unJamSensor() { // stop reversing once beambreak isn't blocked
     return reverse().onlyWhile(blocked);
   }
 
   public Command smartUnJam() { // if sensor is unblocked OR time has passed stop reversing
     Command raceCommand = unJamSensor().raceWith(unJamDefault()).andThen(stop());
+
+    return raceCommand;
+  }
+
+  public Command smartForward() { // if sensor is unblocked OR time has passed stop reversing
+    Command raceCommand = forwardSensor().raceWith(unJamDefault()).andThen(stop());
 
     return raceCommand;
   }
