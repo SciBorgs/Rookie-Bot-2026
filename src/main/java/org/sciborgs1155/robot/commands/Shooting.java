@@ -2,7 +2,6 @@ package org.sciborgs1155.robot.commands;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static org.sciborgs1155.robot.Constants.Shooting.MINIMUM_VELOCITY;
-import static org.sciborgs1155.robot.FieldConstants.allianceReflect;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.CENTER_TO_SHOOTER;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.IDLE_VELOCITY;
 
@@ -98,7 +97,7 @@ public class Shooting {
             .rotateBy(drive.heading())
             .toVector()
             .times(speeds.omegaRadiansPerSecond);
-    //Vector<N2> hoodSpeeds = translationSpeeds.plus(rotationSpeeds);
+    // Vector<N2> hoodSpeeds = translationSpeeds.plus(rotationSpeeds);
 
     Vector<N2> hoodSpeeds = VecBuilder.fill(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
 
@@ -116,7 +115,7 @@ public class Shooting {
     // get values
     double rads = shotVector.get(0); // hypotenuse
     double hoodAngle = shotVector.get(1);
-    double targetYaw = shotVector.get(2); 
+    double targetYaw = shotVector.get(2);
     LoggingUtils.log("/ShootingData/Distance", hoodTranslation.getDistance(reflectedTarget));
 
     return new ShooterParams(rads, hoodAngle, targetYaw);
@@ -130,25 +129,21 @@ public class Shooting {
    * @return Command that runs the shooting while moving
    */
 
-   //TODO: CHECK WHY IT SHOOTS ONLY FOR FIRST FEW TIMES
+  // TODO: CHECK WHY IT SHOOTS ONLY FOR FIRST FEW TIMES
   public Command shootDriving(Translation2d target, InputStream vx) {
     return Commands.waitUntil(
             () ->
-            // tolerance
+                // tolerance
                 Math.abs(shooter.getVelocity() - shooter.setpoint()) < (shooter.setpoint() * 0.05)
                     && shooter.setpoint() > IDLE_VELOCITY.in(RadiansPerSecond)
                     && Math.abs(hood.angle() - hood.angleSetpoint()) < 0.035)
-            .andThen(
-            Commands.waitSeconds(0.15) 
-            )        
+        .andThen(Commands.waitSeconds(0.15))
         .andThen(
-            Commands.run(() -> {
-              if (basketballVisualizer != null) basketballVisualizer.launchProjectile();
-            })
-        )
-        .deadlineFor(
-            runShooterSuperstructure(() -> calculateShot(target), vx)
-        );
+            Commands.run(
+                () -> {
+                  if (basketballVisualizer != null) basketballVisualizer.launchProjectile();
+                }))
+        .deadlineFor(runShooterSuperstructure(() -> calculateShot(target), vx));
   }
 
   /**
@@ -157,25 +152,22 @@ public class Shooting {
    * @param target The target
    * @return Command that runs the shooting while stationary
    */
-     //TODO: CHECK WHY IT SHOOTS ONLY FOR FIRST FEW TIMES
+  // TODO: CHECK WHY IT SHOOTS ONLY FOR FIRST FEW TIMES
   public Command shootNoDriving(Translation2d target) {
     return Commands.waitUntil(
             () ->
                 Math.abs(shooter.getVelocity() - shooter.setpoint()) < (shooter.setpoint() * 0.05)
                     && shooter.setpoint() > IDLE_VELOCITY.in(RadiansPerSecond)
                     && Math.abs(hood.angle() - hood.angleSetpoint()) < 0.035)
-         .andThen(
-            Commands.waitSeconds(0.15) 
-            ) 
+        .andThen(Commands.waitSeconds(0.15))
         .andThen(
-            Commands.run(() -> {
-              if (basketballVisualizer != null) basketballVisualizer.launchProjectile();
-            })
-        )
-        .deadlineFor(
-            runShooterSuperstructure(() -> calculateShot(target)) 
-        );
+            Commands.run(
+                () -> {
+                  if (basketballVisualizer != null) basketballVisualizer.launchProjectile();
+                }))
+        .deadlineFor(runShooterSuperstructure(() -> calculateShot(target)));
   }
+
   /**
    * Runs the shoter at the rads, hood at the angle, and drive to point at the target angle (for
    * moving while shooting)

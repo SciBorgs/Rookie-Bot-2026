@@ -143,8 +143,7 @@ public class Drive extends SubsystemBase {
     final double rightFeedforward = feedforward.calculate(realRightSpeed);
 
     final double leftPID = leftPidController.calculate(leftVelocity(), realLeftSpeed);
-    final double rightPID =
-        rightPIDController.calculate(rightVelocity(), realRightSpeed);
+    final double rightPID = rightPIDController.calculate(rightVelocity(), realRightSpeed);
 
     double leftVoltage = leftPID + leftFeedforward;
     double rightVoltage = rightPID + rightFeedforward;
@@ -277,7 +276,7 @@ public class Drive extends SubsystemBase {
 
     Rotation2d heading = heading();
     double angle = heading.getRadians();
-    double rotation = headingPID.calculate(angle, targetAngle); 
+    double rotation = headingPID.calculate(angle, targetAngle);
 
     ChassisSpeeds speeds = new ChassisSpeeds(forwardSpeed, 0.0, rotation);
 

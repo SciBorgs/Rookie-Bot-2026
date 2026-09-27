@@ -123,19 +123,17 @@ public class Robot extends CommandRobot {
 
   /** Configures trigger -> command bindings. */
   private void configureBindings() {
-    drive.setDefaultCommand(
-        drive.arcadeDrive(() -> -driver.getLeftY(), () -> -driver.getRightX()));
-    driver.x()
-        .whileTrue(
-            shooting.shootNoDriving(Shooting.HUB_TARGET)
-                .withName("Stationary Auto-Aim")
-        );
+    drive.setDefaultCommand(drive.arcadeDrive(() -> -driver.getLeftY(), () -> -driver.getRightX()));
+    driver
+        .x()
+        .whileTrue(shooting.shootNoDriving(Shooting.HUB_TARGET).withName("Stationary Auto-Aim"));
 
-    driver.y() 
+    driver
+        .y()
         .whileTrue(
-            shooting.shootDriving(Shooting.HUB_TARGET, () -> -driver.getLeftY())
-                .withName("Dynamic Motion Auto-Aim")
-        );
+            shooting
+                .shootDriving(Shooting.HUB_TARGET, () -> -driver.getLeftY())
+                .withName("Dynamic Motion Auto-Aim"));
   }
 
   /**
