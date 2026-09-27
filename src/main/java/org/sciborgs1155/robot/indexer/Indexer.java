@@ -70,7 +70,8 @@ public class Indexer extends SubsystemBase {
     double clampedPower = MathUtil.clamp(power, -1.0, 1.0);
     return runIndexer(
         clampedPower
-            * IndexerConstants.INDEXER_MAXPOWER); // scale by maxpower so it stays linear but also clamped
+            * IndexerConstants
+                .INDEXER_MAXPOWER); // scale by maxpower so it stays linear but also clamped
   }
 
   // new
@@ -84,7 +85,7 @@ public class Indexer extends SubsystemBase {
   }
 
   public Command unJamDefault() // stop reversing after a period of time
-  {
+      {
     return reverse().withTimeout(0.5);
   }
 
