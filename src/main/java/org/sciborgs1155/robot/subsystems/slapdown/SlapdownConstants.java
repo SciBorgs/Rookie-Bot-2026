@@ -44,6 +44,5 @@ public class SlapdownConstants {
   public static final Angle MAX_ANGLE = Degrees.of(83.7);
   public static final Angle START_ANGLE = MAX_ANGLE;
 
-
   public static final Angle POSITION_TOLERANCE = Radians.of(0.05);
 }

@@ -7,7 +7,6 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.config.SparkBaseConfig;
-
 import java.util.function.DoubleConsumer;
 
 /**
@@ -51,12 +50,11 @@ public class SimpleMotor {
   }
 
   /**
-   * 
    * @param motor controller instance with device ID
    * @param config apply config to motor
    * @return a new simplemotor that controls a sparkflex motor registerred with fault logger
    */
-  public static SimpleMotor spark(SparkFlex motor, SparkBaseConfig config){
+  public static SimpleMotor spark(SparkFlex motor, SparkBaseConfig config) {
     FaultLogger.register(motor);
     motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     return new SimpleMotor(motor::set, motor::setVoltage, motor::close);
