@@ -45,6 +45,8 @@ public class Indexer extends SubsystemBase {
     config.CurrentLimits.SupplyCurrentLimit = IndexerConstants.CURRENT_LIMIT.in(Amps);
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
+
+
     return SimpleMotor.talon(talonIndexer, config);
   }
 
@@ -77,7 +79,7 @@ public class Indexer extends SubsystemBase {
   // new
 
   public Command forwardDefault() {
-    return forward().withTimeout(0.5);
+    return forward().withTimeout(IndexerConstants.timeOut);
   }
 
   public Command forwardSensor() {
@@ -86,7 +88,7 @@ public class Indexer extends SubsystemBase {
 
   public Command unJamDefault() // stop reversing after a period of time
       {
-    return reverse().withTimeout(0.5);
+    return reverse().withTimeout(IndexerConstants.timeOut);
   }
 
   public Command unJamSensor() { // stop reversing once beambreak isn't blocked
