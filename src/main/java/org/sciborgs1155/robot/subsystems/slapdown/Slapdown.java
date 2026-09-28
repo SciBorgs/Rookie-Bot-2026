@@ -55,11 +55,15 @@ public class Slapdown extends SubsystemBase implements AutoCloseable {
 
     sysIdRoutine =
         new SysIdRoutine(
+<<<<<<< HEAD
             new Config(
                 RAMP_RATE,
                 STEP_VOLTAGE,
                 TIME_OUT,
                 (state) -> SignalLogger.writeString("slapdown state", state.toString())),
+=======
+            new Config(RAMP_RATE, STEP_VOLTAGE, TIME_OUT),
+>>>>>>> 22bcc16e4b5f9ee6eb445f9e1ca4c27a54ce9bfc
             new Mechanism(voltage -> hardware.setVoltage(voltage.in(Volts)), null, this));
 
     // sets up commands to test / gather data
@@ -155,8 +159,11 @@ public class Slapdown extends SubsystemBase implements AutoCloseable {
     hardware.setVoltage(pidVoltage + ffVoltage);
   }
 
+<<<<<<< HEAD
   /** */
 
+=======
+>>>>>>> 22bcc16e4b5f9ee6eb445f9e1ca4c27a54ce9bfc
   // turns on live tuning for PID and ff iff TUNING
   @Override
   public void periodic() {
