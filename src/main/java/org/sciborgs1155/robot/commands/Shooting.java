@@ -34,6 +34,8 @@ public class Shooting {
   public static final Translation2d HUB_TARGET =
       FieldConstants.Hub.TOP_CENTER_POINT.toTranslation2d();
 
+   public static final Translation2d LEFT_FEED = FieldConstants.Hub.LEFT_FEED.toTranslation2d();
+
   public static final DoubleEntry LATENCY_TIME = Tuning.entry("/ShootingData/Latency Time", 0.1);
   private final MovingShot algorithm = new MovingShot();
   private final Shooter shooter;
@@ -97,7 +99,7 @@ public class Shooting {
             .rotateBy(drive.heading())
             .toVector()
             .times(speeds.omegaRadiansPerSecond);
-    // Vector<N2> hoodSpeeds = translationSpeeds.plus(rotationSpeeds);
+    //Vector<N2> hoodSpeeds = translationSpeeds.plus(rotationSpeeds);
 
     Vector<N2> hoodSpeeds = VecBuilder.fill(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
 
@@ -159,9 +161,9 @@ public class Shooting {
                 Math.abs(shooter.getVelocity() - shooter.setpoint()) < (shooter.setpoint() * 0.05)
                     && shooter.setpoint() > IDLE_VELOCITY.in(RadiansPerSecond)
                     && Math.abs(hood.angle() - hood.angleSetpoint()) < 0.035)
-        .andThen(Commands.waitSeconds(0.15))
+        .andThen(Commands.waitSeconds(0.15)) //tolerance for ascope
         .andThen(
-            Commands.run(
+            Commands.runOnce(
                 () -> {
                   if (basketballVisualizer != null) basketballVisualizer.launchProjectile();
                 }))
