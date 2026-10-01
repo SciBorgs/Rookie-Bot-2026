@@ -2,6 +2,7 @@ package org.sciborgs1155.robot.commands;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static org.sciborgs1155.robot.Constants.Shooting.MINIMUM_VELOCITY;
+import static org.sciborgs1155.robot.FieldConstants.allianceReflect;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.CENTER_TO_SHOOTER;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.IDLE_VELOCITY;
 
@@ -34,7 +35,7 @@ public class Shooting {
   public static final Translation2d HUB_TARGET =
       FieldConstants.Hub.TOP_CENTER_POINT.toTranslation2d();
 
-   public static final Translation2d LEFT_FEED = FieldConstants.Hub.LEFT_FEED.toTranslation2d();
+  public static final Translation2d LEFT_FEED = FieldConstants.Hub.LEFT_FEED.toTranslation2d();
 
   public static final DoubleEntry LATENCY_TIME = Tuning.entry("/ShootingData/Latency Time", 0.1);
   private final MovingShot algorithm = new MovingShot();
@@ -50,7 +51,6 @@ public class Shooting {
       Tuning.entry("/ShootingData/Hood Angle", 30.0);
 
   private Translation2d lastTarget = new Translation2d();
-  private double lastTargetAngle = 0.0;
 
   public Shooting(
       Shooter shooter, Hood hood, ProjectileVisualizer basketballVisualizer, Drive drive) {
@@ -72,7 +72,7 @@ public class Shooting {
    */
   public ShooterParams calculateShot(Translation2d target) {
     // reflects the target
-    Translation2d reflectedTarget = target;
+    Translation2d reflectedTarget = allianceReflect(target);
 
     // predicted robot pose using latency time
     Pose2d latencyPose =
@@ -90,17 +90,6 @@ public class Shooting {
     LoggingUtils.log("/ShootingData/Projected Hood Pose", hoodPose, Pose2d.struct);
 
     ChassisSpeeds speeds = drive.fieldRelativeChassisSpeeds();
-    Vector<N2> translationSpeeds =
-        VecBuilder.fill(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
-
-    Vector<N2> rotationSpeeds =
-        CENTER_TO_SHOOTER
-            .getTranslation()
-            .toTranslation2d()
-            .rotateBy(drive.heading())
-            .toVector()
-            .times(speeds.omegaRadiansPerSecond);
-    //Vector<N2> hoodSpeeds = translationSpeeds.plus(rotationSpeeds);
 
     Vector<N2> hoodSpeeds = VecBuilder.fill(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
 
@@ -115,18 +104,17 @@ public class Shooting {
             ? algorithm.calculate(displacement, hoodSpeeds)
             : stationaryShooting.calculate(displacement, VecBuilder.fill(0, 0));
 
-    // get x, y, z from vector 
+    // get x, y, z from vector
     double vx = shotVector.get(0);
     double vy = shotVector.get(1);
     double vz = shotVector.get(2);
 
-    // get the values 
-    double rads = shotVector.norm(); 
+    // get the values
+    double rads = shotVector.norm();
     double hoodAngle = Math.atan2(vz, Math.hypot(vx, vy));
     double fieldYaw = Math.atan2(vy, vx);
     double targetYaw = fieldYaw - drive.pose().getRotation().getRadians();
 
-    lastTargetAngle = targetYaw;
     LoggingUtils.log("/ShootingData/Distance", hoodTranslation.getDistance(reflectedTarget));
 
     return new ShooterParams(rads, hoodAngle, targetYaw);
@@ -139,8 +127,6 @@ public class Shooting {
    * @param vx Forward speed for tank drive movement
    * @return Command that runs the shooting while moving
    */
-
-  // TODO: CHECK WHY IT SHOOTS ONLY FOR FIRST FEW TIMES
   public Command shootDriving(Translation2d target, InputStream vx) {
     return Commands.waitUntil(
             () ->
@@ -164,19 +150,21 @@ public class Shooting {
    * @return Command that runs the shooting while stationary
    */
   public Command shootNoDriving(Translation2d target) {
-    return Commands.waitUntil(() -> 
-        Math.abs(shooter.getVelocity() - shooter.setpoint()) < (shooter.setpoint() * 0.05) 
-        && shooter.setpoint() > IDLE_VELOCITY.in(RadiansPerSecond) 
-        && Math.abs(hood.angle() - hood.angleSetpoint()) < 0.035
-    )
-    .andThen(Commands.waitSeconds(0.15)) // tolerance for ascope
-    .andThen(Commands.runOnce(() -> {
-        if (basketballVisualizer != null) {
-            basketballVisualizer.launchProjectile();
-        }
-    }))
-    .deadlineFor(runShooterSuperstructure(() -> calculateShot(target)));
-}
+    return Commands.waitUntil(
+            () ->
+                Math.abs(shooter.getVelocity() - shooter.setpoint()) < (shooter.setpoint() * 0.05)
+                    && shooter.setpoint() > IDLE_VELOCITY.in(RadiansPerSecond)
+                    && Math.abs(hood.angle() - hood.angleSetpoint()) < 0.035)
+        .andThen(Commands.waitSeconds(0.15)) // tolerance for ascope
+        .andThen(
+            Commands.runOnce(
+                () -> {
+                  if (basketballVisualizer != null) {
+                    basketballVisualizer.launchProjectile();
+                  }
+                }))
+        .deadlineFor(runShooterSuperstructure(() -> calculateShot(target)));
+  }
 
   /**
    * Runs the shoter at the rads, hood at the angle, and drive to point at the target angle (for

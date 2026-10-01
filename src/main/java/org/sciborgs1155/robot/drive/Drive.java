@@ -38,11 +38,9 @@ import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
-
 import org.sciborgs1155.lib.Tuning;
 import org.sciborgs1155.robot.Constants;
 import org.sciborgs1155.robot.Ports;
@@ -54,9 +52,12 @@ import org.sciborgs1155.robot.drive.DriveConstants.HeadingPID;
 @Logged
 public class Drive extends SubsystemBase {
 
-  public static final DoubleEntry headingKP = Tuning.entry("/drive/heading/P", DriveConstants.HeadingPID.kP);
-  public static final DoubleEntry headingKI = Tuning.entry("/drive/heading/I", DriveConstants.HeadingPID.kP);
-  public static final DoubleEntry headingKD = Tuning.entry("/drive/heading/D", DriveConstants.HeadingPID.kP);
+  public static final DoubleEntry headingKP =
+      Tuning.entry("/drive/heading/P", DriveConstants.HeadingPID.kP);
+  public static final DoubleEntry headingKI =
+      Tuning.entry("/drive/heading/I", DriveConstants.HeadingPID.kP);
+  public static final DoubleEntry headingKD =
+      Tuning.entry("/drive/heading/D", DriveConstants.HeadingPID.kP);
 
   private final SparkFlex rightLeader = new SparkFlex(RIGHT_LEADER, MotorType.kBrushless);
   private final SparkFlex rightFollower = new SparkFlex(RIGHT_FOLLOWER, MotorType.kBrushless);
@@ -297,6 +298,4 @@ public class Drive extends SubsystemBase {
 
     setChassisSpeeds(speeds);
   }
-
-
 }
