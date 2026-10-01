@@ -35,7 +35,7 @@ public class HoodConstants {
   public static class ControlConstants {
     public static final double P = 10;
     public static final double I = 0;
-    public static final double D = .2;
+    public static final double D = 0.2;
 
     public static final double S = 0;
     public static final double V = 0;

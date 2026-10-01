@@ -64,7 +64,7 @@ public class Drive extends SubsystemBase {
   private final PIDController rightPIDController =
       new PIDController(DrivePID.kP, DrivePID.kI, DrivePID.kP);
   private final PIDController headingPID =
-      new PIDController(HeadingPID.kP, HeadingPID.kP, HeadingPID.kP);
+      new PIDController(HeadingPID.kP, HeadingPID.kI, HeadingPID.kD);
 
   private final DifferentialDrivetrainSim driveSim;
 
