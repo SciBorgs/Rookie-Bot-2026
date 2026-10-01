@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
+import static org.sciborgs1155.robot.Constants.TUNING;
 import static org.sciborgs1155.robot.Ports.Drive.LEFT_FOLLOWER;
 import static org.sciborgs1155.robot.Ports.Drive.LEFT_LEADER;
 import static org.sciborgs1155.robot.Ports.Drive.RIGHT_FOLLOWER;
@@ -33,12 +34,16 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
+
+import org.sciborgs1155.lib.Tuning;
 import org.sciborgs1155.robot.Constants;
 import org.sciborgs1155.robot.Ports;
 import org.sciborgs1155.robot.Robot;
@@ -48,6 +53,10 @@ import org.sciborgs1155.robot.drive.DriveConstants.HeadingPID;
 
 @Logged
 public class Drive extends SubsystemBase {
+
+  public static final DoubleEntry headingKP = Tuning.entry("/drive/heading/P", DriveConstants.HeadingPID.kP);
+  public static final DoubleEntry headingKI = Tuning.entry("/drive/heading/I", DriveConstants.HeadingPID.kP);
+  public static final DoubleEntry headingKD = Tuning.entry("/drive/heading/D", DriveConstants.HeadingPID.kP);
 
   private final SparkFlex rightLeader = new SparkFlex(RIGHT_LEADER, MotorType.kBrushless);
   private final SparkFlex rightFollower = new SparkFlex(RIGHT_FOLLOWER, MotorType.kBrushless);
@@ -201,6 +210,12 @@ public class Drive extends SubsystemBase {
             ? gyro.getRotation2d()
             : driveSim.getHeading()); // returns roation2D for simulated robot
     field2d.setRobotPose(pose());
+
+    if (TUNING) {
+      headingPID.setP(headingKP.get());
+      headingPID.setI(headingKI.get());
+      headingPID.setD(headingKD.get());
+    }
   }
 
   /**
@@ -282,4 +297,6 @@ public class Drive extends SubsystemBase {
 
     setChassisSpeeds(speeds);
   }
+
+
 }

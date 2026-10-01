@@ -25,13 +25,15 @@ public class StationaryShooting implements ShootingAlgorithm {
     Translation2d target = displacement.toTranslation2d();
     double distance = target.getNorm();
 
+    double targetFieldHeading = target.getAngle().getRadians(); // Angle to hub
+
     Translation3d result =
         new Translation3d(
             DISTANCE_TO_RADS.get(distance) + SIGGYS_CONSTANT.get(),
             new Rotation3d(
                 0,
                 -DISTANCE_TO_HOOD_ANGLE.get(distance).getRadians(),
-                target.getAngle().getRadians()));
+                targetFieldHeading));
 
     return result.toVector();
   }
