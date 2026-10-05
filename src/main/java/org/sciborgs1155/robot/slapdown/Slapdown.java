@@ -1,9 +1,9 @@
-package org.sciborgs1155.robot.subsystems.slapdown;
+package org.sciborgs1155.robot.slapdown;
 
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Volts;
 import static org.sciborgs1155.robot.Constants.TUNING;
-import static org.sciborgs1155.robot.subsystems.slapdown.SlapdownConstants.*;
+import static org.sciborgs1155.robot.slapdown.SlapdownConstants.*;
 
 import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.epilogue.Logged;
@@ -55,15 +55,12 @@ public class Slapdown extends SubsystemBase implements AutoCloseable {
 
     sysIdRoutine =
         new SysIdRoutine(
-<<<<<<< HEAD
             new Config(
                 RAMP_RATE,
                 STEP_VOLTAGE,
                 TIME_OUT,
                 (state) -> SignalLogger.writeString("slapdown state", state.toString())),
-=======
-            new Config(RAMP_RATE, STEP_VOLTAGE, TIME_OUT),
->>>>>>> 22bcc16e4b5f9ee6eb445f9e1ca4c27a54ce9bfc
+
             new Mechanism(voltage -> hardware.setVoltage(voltage.in(Volts)), null, this));
 
     // sets up commands to test / gather data
@@ -159,11 +156,6 @@ public class Slapdown extends SubsystemBase implements AutoCloseable {
     hardware.setVoltage(pidVoltage + ffVoltage);
   }
 
-<<<<<<< HEAD
-  /** */
-
-=======
->>>>>>> 22bcc16e4b5f9ee6eb445f9e1ca4c27a54ce9bfc
   // turns on live tuning for PID and ff iff TUNING
   @Override
   public void periodic() {

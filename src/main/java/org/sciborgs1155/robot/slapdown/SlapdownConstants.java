@@ -1,4 +1,4 @@
-package org.sciborgs1155.robot.subsystems.slapdown;
+package org.sciborgs1155.robot.slapdown;
 
 import static edu.wpi.first.units.Units.*;
 

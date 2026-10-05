@@ -1,9 +1,9 @@
-package org.sciborgs1155.robot.subsystems.slapdown;
+package org.sciborgs1155.robot.slapdown;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Radians;
 import static org.sciborgs1155.robot.Ports.Slapdown.*;
-import static org.sciborgs1155.robot.subsystems.slapdown.SlapdownConstants.*;
+import static org.sciborgs1155.robot.slapdown.SlapdownConstants.*;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;

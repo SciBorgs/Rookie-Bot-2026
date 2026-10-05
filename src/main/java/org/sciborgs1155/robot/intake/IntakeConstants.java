@@ -1,4 +1,4 @@
-package org.sciborgs1155.robot.subsystems.intake;
+package org.sciborgs1155.robot.intake;
 
 import static edu.wpi.first.units.Units.*;
 

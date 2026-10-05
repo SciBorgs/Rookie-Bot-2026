@@ -1,10 +1,10 @@
-package org.sciborgs1155.robot.subsystems.slapdown;
+package org.sciborgs1155.robot.slapdown;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Seconds;
 import static org.sciborgs1155.robot.Constants.PERIOD;
-import static org.sciborgs1155.robot.subsystems.slapdown.SlapdownConstants.*;
+import static org.sciborgs1155.robot.slapdown.SlapdownConstants.*;
 
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 

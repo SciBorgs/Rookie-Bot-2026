@@ -1,9 +1,9 @@
-package org.sciborgs1155.robot.subsystems.intake;
+package org.sciborgs1155.robot.intake;
 
 import static edu.wpi.first.units.Units.Amps;
 import static org.sciborgs1155.robot.Ports.Intake.*;
-import static org.sciborgs1155.robot.subsystems.intake.IntakeConstants.CURRENT_LIMIT;
-import static org.sciborgs1155.robot.subsystems.intake.IntakeConstants.INTAKE_POWER;
+import static org.sciborgs1155.robot.intake.IntakeConstants.CURRENT_LIMIT;
+import static org.sciborgs1155.robot.intake.IntakeConstants.INTAKE_POWER;
 
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
