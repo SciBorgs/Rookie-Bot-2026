@@ -1,5 +1,7 @@
 package org.sciborgs1155.robot;
 
+import static java.util.Map.entry;
+
 import java.util.Map;
 
 public final class Ports {
@@ -7,11 +9,11 @@ public final class Ports {
 
   public static final Map<Integer, String> ID_TO_NAME =
       Map.ofEntries(
-          Map.entry(Drive.RIGHT_LEADER, "Right Leader"),
-          Map.entry(Drive.RIGHT_FOLLOWER, "Right Follower drive"),
-          Map.entry(Drive.LEFT_FOLLOWER, "Left_Follower"),
-          Map.entry(Drive.LEFT_LEADER, "Left Leader"),
-          Map.entry(Drive.GYRO_CHANNEL, "Gyro Channel"));
+          entry(Drive.RIGHT_LEADER, "RL Drive"),
+          entry(Drive.RIGHT_FOLLOWER, "RF Drive"),
+          entry(Drive.LEFT_FOLLOWER, "LF Drive"),
+          entry(Drive.LEFT_LEADER, "LL Drive"),
+          entry(Drive.GYRO_CHANNEL, "Gyro "));
 
   public static final class OI {
     public static final int OPERATOR = 0;

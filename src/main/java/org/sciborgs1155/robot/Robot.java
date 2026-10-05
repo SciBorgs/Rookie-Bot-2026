@@ -2,6 +2,7 @@ package org.sciborgs1155.robot;
 
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.wpilibj2.command.button.RobotModeTriggers.*;
+import static org.sciborgs1155.robot.Constants.DEADBAND;
 import static org.sciborgs1155.robot.Constants.PERIOD;
 import static org.sciborgs1155.robot.drive.DriveConstants.*;
 
@@ -9,6 +10,7 @@ import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -45,7 +47,7 @@ public class Robot extends CommandRobot {
   private final PowerDistribution pdh = new PowerDistribution();
 
   // SUBSYSTEMS
-  Drive drive = new Drive();
+  private final Drive drive = new Drive();
   private final Vision vision = Vision.create();
   private final Shooter shooter = Shooter.create();
 
@@ -97,7 +99,10 @@ public class Robot extends CommandRobot {
 
   /** Configures trigger -> command bindings. */
   private void configureBindings() {
-    drive.setDefaultCommand(drive.drive(driver::getLeftY, driver::getRightY));
+    drive.setDefaultCommand(
+        drive.drive(
+            () -> MathUtil.applyDeadband(driver.getLeftY(), DEADBAND),
+            () -> MathUtil.applyDeadband(driver.getRightY(), DEADBAND)));
   }
 
   /**
@@ -119,5 +124,14 @@ public class Robot extends CommandRobot {
               driver.getHID().setRumble(rumbleType, 0);
               operator.getHID().setRumble(rumbleType, 0);
             });
+  }
+
+  @Override
+  public void close() {
+    super.close();
+    try {
+      drive.close();
+    } catch (Exception e) {
+    }
   }
 }

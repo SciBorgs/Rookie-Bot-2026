@@ -58,7 +58,6 @@ public class Constants {
   }
 
   public static final Time PERIOD = Seconds.of(0.02); // roborio tickrate (s)
-  public static final Time ODOMETRY_PERIOD = Seconds.of(1.0 / 100.0); // 10 ms (speedy!)
   public static final double DEADBAND = 0.2;
   public static final double SLOW_SPEED_MULTIPLIER = 0.33;
   public static final double FULL_SPEED_MULTIPLIER = 1.0;
@@ -79,17 +78,6 @@ public class Constants {
     public static final InterpolatingDoubleTreeMap DISTANCE_TO_TOF =
         new InterpolatingDoubleTreeMap();
     public static final InterpolatingTreeMap<Double, Rotation2d> DISTANCE_TO_HOOD_ANGLE =
-        new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
-    public static final InterpolatingDoubleTreeMap DISTANCE_TO_HORIZONTAL_VELOCITY =
-        new InterpolatingDoubleTreeMap();
-    public static final InterpolatingDoubleTreeMap VELOCITY_TO_RADS =
-        new InterpolatingDoubleTreeMap();
-    public static final InterpolatingTreeMap<Double, Rotation2d> VELOCITY_TO_HOOD_ANGLE =
-        new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
-
-    public static final InterpolatingDoubleTreeMap DISTANCE_TO_RADS_HOOP =
-        new InterpolatingDoubleTreeMap();
-    public static final InterpolatingTreeMap DISTANCE_TO_HOOD_HOOP =
         new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
   }
 }
