@@ -60,7 +60,6 @@ public class Slapdown extends SubsystemBase implements AutoCloseable {
                 STEP_VOLTAGE,
                 TIME_OUT,
                 (state) -> SignalLogger.writeString("slapdown state", state.toString())),
-
             new Mechanism(voltage -> hardware.setVoltage(voltage.in(Volts)), null, this));
 
     // sets up commands to test / gather data
