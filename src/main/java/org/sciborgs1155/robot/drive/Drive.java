@@ -308,11 +308,18 @@ public class Drive extends SubsystemBase {
     setChassisSpeeds(speeds);
   }
 
+  /**
+   * @return motor velocity
+   */
   public double driveVelocity() {
-    return Robot.isReal() ? leftEncoder.getVelocity() / GEARING * WHEEL_RADIUS.in(Meters) * 2 * Math.PI : driveSim.getLeftVelocityMetersPerSecond();
-
+    return Robot.isReal()
+        ? leftEncoder.getVelocity() / GEARING * WHEEL_RADIUS.in(Meters) * 2 * Math.PI
+        : driveSim.getLeftVelocityMetersPerSecond();
   }
 
+  /**
+   * @return setpoint of PID
+   */
   public double driveVelocitySetpoint() {
     return leftPidController.getSetpoint();
   }
