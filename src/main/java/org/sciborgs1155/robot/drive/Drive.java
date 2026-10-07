@@ -53,11 +53,20 @@ import org.sciborgs1155.robot.drive.DriveConstants.HeadingPID;
 public class Drive extends SubsystemBase {
 
   public static final DoubleEntry headingKP =
-      Tuning.entry("/drive/heading/P", DriveConstants.HeadingPID.kP);
+      Tuning.entry("/tuning/drive/heading/P", DriveConstants.HeadingPID.kP);
   public static final DoubleEntry headingKI =
-      Tuning.entry("/drive/heading/I", DriveConstants.HeadingPID.kP);
+      Tuning.entry("/tuning/drive/heading/I", DriveConstants.HeadingPID.kP);
   public static final DoubleEntry headingKD =
-      Tuning.entry("/drive/heading/D", DriveConstants.HeadingPID.kP);
+      Tuning.entry("/tuning/drive/heading/D", DriveConstants.HeadingPID.kP);
+
+  public static final DoubleEntry driveKP =
+      Tuning.entry("/tuning/drive/drive/P", DriveConstants.DrivePID.kP);
+  public static final DoubleEntry driveKI =
+      Tuning.entry("/tuning/drive/drive/I", DriveConstants.DrivePID.kP);
+  public static final DoubleEntry driveKD =
+      Tuning.entry("/tuning/drive/drive/D", DriveConstants.DrivePID.kP);
+  public static final DoubleEntry driveKV =
+      Tuning.entry("/tuning/drive/drive/V", DriveConstants.FF.kV);
 
   private final SparkFlex rightLeader = new SparkFlex(RIGHT_LEADER, MotorType.kBrushless);
   private final SparkFlex rightFollower = new SparkFlex(RIGHT_FOLLOWER, MotorType.kBrushless);
@@ -152,6 +161,7 @@ public class Drive extends SubsystemBase {
     final double leftFeedforward = feedforward.calculate(realLeftSpeed);
     final double rightFeedforward = feedforward.calculate(realRightSpeed);
 
+    System.out.println(realLeftSpeed);
     final double leftPID = leftPidController.calculate(leftVelocity(), realLeftSpeed);
     final double rightPID = rightPIDController.calculate(rightVelocity(), realRightSpeed);
 
@@ -181,7 +191,7 @@ public class Drive extends SubsystemBase {
           double leftSpeed = forward.getAsDouble() - rotation.getAsDouble();
           double rightSpeed = forward.getAsDouble() + rotation.getAsDouble();
           double scale = Math.max(1.0, Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed)));
-          drive(leftSpeed / scale, rightSpeed / scale);
+          drive(leftSpeed * scale, rightSpeed * scale);
         });
   }
 
@@ -290,12 +300,20 @@ public class Drive extends SubsystemBase {
     double forwardSpeed =
         vx * MAX_SPEED.in(MetersPerSecond); // Might need to change the speed limit
 
-    Rotation2d heading = heading();
-    double angle = heading.getRadians();
+    double angle = heading().getRadians();
     double rotation = headingPID.calculate(angle, targetAngle);
 
     ChassisSpeeds speeds = new ChassisSpeeds(forwardSpeed, 0.0, rotation);
 
     setChassisSpeeds(speeds);
+  }
+
+  public double driveVelocity() {
+    return Robot.isReal() ? leftEncoder.getVelocity() / GEARING * WHEEL_RADIUS.in(Meters) * 2 * Math.PI : driveSim.getLeftVelocityMetersPerSecond();
+
+  }
+
+  public double driveVelocitySetpoint() {
+    return leftPidController.getSetpoint();
   }
 }
