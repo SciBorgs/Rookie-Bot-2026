@@ -43,19 +43,19 @@ public class DriveConstants {
   }; // fake vales
 
   public static final class FF {
-    public static final double kS = 1;
-    public static final double kV = 3;
+    public static final double kS = 0;
+    public static final double kV = 1.659;
   }
 
   // change values
   public static final class HeadingPID {
-    public static final double kP = 2.0;
+    public static final double kP = 0.0;
     public static final double kI = 0.0;
-    public static final double kD = 0.15;
+    public static final double kD = 0.0;
   }
 
   public static final class DrivePID {
-    public static final double kP = 8.5;
+    public static final double kP = 5.0;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
   }

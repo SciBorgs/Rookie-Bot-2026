@@ -161,7 +161,6 @@ public class Drive extends SubsystemBase {
     final double leftFeedforward = feedforward.calculate(realLeftSpeed);
     final double rightFeedforward = feedforward.calculate(realRightSpeed);
 
-    System.out.println(realLeftSpeed);
     final double leftPID = leftPidController.calculate(leftVelocity(), realLeftSpeed);
     final double rightPID = rightPIDController.calculate(rightVelocity(), realRightSpeed);
 
@@ -185,13 +184,10 @@ public class Drive extends SubsystemBase {
   }
 
   /** Drives with a forward/reverse input and a left/right rotation input. */
-  public Command arcadeDrive(DoubleSupplier forward, DoubleSupplier rotation) {
+  public Command arcadeDrive(DoubleSupplier left, DoubleSupplier right) {
     return run(
         () -> {
-          double leftSpeed = forward.getAsDouble() - rotation.getAsDouble();
-          double rightSpeed = forward.getAsDouble() + rotation.getAsDouble();
-          double scale = Math.max(1.0, Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed)));
-          drive(leftSpeed * scale, rightSpeed * scale);
+          drive(left.getAsDouble(), right.getAsDouble());
         });
   }
 
@@ -226,6 +222,15 @@ public class Drive extends SubsystemBase {
       headingPID.setP(headingKP.get());
       headingPID.setI(headingKI.get());
       headingPID.setD(headingKD.get());
+
+      leftPidController.setP(driveKP.get());
+      leftPidController.setI(driveKI.get());
+      leftPidController.setD(driveKD.get());
+      rightPIDController.setP(driveKP.get());
+      rightPIDController.setI(driveKI.get());
+      rightPIDController.setD(driveKD.get());
+
+      feedforward.setKv(driveKV.get());
     }
   }
 
@@ -252,14 +257,6 @@ public class Drive extends SubsystemBase {
     double rightMotorVelocity = rightVelocity();
     return kinematics.toChassisSpeeds(
         new DifferentialDriveWheelSpeeds(leftMotorVelocity, rightMotorVelocity));
-  }
-
-  private double leftVelocity() {
-    return Robot.isReal() ? leftEncoder.getVelocity() : driveSim.getLeftVelocityMetersPerSecond();
-  }
-
-  private double rightVelocity() {
-    return Robot.isReal() ? rightEncoder.getVelocity() : driveSim.getRightVelocityMetersPerSecond();
   }
 
   /**
@@ -311,16 +308,26 @@ public class Drive extends SubsystemBase {
   /**
    * @return motor velocity
    */
-  public double driveVelocity() {
+  public double leftVelocity() {
     return Robot.isReal()
         ? leftEncoder.getVelocity() / GEARING * WHEEL_RADIUS.in(Meters) * 2 * Math.PI
         : driveSim.getLeftVelocityMetersPerSecond();
   }
 
+  public double rightVelocity() {
+    return Robot.isReal()
+        ? rightEncoder.getVelocity() / GEARING * WHEEL_RADIUS.in(Meters) * 2 * Math.PI
+        : driveSim.getRightVelocityMetersPerSecond();
+  }
+
   /**
    * @return setpoint of PID
    */
-  public double driveVelocitySetpoint() {
+  public double leftVelocitySetpoint() {
     return leftPidController.getSetpoint();
+  }
+
+  public double rightVelocitySetpoint() {
+    return rightPIDController.getSetpoint();
   }
 }
