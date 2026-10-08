@@ -123,7 +123,7 @@ public class Robot extends CommandRobot {
 
   /** Configures trigger -> command bindings. */
   private void configureBindings() {
-    drive.setDefaultCommand(drive.arcadeDrive(() -> -driver.getLeftY(), () -> -driver.getRightY()));
+    drive.setDefaultCommand(drive.drive(() -> -driver.getLeftY(), () -> -driver.getRightY()));
     driver
         .x()
         .whileTrue(shooting.shootNoDriving(Shooting.HUB_TARGET).withName("Stationary Auto-Aim"));

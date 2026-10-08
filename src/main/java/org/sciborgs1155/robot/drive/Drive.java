@@ -184,10 +184,13 @@ public class Drive extends SubsystemBase {
   }
 
   /** Drives with a forward/reverse input and a left/right rotation input. */
-  public Command arcadeDrive(DoubleSupplier left, DoubleSupplier right) {
+   public Command arcadeDrive(DoubleSupplier forward, DoubleSupplier rotation) {
     return run(
         () -> {
-          drive(left.getAsDouble(), right.getAsDouble());
+          double leftSpeed = forward.getAsDouble() - rotation.getAsDouble();
+          double rightSpeed = forward.getAsDouble() + rotation.getAsDouble();
+          double scale = Math.max(1.0, Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed)));
+          drive(leftSpeed * scale, rightSpeed * scale);
         });
   }
 
