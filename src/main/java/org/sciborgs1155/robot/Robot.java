@@ -127,6 +127,8 @@ public class Robot extends CommandRobot {
     driver
         .x()
         .whileTrue(shooting.shootNoDriving(Shooting.HUB_TARGET).withName("Stationary Auto-Aim"));
+    driver.y().whileTrue(shooter.runShooter(150).withName("PID Tune"));
+
   }
 
   /**
