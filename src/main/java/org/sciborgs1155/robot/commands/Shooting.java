@@ -2,7 +2,6 @@ package org.sciborgs1155.robot.commands;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static org.sciborgs1155.robot.Constants.Shooting.MINIMUM_VELOCITY;
-import static org.sciborgs1155.robot.FieldConstants.allianceReflect;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.CENTER_TO_SHOOTER;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.IDLE_VELOCITY;
 
@@ -71,8 +70,6 @@ public class Shooting {
    * @return
    */
   public ShooterParams calculateShot(Translation2d target) {
-    // reflects the target
-    Translation2d reflectedTarget = allianceReflect(target);
 
     // predicted robot pose using latency time
     Pose2d latencyPose =
@@ -95,8 +92,7 @@ public class Shooting {
 
     // get displacement from hood to from target
     Translation2d hoodTranslation = hoodPose.getTranslation();
-    Translation3d displacement =
-        new Translation3d(reflectedTarget.minus(hoodPose.getTranslation()));
+    Translation3d displacement = new Translation3d(target.minus(hoodPose.getTranslation()));
 
     // run shooting alg
     Vector<N3> shotVector =
@@ -113,9 +109,9 @@ public class Shooting {
     double rads = shotVector.norm();
     double hoodAngle = Math.atan2(vz, Math.hypot(vx, vy));
     double fieldYaw = Math.atan2(vy, vx);
-    double targetYaw = fieldYaw - drive.pose().getRotation().getRadians();
+    double targetYaw = fieldYaw;
 
-    LoggingUtils.log("/ShootingData/Distance", hoodTranslation.getDistance(reflectedTarget));
+    LoggingUtils.log("/ShootingData/Distance", hoodTranslation.getDistance(target));
 
     return new ShooterParams(rads, hoodAngle, targetYaw);
   }

@@ -336,5 +336,5 @@ public class Drive extends SubsystemBase {
 
   public double getHeadingSetpoint() {
     return headingPID.getSetpoint();
-}
+  }
 }
