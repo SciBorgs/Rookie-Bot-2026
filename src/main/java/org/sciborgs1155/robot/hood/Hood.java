@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
+import static org.sciborgs1155.robot.Constants.TUNING;
 import static org.sciborgs1155.robot.hood.HoodConstants.DEFAULT_ANGLE;
 import static org.sciborgs1155.robot.hood.HoodConstants.MAX_ACCEL;
 import static org.sciborgs1155.robot.hood.HoodConstants.MAX_ANGLE;
@@ -19,6 +20,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import java.util.function.DoubleSupplier;
+import org.sciborgs1155.lib.Tuning;
 import org.sciborgs1155.robot.Robot;
 import org.sciborgs1155.robot.hood.HoodConstants.*;
 
@@ -44,6 +47,14 @@ public class Hood extends SubsystemBase implements AutoCloseable {
   private final ArmFeedforward ff =
       new ArmFeedforward(
           ControlConstants.S, ControlConstants.G, ControlConstants.V, ControlConstants.A);
+
+  public static final DoubleEntry hoodP = Tuning.entry("/tuning/hood/hood/P", ControlConstants.P);
+  public static final DoubleEntry hoodI = Tuning.entry("/tuning/hood/hood//I", ControlConstants.I);
+  public static final DoubleEntry hoodD = Tuning.entry("/tuning/hood/hood//D", ControlConstants.D);
+  public static final DoubleEntry hoodV = Tuning.entry("/tuning/hood/hood//V", ControlConstants.V);
+  public static final DoubleEntry hoodS = Tuning.entry("/tuning/hood/hood/S", ControlConstants.S);
+  public static final DoubleEntry hoodA = Tuning.entry("/tuning/hood/hood/A", ControlConstants.A);
+  public static final DoubleEntry hoodG = Tuning.entry("/tuning/hood/hood/G", ControlConstants.G);
 
   private final SysIdRoutine sysIdRoutine;
 
@@ -173,4 +184,17 @@ public class Hood extends SubsystemBase implements AutoCloseable {
 
   @Override
   public void close() throws Exception {}
+
+  @Override
+  public void periodic() {
+    if (TUNING) {
+      controller.setP(hoodP.get());
+      controller.setI(hoodI.get());
+      controller.setD(hoodD.get());
+      ff.setKs(hoodS.get());
+      ff.setKg(hoodG.get());
+      ff.setKv(hoodV.get());
+      ff.setKa(hoodA.get());
+    }
+  }
 }

@@ -55,16 +55,16 @@ public class Drive extends SubsystemBase {
   public static final DoubleEntry headingKP =
       Tuning.entry("/tuning/drive/heading/P", DriveConstants.HeadingPID.kP);
   public static final DoubleEntry headingKI =
-      Tuning.entry("/tuning/drive/heading/I", DriveConstants.HeadingPID.kP);
+      Tuning.entry("/tuning/drive/heading/I", DriveConstants.HeadingPID.kI);
   public static final DoubleEntry headingKD =
-      Tuning.entry("/tuning/drive/heading/D", DriveConstants.HeadingPID.kP);
+      Tuning.entry("/tuning/drive/heading/D", DriveConstants.HeadingPID.kD);
 
   public static final DoubleEntry driveKP =
       Tuning.entry("/tuning/drive/drive/P", DriveConstants.DrivePID.kP);
   public static final DoubleEntry driveKI =
-      Tuning.entry("/tuning/drive/drive/I", DriveConstants.DrivePID.kP);
+      Tuning.entry("/tuning/drive/drive/I", DriveConstants.DrivePID.kI);
   public static final DoubleEntry driveKD =
-      Tuning.entry("/tuning/drive/drive/D", DriveConstants.DrivePID.kP);
+      Tuning.entry("/tuning/drive/drive/D", DriveConstants.DrivePID.kD);
   public static final DoubleEntry driveKV =
       Tuning.entry("/tuning/drive/drive/V", DriveConstants.FF.kV);
 
@@ -184,7 +184,7 @@ public class Drive extends SubsystemBase {
   }
 
   /** Drives with a forward/reverse input and a left/right rotation input. */
-   public Command arcadeDrive(DoubleSupplier forward, DoubleSupplier rotation) {
+  public Command arcadeDrive(DoubleSupplier forward, DoubleSupplier rotation) {
     return run(
         () -> {
           double leftSpeed = forward.getAsDouble() - rotation.getAsDouble();

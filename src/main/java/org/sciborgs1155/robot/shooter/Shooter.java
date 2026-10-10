@@ -1,6 +1,7 @@
 package org.sciborgs1155.robot.shooter;
 
 import static edu.wpi.first.units.Units.*;
+import static org.sciborgs1155.robot.Constants.TUNING;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.IDLE_VELOCITY;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.MAX_VELOCITY;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.MAX_VOLTAGE;
@@ -10,12 +11,14 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import java.util.function.DoubleSupplier;
+import org.sciborgs1155.lib.Tuning;
 import org.sciborgs1155.robot.Robot;
 import org.sciborgs1155.robot.shooter.ShooterConstants.VelocityControl;
 
@@ -29,6 +32,19 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
       new PIDController(VelocityControl.P, VelocityControl.I, VelocityControl.D);
   private final SimpleMotorFeedforward ff =
       new SimpleMotorFeedforward(VelocityControl.S, VelocityControl.V, VelocityControl.A);
+
+  public static final DoubleEntry shooterP =
+      Tuning.entry("/tuning/shooter/shooter/P", VelocityControl.P);
+  public static final DoubleEntry shooterI =
+      Tuning.entry("/tuning/shooter/shooter/I", VelocityControl.I);
+  public static final DoubleEntry shooterD =
+      Tuning.entry("/tuning/shooter/shooter/D", VelocityControl.D);
+  public static final DoubleEntry shooterV =
+      Tuning.entry("/tuning/shooter/shooter/V", VelocityControl.V);
+  public static final DoubleEntry shooterS =
+      Tuning.entry("/tuning/shooter/shooter/S", VelocityControl.S);
+  public static final DoubleEntry shooterA =
+      Tuning.entry("/tuning/shooter/shooter/A", VelocityControl.V);
 
   public Shooter(WheelIO hardware) {
     this.hardware = hardware;
@@ -138,5 +154,18 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
   @Override
   public void close() throws Exception {
     hardware.close();
+  }
+
+  @Override
+  public void periodic() {
+    if (TUNING) {
+      controller.setP(shooterP.get());
+      controller.setI(shooterI.get());
+      controller.setD(shooterD.get());
+
+      ff.setKv(shooterV.get());
+      ff.setKs(shooterS.get());
+      ff.setKa(shooterA.get());
+    }
   }
 }
