@@ -333,4 +333,8 @@ public class Drive extends SubsystemBase {
   public double rightVelocitySetpoint() {
     return rightPIDController.getSetpoint();
   }
+
+  public double getHeadingSetpoint() {
+    return headingPID.getSetpoint();
+}
 }
