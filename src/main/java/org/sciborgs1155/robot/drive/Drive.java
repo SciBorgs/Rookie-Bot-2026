@@ -340,10 +340,10 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Checks if drive is aligned to hub by comapring target angle to heading 
-   * 
+   * Checks if drive is aligned to hub by comapring target angle to heading
+   *
    * @param targetAngle desired angle in rads
-   * @return boolean to see if drive is aligned to hub 
+   * @return boolean to see if drive is aligned to hub
    */
   public boolean isAligned(double targetAngle) {
     double angleError =

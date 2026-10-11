@@ -127,12 +127,12 @@ public class Shooting {
     return Commands.waitUntil(
             () ->
                 // tolerance
-                Math.abs(shooter.getVelocity() - shooter.setpoint()) < (shooter.setpoint() * 0.05)
+                shooter.atVelocity(shooter.setpoint())
                     && shooter.setpoint() > IDLE_VELOCITY.in(RadiansPerSecond)
-                    && Math.abs(hood.angle() - hood.angleSetpoint()) < 0.035)
-        .andThen(Commands.waitSeconds(0.15))
+                    && hood.atPosition(hood.angleSetpoint())
+                    && drive.isAligned(calculateShot(target).driveAngle()))
         .andThen(
-            Commands.run(
+            Commands.runOnce(
                 () -> {
                   if (basketballVisualizer != null) basketballVisualizer.launchProjectile();
                 }))
@@ -148,11 +148,10 @@ public class Shooting {
   public Command shootNoDriving(Translation2d target) {
     return Commands.waitUntil(
             () ->
-                Math.abs(shooter.getVelocity() - shooter.setpoint()) < (shooter.setpoint() * 0.05)
+                shooter.atVelocity(shooter.setpoint())
                     && shooter.setpoint() > IDLE_VELOCITY.in(RadiansPerSecond)
-                    && Math.abs(hood.angle() - hood.angleSetpoint()) < 0.035
+                    && hood.atPosition(hood.angleSetpoint())
                     && drive.isAligned(calculateShot(target).driveAngle()))
-        .andThen(Commands.waitSeconds(0.15)) // tolerance for ascope
         .andThen(
             Commands.runOnce(
                 () -> {

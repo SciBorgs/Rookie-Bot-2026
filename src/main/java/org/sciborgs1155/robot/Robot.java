@@ -127,6 +127,14 @@ public class Robot extends CommandRobot {
     driver
         .x()
         .whileTrue(shooting.shootNoDriving(Shooting.HUB_TARGET).withName("Stationary Auto-Aim"));
+
+    // SOTM (prolly gonna delete this later as its not going to be used)
+    driver
+        .y()
+        .whileTrue(
+            shooting
+                .shootDriving(Shooting.HUB_TARGET, () -> driver.getLeftY())
+                .withName("Auto-Aim"));
   }
 
   /**
