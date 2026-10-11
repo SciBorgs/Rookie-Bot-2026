@@ -150,7 +150,8 @@ public class Shooting {
             () ->
                 Math.abs(shooter.getVelocity() - shooter.setpoint()) < (shooter.setpoint() * 0.05)
                     && shooter.setpoint() > IDLE_VELOCITY.in(RadiansPerSecond)
-                    && Math.abs(hood.angle() - hood.angleSetpoint()) < 0.035)
+                    && Math.abs(hood.angle() - hood.angleSetpoint()) < 0.035
+                    && drive.isAligned(calculateShot(target).driveAngle()))
         .andThen(Commands.waitSeconds(0.15)) // tolerance for ascope
         .andThen(
             Commands.runOnce(

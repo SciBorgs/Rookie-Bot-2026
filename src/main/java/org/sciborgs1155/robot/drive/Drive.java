@@ -25,6 +25,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -336,5 +337,19 @@ public class Drive extends SubsystemBase {
 
   public double getHeadingSetpoint() {
     return headingPID.getSetpoint();
+  }
+
+  /**
+   * Checks if drive is aligned to hub by comapring target angle to heading 
+   * 
+   * @param targetAngle desired angle in rads
+   * @return boolean to see if drive is aligned to hub 
+   */
+  public boolean isAligned(double targetAngle) {
+    double angleError =
+        MathUtil.angleModulus(
+            heading().getRadians()
+                - targetAngle); // calculates shortest distance of two angles in a circle
+    return Math.abs(angleError) < 0.05;
   }
 }
