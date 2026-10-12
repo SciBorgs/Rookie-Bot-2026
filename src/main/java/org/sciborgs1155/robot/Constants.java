@@ -80,33 +80,17 @@ public class Constants {
         new InterpolatingDoubleTreeMap();
     public static final InterpolatingTreeMap<Double, Rotation2d> DISTANCE_TO_HOOD_ANGLE =
         new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
-    public static final InterpolatingDoubleTreeMap DISTANCE_TO_HORIZONTAL_VELOCITY =
-        new InterpolatingDoubleTreeMap();
-    public static final InterpolatingDoubleTreeMap VELOCITY_TO_RADS =
-        new InterpolatingDoubleTreeMap();
-    public static final InterpolatingTreeMap<Double, Rotation2d> VELOCITY_TO_HOOD_ANGLE =
-        new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
-
-    public static final InterpolatingDoubleTreeMap DISTANCE_TO_RADS_HOOP =
-        new InterpolatingDoubleTreeMap();
-    public static final InterpolatingTreeMap DISTANCE_TO_HOOD_HOOP =
-        new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
 
     public static void put(double dist, double degIncline, double speed, double tof) {
       Rotation2d hoodAngle = Rotation2d.fromDegrees(degIncline);
       DISTANCE_TO_HOOD_ANGLE.put(dist, hoodAngle);
       DISTANCE_TO_RADS.put(dist, speed);
       DISTANCE_TO_TOF.put(dist, tof);
-
-      double velocity = dist / tof;
-      DISTANCE_TO_HORIZONTAL_VELOCITY.put(dist, velocity);
-      VELOCITY_TO_RADS.put(velocity, speed);
-      VELOCITY_TO_HOOD_ANGLE.put(velocity, hoodAngle);
     }
 
     static {
-      put(2.460, 15, 140, 0.98);
-      put(2.555, 15, 147, 1.0);
+      put(2.465, 15, 140, 0.98);
+      put(2.984, 20, 145, 1.0);
       put(3.022, 26, 135, 1.0);
       put(3.309, 28, 138, 0.98);
       put(4.079, 30, 147, 1.34);

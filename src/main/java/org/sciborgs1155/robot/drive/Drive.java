@@ -42,10 +42,12 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
+import org.sciborgs1155.lib.LoggingUtils;
 import org.sciborgs1155.lib.Tuning;
 import org.sciborgs1155.robot.Constants;
 import org.sciborgs1155.robot.Ports;
 import org.sciborgs1155.robot.Robot;
+import org.sciborgs1155.robot.commands.Shooting;
 import org.sciborgs1155.robot.drive.DriveConstants.DrivePID;
 import org.sciborgs1155.robot.drive.DriveConstants.FF;
 import org.sciborgs1155.robot.drive.DriveConstants.HeadingPID;
@@ -221,6 +223,9 @@ public class Drive extends SubsystemBase {
             ? gyro.getRotation2d()
             : driveSim.getHeading()); // returns roation2D for simulated robot
     field2d.setRobotPose(pose());
+
+    double targetDistance = pose().getTranslation().getDistance(Shooting.HUB_TARGET);
+    LoggingUtils.log("/ShootingData/Distance", targetDistance);
 
     if (TUNING) {
       headingPID.setP(headingKP.get());
