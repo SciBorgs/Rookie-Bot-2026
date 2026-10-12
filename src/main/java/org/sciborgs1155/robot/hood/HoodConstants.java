@@ -16,7 +16,7 @@ import edu.wpi.first.units.measure.Voltage;
 public class HoodConstants {
   public static final Current SUPPLY_LIMIT = Amps.of(30);
   public static final Current STATOR_LIMIT = Amps.of(30);
-  public static final double Gear_RATIO = 10.0; // FOR NOW
+  public static final double GEAR_RATIO = 10.0; // FOR NOW
   public static final Angle MIN_ANGLE = Degrees.of(15);
   public static final Angle MAX_ANGLE = Degrees.of(53);
   public static final Mass MASS = Pounds.of(1.307);

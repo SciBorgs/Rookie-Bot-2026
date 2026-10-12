@@ -2,8 +2,8 @@ package org.sciborgs1155.robot.hood;
 
 import static edu.wpi.first.units.Units.Amps;
 import static org.sciborgs1155.robot.Ports.Shooter.HOOD_MOTOR;
-import static org.sciborgs1155.robot.shooter.ShooterConstants.GEAR_RATIO;
-import static org.sciborgs1155.robot.shooter.ShooterConstants.STATOR_CURRENT_LIMIT;
+import static org.sciborgs1155.robot.hood.HoodConstants.GEAR_RATIO;
+import static org.sciborgs1155.robot.hood.HoodConstants.STATOR_LIMIT;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
@@ -28,7 +28,7 @@ public class RealHood implements HoodIO {
     config = new SparkFlexConfig();
 
     config.inverted(true); // will delete this if motor doen't need to be inverted (look at CAD)
-    config.smartCurrentLimit((int) STATOR_CURRENT_LIMIT.in(Amps));
+    config.smartCurrentLimit((int) STATOR_LIMIT.in(Amps));
 
     config.idleMode(IdleMode.kBrake);
 
