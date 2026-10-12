@@ -1,6 +1,7 @@
 package org.sciborgs1155.robot.shooter;
 
 import static edu.wpi.first.units.Units.*;
+import static org.sciborgs1155.robot.Constants.TUNING;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.IDLE_VELOCITY;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.MAX_VELOCITY;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.MAX_VOLTAGE;
@@ -17,12 +18,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import java.util.function.DoubleSupplier;
-
 import org.sciborgs1155.lib.Tuning;
 import org.sciborgs1155.robot.Robot;
 import org.sciborgs1155.robot.shooter.ShooterConstants.VelocityControl;
-
-import static org.sciborgs1155.robot.Constants.TUNING;
 
 public class Shooter extends SubsystemBase implements AutoCloseable {
 
@@ -47,7 +45,6 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
       Tuning.entry("/tuning/shooter/shooter/S", VelocityControl.S);
   public static final DoubleEntry shooterA =
       Tuning.entry("/tuning/shooter/shooter/A", VelocityControl.V);
-
 
   public Shooter(WheelIO hardware) {
     this.hardware = hardware;
@@ -159,7 +156,7 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
     hardware.close();
   }
 
- @Override
+  @Override
   public void periodic() {
     if (TUNING) {
       controller.setP(shooterP.get());
