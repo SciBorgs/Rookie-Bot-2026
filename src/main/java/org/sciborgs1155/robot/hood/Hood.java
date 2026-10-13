@@ -49,9 +49,9 @@ public class Hood extends SubsystemBase implements AutoCloseable {
           ControlConstants.S, ControlConstants.G, ControlConstants.V, ControlConstants.A);
 
   public static final DoubleEntry hoodP = Tuning.entry("/tuning/hood/hood/P", ControlConstants.P);
-  public static final DoubleEntry hoodI = Tuning.entry("/tuning/hood/hood//I", ControlConstants.I);
-  public static final DoubleEntry hoodD = Tuning.entry("/tuning/hood/hood//D", ControlConstants.D);
-  public static final DoubleEntry hoodV = Tuning.entry("/tuning/hood/hood//V", ControlConstants.V);
+  public static final DoubleEntry hoodI = Tuning.entry("/tuning/hood/hood/I", ControlConstants.I);
+  public static final DoubleEntry hoodD = Tuning.entry("/tuning/hood/hood/D", ControlConstants.D);
+  public static final DoubleEntry hoodV = Tuning.entry("/tuning/hood/hood/V", ControlConstants.V);
   public static final DoubleEntry hoodS = Tuning.entry("/tuning/hood/hood/S", ControlConstants.S);
   public static final DoubleEntry hoodA = Tuning.entry("/tuning/hood/hood/A", ControlConstants.A);
   public static final DoubleEntry hoodG = Tuning.entry("/tuning/hood/hood/G", ControlConstants.G);
