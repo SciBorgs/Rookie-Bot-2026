@@ -26,7 +26,6 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
 
   private final WheelIO hardware;
   private final SysIdRoutine characterization;
-  private double lastVelocityTarget = 0.0;
 
   private final PIDController controller =
       new PIDController(VelocityControl.P, VelocityControl.I, VelocityControl.D);
@@ -44,7 +43,7 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
   public static final DoubleEntry shooterS =
       Tuning.entry("/tuning/shooter/shooter/S", VelocityControl.S);
   public static final DoubleEntry shooterA =
-      Tuning.entry("/tuning/shooter/shooter/A", VelocityControl.V);
+      Tuning.entry("/tuning/shooter/shooter/A", VelocityControl.A);
 
   public Shooter(WheelIO hardware) {
     this.hardware = hardware;
@@ -96,8 +95,7 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
             velocitySetpoint,
             -MAX_VELOCITY.in(RadiansPerSecond),
             MAX_VELOCITY.in(RadiansPerSecond));
-    double ffVolts = ff.calculateWithVelocities(lastVelocityTarget, velocity);
-    lastVelocityTarget = velocity;
+    double ffVolts = ff.calculate(velocity);
     double pidVolts = controller.calculate(getVelocity(), velocity);
     hardware.setVoltage(MathUtil.clamp(pidVolts + ffVolts, -MAX_VOLTAGE, MAX_VOLTAGE));
   }
