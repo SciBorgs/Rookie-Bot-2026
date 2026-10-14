@@ -9,6 +9,7 @@ import static org.sciborgs1155.robot.hood.HoodConstants.DEFAULT_ANGLE;
 import static org.sciborgs1155.robot.hood.HoodConstants.MAX_ACCEL;
 import static org.sciborgs1155.robot.hood.HoodConstants.MAX_ANGLE;
 import static org.sciborgs1155.robot.hood.HoodConstants.MAX_VELOCITY;
+import static org.sciborgs1155.robot.hood.HoodConstants.MAX_VOLTAGE;
 import static org.sciborgs1155.robot.hood.HoodConstants.MIN_ANGLE;
 import static org.sciborgs1155.robot.hood.HoodConstants.POSITION_TOLERANCE;
 import static org.sciborgs1155.robot.hood.HoodConstants.RAMP_RATE;
@@ -23,6 +24,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -47,6 +50,12 @@ public class Hood extends SubsystemBase implements AutoCloseable {
   private final ArmFeedforward ff =
       new ArmFeedforward(
           ControlConstants.S, ControlConstants.G, ControlConstants.V, ControlConstants.A);
+
+  private final HoodVisualizer measurement =
+      new HoodVisualizer("measurement", new Color8Bit(Color.kBlue), new Color8Bit(Color.kDarkBlue));
+
+  private final HoodVisualizer setpoint =
+      new HoodVisualizer("setpoint", new Color8Bit(Color.kOrange), new Color8Bit(Color.kOrangeRed));
 
   public static final DoubleEntry hoodP = Tuning.entry("/tuning/hood/hood/P", ControlConstants.P);
   public static final DoubleEntry hoodI = Tuning.entry("/tuning/hood/hood/I", ControlConstants.I);
@@ -159,12 +168,13 @@ public class Hood extends SubsystemBase implements AutoCloseable {
    *
    * @param position The deisred position of the hood
    */
-  public void update(double position) {
+  private void update(double position) {
     double goal = MathUtil.clamp(position, MIN_ANGLE.in(Radians), MAX_ANGLE.in(Radians));
     double PIDCalculations = controller.calculate(angle(), goal);
     double ffCalculations =
         ff.calculate(controller.getSetpoint().position, controller.getSetpoint().velocity);
-    hardware.setVoltage((PIDCalculations + ffCalculations));
+    hardware.setVoltage(
+        MathUtil.clamp(PIDCalculations + ffCalculations, -MAX_VOLTAGE, MAX_VOLTAGE));
   }
 
   /**

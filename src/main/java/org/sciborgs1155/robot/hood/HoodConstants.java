@@ -31,6 +31,7 @@ public class HoodConstants {
   public static final Angle POSITION_TOLERANCE = Radians.of(0.01);
   public static final Angle SHOOTING_ANGLE_OFFSET = Degrees.of(90);
   public static final Angle DEFAULT_ANGLE = STARTING_ANGLE;
+  public static final double MAX_VOLTAGE = 12.0;
 
   public static class ControlConstants {
     public static final double P = 10;
