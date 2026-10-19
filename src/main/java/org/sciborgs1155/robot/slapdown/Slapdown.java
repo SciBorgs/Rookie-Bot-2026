@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import org.sciborgs1155.lib.Tuning;
+import org.sciborgs1155.robot.Robot;
 
 public class Slapdown extends SubsystemBase implements AutoCloseable {
 
@@ -40,6 +41,20 @@ public class Slapdown extends SubsystemBase implements AutoCloseable {
 
   /** routine for recording + analyzing motor dataq */
   private final SysIdRoutine sysIdRoutine;
+
+  
+  /**
+   * @return real slapdown if slapdown is real
+   */
+  public static Slapdown create() {
+    return new Slapdown(Robot.isReal() ? new RealSlapdown() : new SimSlapdown());
+  }
+  /**
+   * @return
+   */
+  public static Slapdown none(){
+    return new Slapdown(new NoSlapdown());
+  }
 
   /**
    * @param hardware object will be operated on

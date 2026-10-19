@@ -15,8 +15,6 @@ import org.sciborgs1155.lib.FaultLogger;
 
 public class RealSlapdown implements SlapdownIO {
 
-  // place holder variable
-  private static final boolean inverted = false;
 
   SparkFlex motor;
 
@@ -28,11 +26,12 @@ public class RealSlapdown implements SlapdownIO {
     config.smartCurrentLimit((int) CURRENT_LIMIT.in(Amps));
     config.idleMode(IdleMode.kBrake);
 
-    // not sure if inverted or not
-    config.inverted(inverted);
+    config.inverted(false);
 
     motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     motor.getEncoder().setPosition(MAX_ANGLE.in(Radians));
+
+    config.encoder.positionConversionFactor(GEARING);
 
     FaultLogger.register(motor);
   }
@@ -49,6 +48,6 @@ public class RealSlapdown implements SlapdownIO {
 
   @Override
   public double position() {
-    return motor.getEncoder().getPosition();
+    return motor.getEncoder().getPosition() * Math.PI * 2;
   }
 }

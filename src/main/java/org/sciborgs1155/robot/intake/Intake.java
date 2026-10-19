@@ -16,9 +16,6 @@ import org.sciborgs1155.robot.Robot;
 
 public class Intake extends SubsystemBase implements AutoCloseable {
 
-  // place holder variable
-  private static final boolean inverted = false;
-
   // hardware init
   private final SimpleMotor hardware;
 
@@ -43,8 +40,7 @@ public class Intake extends SubsystemBase implements AutoCloseable {
     config.smartCurrentLimit((int) CURRENT_LIMIT.in(Amps));
     config.idleMode(IdleMode.kBrake);
 
-    // not sure if inverted or not
-    config.inverted(inverted);
+    config.inverted(false);
 
     return SimpleMotor.spark(motor, config);
   }
@@ -77,6 +73,7 @@ public class Intake extends SubsystemBase implements AutoCloseable {
   public Command outtake() {
     return spin(-INTAKE_POWER);
   }
+
 
   /**
    * @return stop motors
