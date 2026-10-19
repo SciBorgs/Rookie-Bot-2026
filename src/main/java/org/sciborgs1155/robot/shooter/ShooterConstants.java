@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
@@ -23,10 +22,6 @@ public class ShooterConstants {
   public static final double MOI = 0.01; // Moment of Intertia
 
   // copied from rebuilt
-  public static final Distance HOOD_RADIUS = Inches.of(9.29);
-  public static final Angle MIN_ANGLE = Degrees.of(15);
-  public static final Angle MAX_ANGLE = Degrees.of(15);
-  public static final Angle STARING_ANGLE = MIN_ANGLE;
   public static final AngularVelocity VELOCITY_TOLERANCE = RadiansPerSecond.of(1);
   public static final AngularVelocity IDLE_VELOCITY = RadiansPerSecond.of(5);
   public static final AngularVelocity MAX_VELOCITY = RPM.of(7230);

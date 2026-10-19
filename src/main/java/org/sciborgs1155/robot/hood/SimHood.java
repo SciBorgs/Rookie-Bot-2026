@@ -7,9 +7,9 @@ import static org.sciborgs1155.robot.Constants.PERIOD;
 import static org.sciborgs1155.robot.hood.HoodConstants.GEAR_RATIO;
 import static org.sciborgs1155.robot.hood.HoodConstants.HOOD_RADIUS;
 import static org.sciborgs1155.robot.hood.HoodConstants.MAX_ANGLE;
+import static org.sciborgs1155.robot.hood.HoodConstants.MIN_ANGLE;
 import static org.sciborgs1155.robot.hood.HoodConstants.MOI;
 import static org.sciborgs1155.robot.hood.HoodConstants.STARTING_ANGLE;
-import static org.sciborgs1155.robot.shooter.ShooterConstants.MIN_ANGLE;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
