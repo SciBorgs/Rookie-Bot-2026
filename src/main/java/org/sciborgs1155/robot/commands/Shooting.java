@@ -22,7 +22,6 @@ import org.sciborgs1155.lib.InputStream;
 import org.sciborgs1155.lib.LoggingUtils;
 import org.sciborgs1155.lib.Tuning;
 import org.sciborgs1155.robot.FieldConstants;
-import org.sciborgs1155.robot.commands.shooting.MovingShot;
 import org.sciborgs1155.robot.commands.shooting.ProjectileVisualizer;
 import org.sciborgs1155.robot.commands.shooting.StationaryShooting;
 import org.sciborgs1155.robot.drive.Drive;
@@ -37,12 +36,11 @@ public class Shooting {
   public static final Translation2d LEFT_FEED = FieldConstants.Hub.LEFT_FEED.toTranslation2d();
 
   public static final DoubleEntry LATENCY_TIME = Tuning.entry("/ShootingData/Latency Time", 0.1);
-  private final MovingShot algorithm = new MovingShot();
+  private final StationaryShooting algorithm = new StationaryShooting();
   private final Shooter shooter;
   private final Hood hood;
   private final ProjectileVisualizer basketballVisualizer;
   private final Drive drive;
-  private final StationaryShooting stationaryShooting = new StationaryShooting();
 
   // for shooting test
   public static final DoubleEntry RADS_TEST = Tuning.entry("/ShootingData/RADS", 100.0);
@@ -94,11 +92,10 @@ public class Shooting {
     Translation2d hoodTranslation = hoodPose.getTranslation();
     Translation3d displacement = new Translation3d(target.minus(hoodPose.getTranslation()));
 
+
+    System.out.println("displacement: " + displacement + " hoodSpeeds: " + hoodSpeeds);
     // run shooting alg
-    Vector<N3> shotVector =
-        hoodSpeeds.norm() > MINIMUM_VELOCITY
-            ? algorithm.calculate(displacement, hoodSpeeds)
-            : stationaryShooting.calculate(displacement, VecBuilder.fill(0, 0));
+    Vector<N3> shotVector = algorithm.calculate(displacement, hoodSpeeds);
 
     // get x, y, z from vector
     double vx = shotVector.get(0);
@@ -114,29 +111,6 @@ public class Shooting {
     LoggingUtils.log("/ShootingData/Distance", hoodTranslation.getDistance(target));
 
     return new ShooterParams(rads, hoodAngle, targetYaw);
-  }
-
-  /**
-   * Shoots while moving
-   *
-   * @param target The Target
-   * @param vx Forward speed for tank drive movement
-   * @return Command that runs the shooting while moving
-   */
-  public Command shootDriving(Translation2d target, InputStream vx) {
-    return Commands.waitUntil(
-            () ->
-                // tolerance
-                shooter.atVelocity(shooter.setpoint())
-                    && shooter.setpoint() > IDLE_VELOCITY.in(RadiansPerSecond)
-                    && hood.atPosition(hood.angleSetpoint())
-                    && drive.isAligned(calculateShot(target).driveAngle()))
-        .andThen(
-            Commands.runOnce(
-                () -> {
-                  if (basketballVisualizer != null) basketballVisualizer.launchProjectile();
-                }))
-        .deadlineFor(runShooterSuperstructure(() -> calculateShot(target), vx));
   }
 
   /**
@@ -160,21 +134,6 @@ public class Shooting {
                   }
                 }))
         .deadlineFor(runShooterSuperstructure(() -> calculateShot(target)));
-  }
-
-  /**
-   * Runs the shoter at the rads, hood at the angle, and drive to point at the target angle (for
-   * moving while shooting)
-   *
-   * @param params Shooter Params that contain flywheel rads, hood and drive angle
-   * @param vx forward speed
-   * @return Command to run shooter at the rads, hood at angle, and drive at target anlge
-   */
-  private Command runShooterSuperstructure(Supplier<ShooterParams> params, InputStream vx) {
-    return Commands.parallel(
-        shooter.runShooter(() -> params.get().rads),
-        hood.goTo(() -> params.get().hoodAngle),
-        Commands.run(() -> drive.pointAtAngle(vx.get(), params.get().driveAngle()), drive));
   }
 
   /**

@@ -76,24 +76,26 @@ public class Constants {
 
     public static final InterpolatingDoubleTreeMap DISTANCE_TO_RADS =
         new InterpolatingDoubleTreeMap();
-    public static final InterpolatingDoubleTreeMap DISTANCE_TO_TOF =
-        new InterpolatingDoubleTreeMap();
     public static final InterpolatingTreeMap<Double, Rotation2d> DISTANCE_TO_HOOD_ANGLE =
         new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Rotation2d::interpolate);
 
-    public static void put(double dist, double degIncline, double speed, double tof) {
+    public static void put(double dist, double degIncline, double speed) {
       Rotation2d hoodAngle = Rotation2d.fromDegrees(degIncline);
       DISTANCE_TO_HOOD_ANGLE.put(dist, hoodAngle);
       DISTANCE_TO_RADS.put(dist, speed);
-      DISTANCE_TO_TOF.put(dist, tof);
     }
 
     static {
-      put(4.868, 30, 154.5, 1.29);
-      put(2.164, 20, 126, 0.96);
-      put(2.846, 26, 130, 1.0);
-      put(2.846, 26, 130, 1.0);
-      put(3.729, 29, 140, 0.91);
+      put(5.163, 34, 154);
+      put(4.868, 30, 154.5);
+      put(4.500, 30, 147);
+      put(4.124, 30, 142);
+      put(3.729, 29, 140);
+      put(3.115, 26, 134);
+      put(2.993, 25, 133);
+      put(2.485, 24, 126);
+      put(2.164, 20, 126);
+      put(1.762, 5, 120);
     }
   }
 }
