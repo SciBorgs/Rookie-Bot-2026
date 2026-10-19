@@ -7,7 +7,6 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.wpilibj2.command.button.RobotModeTriggers.*;
 import static org.sciborgs1155.lib.LoggingUtils.log;
-import static org.sciborgs1155.lib.UnitTestingUtil.run;
 import static org.sciborgs1155.robot.Constants.DEADBAND;
 import static org.sciborgs1155.robot.Constants.PERIOD;
 import static org.sciborgs1155.robot.Constants.TUNING;
@@ -38,11 +37,11 @@ import org.sciborgs1155.lib.InputStream;
 import org.sciborgs1155.lib.LoggingUtils;
 import org.sciborgs1155.lib.Tracer;
 import org.sciborgs1155.robot.Ports.OI;
-import org.sciborgs1155.robot.slapdown.Slapdown;
 import org.sciborgs1155.robot.commands.Alignment;
 import org.sciborgs1155.robot.commands.Autos;
 import org.sciborgs1155.robot.drive.Drive;
 import org.sciborgs1155.robot.intake.Intake;
+import org.sciborgs1155.robot.slapdown.Slapdown;
 import org.sciborgs1155.robot.vision.Vision;
 
 /**
@@ -89,7 +88,6 @@ public class Robot extends CommandRobot {
     Tracer.endTrace();
 
     LoggingUtils.log("slapdown pos", slapdown.position());
-
   }
 
   /** Configures basic behavior for different periods during the game. */
@@ -206,9 +204,9 @@ public class Robot extends CommandRobot {
         .onTrue(Commands.runOnce(() -> speedMultiplier = Constants.SLOW_SPEED_MULTIPLIER))
         .onFalse(Commands.runOnce(() -> speedMultiplier = Constants.FULL_SPEED_MULTIPLIER));
 
-    // bindings 
+    // bindings
     operator.x().whileTrue(slapdown.extend());
-        // TODO: Add any additional bindings.
+    // TODO: Add any additional bindings.
   }
 
   /**

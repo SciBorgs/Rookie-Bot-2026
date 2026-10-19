@@ -74,7 +74,6 @@ public class Intake extends SubsystemBase implements AutoCloseable {
     return spin(-INTAKE_POWER);
   }
 
-
   /**
    * @return stop motors
    */

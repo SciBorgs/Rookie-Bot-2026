@@ -15,7 +15,6 @@ import org.sciborgs1155.lib.FaultLogger;
 
 public class RealSlapdown implements SlapdownIO {
 
-
   SparkFlex motor;
 
   public RealSlapdown() {

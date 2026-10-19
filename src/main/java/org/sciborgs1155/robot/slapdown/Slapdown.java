@@ -42,17 +42,17 @@ public class Slapdown extends SubsystemBase implements AutoCloseable {
   /** routine for recording + analyzing motor dataq */
   private final SysIdRoutine sysIdRoutine;
 
-  
   /**
    * @return real slapdown if slapdown is real
    */
   public static Slapdown create() {
     return new Slapdown(Robot.isReal() ? new RealSlapdown() : new SimSlapdown());
   }
+
   /**
    * @return
    */
-  public static Slapdown none(){
+  public static Slapdown none() {
     return new Slapdown(new NoSlapdown());
   }
 
