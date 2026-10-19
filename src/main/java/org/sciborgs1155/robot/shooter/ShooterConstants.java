@@ -17,6 +17,8 @@ public class ShooterConstants {
   public static final double GEAR_RATIO =
       10.0; // 10: 1 ratio (every 10 motor spins = 1 mechanism spin)
 
+  //36/48
+
   public static final Current STATOR_CURRENT_LIMIT = Amps.of(30);
   public static final Current SUPPLY_CURRENT_LIMIT = Amps.of(30);
   public static final double MOI = 0.0410396299; // Moment of Intertia for every part spinning with shooter
