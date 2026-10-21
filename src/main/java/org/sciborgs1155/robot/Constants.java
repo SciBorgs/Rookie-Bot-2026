@@ -86,6 +86,7 @@ public class Constants {
     }
 
     static {
+      put(5.726, 36, 157);
       put(5.163, 34, 154);
       put(4.868, 30, 154.5);
       put(4.500, 30, 147);
