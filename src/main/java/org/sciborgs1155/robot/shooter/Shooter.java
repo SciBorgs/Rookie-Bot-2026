@@ -33,18 +33,12 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
   private final SimpleMotorFeedforward ff =
       new SimpleMotorFeedforward(VelocityControl.S, VelocityControl.V, VelocityControl.A);
 
-  public static final DoubleEntry shooterP =
-      Tuning.entry("/tuning/shooter/P", VelocityControl.P);
-  public static final DoubleEntry shooterI =
-      Tuning.entry("/tuning/shooter/I", VelocityControl.I);
-  public static final DoubleEntry shooterD =
-      Tuning.entry("/tuning/shooter/D", VelocityControl.D);
-  public static final DoubleEntry shooterV =
-      Tuning.entry("/tuning/shooter/V", VelocityControl.V);
-  public static final DoubleEntry shooterS =
-      Tuning.entry("/tuning/shooter/S", VelocityControl.S);
-  public static final DoubleEntry shooterA =
-      Tuning.entry("/tuning/shooter/A", VelocityControl.A);
+  public static final DoubleEntry shooterP = Tuning.entry("/tuning/shooter/P", VelocityControl.P);
+  public static final DoubleEntry shooterI = Tuning.entry("/tuning/shooter/I", VelocityControl.I);
+  public static final DoubleEntry shooterD = Tuning.entry("/tuning/shooter/D", VelocityControl.D);
+  public static final DoubleEntry shooterV = Tuning.entry("/tuning/shooter/V", VelocityControl.V);
+  public static final DoubleEntry shooterS = Tuning.entry("/tuning/shooter/S", VelocityControl.S);
+  public static final DoubleEntry shooterA = Tuning.entry("/tuning/shooter/A", VelocityControl.A);
 
   public Shooter(WheelIO hardware) {
     this.hardware = hardware;
@@ -118,7 +112,8 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
    * @return true or false
    */
   public boolean atVelocity(double velocity) {
-    return Math.abs(velocity - getVelocity().in(RadiansPerSecond)) < VELOCITY_TOLERANCE.in(RadiansPerSecond);
+    return Math.abs(velocity - getVelocity().in(RadiansPerSecond))
+        < VELOCITY_TOLERANCE.in(RadiansPerSecond);
   }
 
   /**

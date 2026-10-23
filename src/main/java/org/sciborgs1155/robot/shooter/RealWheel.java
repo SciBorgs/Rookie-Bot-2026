@@ -11,10 +11,8 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
-import edu.wpi.first.units.measure.AngularVelocity;
-
 import com.revrobotics.spark.config.SparkFlexConfig;
+import edu.wpi.first.units.measure.AngularVelocity;
 import org.sciborgs1155.lib.FaultLogger;
 
 public class RealWheel implements WheelIO {
@@ -43,7 +41,7 @@ public class RealWheel implements WheelIO {
 
     wheelMotorFollower.configure(
         config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    
+
     // registers the motors to be checked for faults
     FaultLogger.register(wheelMotorLeader);
     FaultLogger.register(wheelMotorFollower);
