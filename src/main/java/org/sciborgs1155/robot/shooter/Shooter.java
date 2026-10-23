@@ -12,6 +12,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.networktables.DoubleEntry;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -33,17 +34,17 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
       new SimpleMotorFeedforward(VelocityControl.S, VelocityControl.V, VelocityControl.A);
 
   public static final DoubleEntry shooterP =
-      Tuning.entry("/tuning/shooter/shooter/P", VelocityControl.P);
+      Tuning.entry("/tuning/shooter/P", VelocityControl.P);
   public static final DoubleEntry shooterI =
-      Tuning.entry("/tuning/shooter/shooter/I", VelocityControl.I);
+      Tuning.entry("/tuning/shooter/I", VelocityControl.I);
   public static final DoubleEntry shooterD =
-      Tuning.entry("/tuning/shooter/shooter/D", VelocityControl.D);
+      Tuning.entry("/tuning/shooter/D", VelocityControl.D);
   public static final DoubleEntry shooterV =
-      Tuning.entry("/tuning/shooter/shooter/V", VelocityControl.V);
+      Tuning.entry("/tuning/shooter/V", VelocityControl.V);
   public static final DoubleEntry shooterS =
-      Tuning.entry("/tuning/shooter/shooter/S", VelocityControl.S);
+      Tuning.entry("/tuning/shooter/S", VelocityControl.S);
   public static final DoubleEntry shooterA =
-      Tuning.entry("/tuning/shooter/shooter/A", VelocityControl.A);
+      Tuning.entry("/tuning/shooter/A", VelocityControl.A);
 
   public Shooter(WheelIO hardware) {
     this.hardware = hardware;
@@ -69,7 +70,7 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
   }
 
   public static Shooter create() {
-    return Robot.isReal() ? new Shooter(new RealWheel()) : new Shooter(new SimWheel());
+    return new Shooter(Robot.isReal() ? new RealWheel() : new SimWheel());
   }
 
   public static Shooter none() {
@@ -80,7 +81,7 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
    * @return The value of the velocity (in Radians Per Second)
    */
   @Logged
-  public double getVelocity() {
+  public AngularVelocity getVelocity() {
     return hardware.getVelocity();
   }
 
@@ -96,7 +97,7 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
             -MAX_VELOCITY.in(RadiansPerSecond),
             MAX_VELOCITY.in(RadiansPerSecond));
     double ffVolts = ff.calculate(velocity);
-    double pidVolts = controller.calculate(getVelocity(), velocity);
+    double pidVolts = controller.calculate(getVelocity().in(RadiansPerSecond), velocity);
     hardware.setVoltage(MathUtil.clamp(pidVolts + ffVolts, -MAX_VOLTAGE, MAX_VOLTAGE));
   }
 
@@ -117,7 +118,7 @@ public class Shooter extends SubsystemBase implements AutoCloseable {
    * @return true or false
    */
   public boolean atVelocity(double velocity) {
-    return Math.abs(velocity - getVelocity()) < VELOCITY_TOLERANCE.in(RadiansPerSecond);
+    return Math.abs(velocity - getVelocity().in(RadiansPerSecond)) < VELOCITY_TOLERANCE.in(RadiansPerSecond);
   }
 
   /**

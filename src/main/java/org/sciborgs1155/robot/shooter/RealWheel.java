@@ -1,6 +1,7 @@
 package org.sciborgs1155.robot.shooter;
 
 import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static org.sciborgs1155.robot.Ports.Shooter.*;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.*;
 
@@ -10,6 +11,9 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import edu.wpi.first.units.measure.AngularVelocity;
+
 import com.revrobotics.spark.config.SparkFlexConfig;
 import org.sciborgs1155.lib.FaultLogger;
 
@@ -30,6 +34,7 @@ public class RealWheel implements WheelIO {
     config = new SparkFlexConfig();
     config.smartCurrentLimit((int) STATOR_CURRENT_LIMIT.in(Amps));
     config.idleMode(IdleMode.kCoast);
+    config.encoder.velocityConversionFactor(Math.PI * 2 / 60);
 
     wheelMotorLeader.configure(
         config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -38,7 +43,7 @@ public class RealWheel implements WheelIO {
 
     wheelMotorFollower.configure(
         config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
+    
     // registers the motors to be checked for faults
     FaultLogger.register(wheelMotorLeader);
     FaultLogger.register(wheelMotorFollower);
@@ -50,8 +55,8 @@ public class RealWheel implements WheelIO {
   }
 
   @Override
-  public double getVelocity() {
-    return encoderLeader.getVelocity() * Math.PI * 2;
+  public AngularVelocity getVelocity() {
+    return RadiansPerSecond.of(encoderLeader.getVelocity());
   }
 
   /* shuts the motor after its no longer needed */

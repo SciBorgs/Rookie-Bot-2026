@@ -1,5 +1,9 @@
 package org.sciborgs1155.robot.shooter;
 
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+
+import edu.wpi.first.units.measure.AngularVelocity;
+
 public class NoWheel implements WheelIO {
 
   /* Return 0 or empty */
@@ -8,8 +12,8 @@ public class NoWheel implements WheelIO {
   public void setVoltage(double voltage) {}
 
   @Override
-  public double getVelocity() {
-    return 0;
+  public AngularVelocity getVelocity() {
+    return RadiansPerSecond.of(0);
   }
 
   @Override

@@ -1,5 +1,7 @@
 package org.sciborgs1155.robot.shooter;
 
+import edu.wpi.first.units.measure.AngularVelocity;
+
 public interface WheelIO extends AutoCloseable {
 
   /*
@@ -14,5 +16,5 @@ public interface WheelIO extends AutoCloseable {
    * @return The velocity of the flywheel, in radians per sec
    *
    */
-  double getVelocity();
+  AngularVelocity getVelocity();
 }
