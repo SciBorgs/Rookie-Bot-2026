@@ -1,7 +1,6 @@
 package org.sciborgs1155.robot.commands;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static org.sciborgs1155.robot.Constants.Shooting.MINIMUM_VELOCITY;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.CENTER_TO_SHOOTER;
 import static org.sciborgs1155.robot.shooter.ShooterConstants.IDLE_VELOCITY;
 
@@ -18,7 +17,6 @@ import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import java.util.function.Supplier;
-import org.sciborgs1155.lib.InputStream;
 import org.sciborgs1155.lib.LoggingUtils;
 import org.sciborgs1155.lib.Tuning;
 import org.sciborgs1155.robot.FieldConstants;
@@ -106,9 +104,7 @@ public class Shooting {
     double fieldYaw = Math.atan2(vy, vx);
     double targetYaw = fieldYaw;
 
-    LoggingUtils.log(
-      "/ShootingData/Shooter Distance",
-      hoodTranslation.getDistance(target));
+    LoggingUtils.log("/ShootingData/Shooter Distance", hoodTranslation.getDistance(target));
 
     return new ShooterParams(rads, hoodAngle, targetYaw);
   }

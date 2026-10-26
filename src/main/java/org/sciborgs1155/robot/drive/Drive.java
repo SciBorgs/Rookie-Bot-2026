@@ -356,6 +356,8 @@ public class Drive extends SubsystemBase {
             heading().getRadians()
                 - targetAngle); // calculates shortest distance of two angles in a circle
 
-    return Math.abs(angleError) < 0.05 && Math.abs(leftVelocity()) < 0.1 && Math.abs(rightVelocity()) < 0.1;
+    return Math.abs(angleError) < 0.05
+        && Math.abs(leftVelocity()) < 0.1
+        && Math.abs(rightVelocity()) < 0.1;
   }
 }
