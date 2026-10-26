@@ -93,7 +93,10 @@ public class Shooting {
     Translation3d displacement = new Translation3d(target.minus(hoodPose.getTranslation()));
 
 
-    System.out.println("displacement: " + displacement + " hoodSpeeds: " + hoodSpeeds);
+    System.out.println("hoodSpeeds: " + hoodSpeeds);
+
+    // maybe bug since hoodSpeeds becomes 0 after first shot so shooting is off
+
     // run shooting alg
     Vector<N3> shotVector = algorithm.calculate(displacement, hoodSpeeds);
 
