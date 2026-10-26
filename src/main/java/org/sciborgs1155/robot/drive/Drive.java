@@ -225,7 +225,7 @@ public class Drive extends SubsystemBase {
     field2d.setRobotPose(pose());
 
     double targetDistance = pose().getTranslation().getDistance(Shooting.HUB_TARGET);
-    LoggingUtils.log("/ShootingData/Distance", targetDistance);
+    LoggingUtils.log("/ShootingData/Robot Center Distance", targetDistance);
 
     if (TUNING) {
       headingPID.setP(headingKP.get());

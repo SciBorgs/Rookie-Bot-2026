@@ -92,11 +92,6 @@ public class Shooting {
     Translation2d hoodTranslation = hoodPose.getTranslation();
     Translation3d displacement = new Translation3d(target.minus(hoodPose.getTranslation()));
 
-
-    System.out.println("hoodSpeeds: " + hoodSpeeds);
-
-    // maybe bug since hoodSpeeds becomes 0 after first shot so shooting is off
-
     // run shooting alg
     Vector<N3> shotVector = algorithm.calculate(displacement, hoodSpeeds);
 
@@ -111,7 +106,9 @@ public class Shooting {
     double fieldYaw = Math.atan2(vy, vx);
     double targetYaw = fieldYaw;
 
-    LoggingUtils.log("/ShootingData/Distance", hoodTranslation.getDistance(target));
+    LoggingUtils.log(
+      "/ShootingData/Shooter Distance",
+      hoodTranslation.getDistance(target));
 
     return new ShooterParams(rads, hoodAngle, targetYaw);
   }
@@ -127,7 +124,7 @@ public class Shooting {
             () ->
                 shooter.atVelocity(shooter.setpoint())
                     && shooter.setpoint() > IDLE_VELOCITY.in(RadiansPerSecond)
-                    && hood.atPosition(hood.angleSetpoint())
+                    && hood.atPosition(hood.getGoal())
                     && drive.isAligned(calculateShot(target).driveAngle()))
         .andThen(
             Commands.runOnce(
@@ -136,7 +133,7 @@ public class Shooting {
                     basketballVisualizer.launchProjectile();
                   }
                 }))
-        .deadlineFor(runShooterSuperstructure(() -> calculateShot(target)));
+        .alongWith(runShooterSuperstructure(() -> calculateShot(target)));
   }
 
   /**

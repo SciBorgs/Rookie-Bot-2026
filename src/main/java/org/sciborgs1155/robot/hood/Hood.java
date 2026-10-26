@@ -174,6 +174,10 @@ public class Hood extends SubsystemBase implements AutoCloseable {
     return controller.atGoal();
   }
 
+  public double getGoal() {
+    return controller.getGoal().position;
+  }
+
   /**
    * @param angle The deisred angle
    * @return Boolean depending if the abs value of its difference is less than position tolerance
