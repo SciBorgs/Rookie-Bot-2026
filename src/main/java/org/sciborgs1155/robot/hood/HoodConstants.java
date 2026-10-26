@@ -22,7 +22,8 @@ public class HoodConstants {
   public static final Mass MASS = Pounds.of(1.307);
   public static final Angle STARTING_ANGLE = MIN_ANGLE;
   public static final Distance HOOD_RADIUS = Inches.of(9.29);
-  public static final double MOI = 0.0045821517; // kg*m^2
+  public static final double MOI = 0.0264828231; //already in kg*m^2
+  //OLD VALUE: 0.0045821517 kg*m^2
   public static final AngularAcceleration MAX_ACCEL = RadiansPerSecondPerSecond.of(1);
   public static final AngularVelocity MAX_VELOCITY = RadiansPerSecond.of(1);
   public static final Velocity<VoltageUnit> RAMP_RATE = Volts.of(0.5).per(Second);
