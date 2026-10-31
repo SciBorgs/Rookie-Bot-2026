@@ -45,8 +45,6 @@ public class Shooting {
   public static final DoubleEntry HOOD_DEGREES_TEST =
       Tuning.entry("/ShootingData/Hood Angle", 30.0);
 
-  private Translation2d lastTarget = new Translation2d();
-
   public Shooting(
       Shooter shooter, Hood hood, ProjectileVisualizer basketballVisualizer, Drive drive) {
     this.shooter = shooter;
@@ -70,8 +68,6 @@ public class Shooting {
     // predicted robot pose using latency time
     Pose2d latencyPose =
         drive.pose().exp(drive.robotRelativeChassisSpeeds().toTwist2d(LATENCY_TIME.get()));
-
-    lastTarget = target;
 
     // shifts the hoodPose using latencyPose
     Pose2d hoodPose =
