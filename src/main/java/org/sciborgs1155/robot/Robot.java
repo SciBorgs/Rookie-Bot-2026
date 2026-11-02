@@ -34,11 +34,14 @@ import org.littletonrobotics.urcl.URCL;
 import org.sciborgs1155.lib.CommandRobot;
 import org.sciborgs1155.lib.FaultLogger;
 import org.sciborgs1155.lib.InputStream;
+import org.sciborgs1155.lib.LoggingUtils;
 import org.sciborgs1155.lib.Tracer;
 import org.sciborgs1155.robot.Ports.OI;
 import org.sciborgs1155.robot.commands.Alignment;
 import org.sciborgs1155.robot.commands.Autos;
 import org.sciborgs1155.robot.drive.Drive;
+import org.sciborgs1155.robot.intake.Intake;
+import org.sciborgs1155.robot.slapdown.Slapdown;
 import org.sciborgs1155.robot.vision.Vision;
 
 /**
@@ -58,6 +61,8 @@ public class Robot extends CommandRobot {
   // SUBSYSTEMS
   private final Drive drive = Drive.create();
   private final Vision vision = Vision.create();
+  private final Intake intake = Intake.create();
+  private final Slapdown slapdown = Slapdown.create();
 
   // COMMANDS
   private final Alignment align = new Alignment(drive);
@@ -81,6 +86,8 @@ public class Robot extends CommandRobot {
     Tracer.startTrace("commands");
     CommandScheduler.getInstance().run();
     Tracer.endTrace();
+
+    LoggingUtils.log("slapdown pos", slapdown.position());
   }
 
   /** Configures basic behavior for different periods during the game. */
@@ -94,6 +101,8 @@ public class Robot extends CommandRobot {
 
     FaultLogger.register(pdh);
     SmartDashboard.putData("Auto Chooser", autos);
+
+    driver.a().whileTrue(slapdown.extend());
 
     if (TUNING) {
       addPeriodic(
@@ -195,6 +204,8 @@ public class Robot extends CommandRobot {
         .onTrue(Commands.runOnce(() -> speedMultiplier = Constants.SLOW_SPEED_MULTIPLIER))
         .onFalse(Commands.runOnce(() -> speedMultiplier = Constants.FULL_SPEED_MULTIPLIER));
 
+    // bindings
+    operator.x().whileTrue(slapdown.extend());
     // TODO: Add any additional bindings.
   }
 
