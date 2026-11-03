@@ -1,5 +1,6 @@
 package org.sciborgs1155.robot.hood;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
@@ -37,6 +38,7 @@ import org.sciborgs1155.lib.Tuning;
 import org.sciborgs1155.robot.Robot;
 import org.sciborgs1155.robot.hood.HoodConstants.*;
 
+@Logged
 public class Hood extends SubsystemBase implements AutoCloseable {
 
   private final HoodIO hardware;
@@ -197,6 +199,9 @@ public class Hood extends SubsystemBase implements AutoCloseable {
 
   @Override
   public void periodic() {
+    measurement.setAngle(Radians.of(angle()).in(Degrees));
+    setpoint.setAngle(Radians.of(angleSetpoint()).in(Degrees));
+
     if (TUNING) {
       controller.setP(hoodP.get());
       controller.setI(hoodI.get());

@@ -1,7 +1,7 @@
 package org.sciborgs1155.robot.hood;
 
 import static edu.wpi.first.units.Units.Amps;
-import static org.sciborgs1155.robot.Ports.Shooter.HOOD_MOTOR;
+import static org.sciborgs1155.robot.Ports.Hood.HOOD_MOTOR;
 import static org.sciborgs1155.robot.hood.HoodConstants.GEAR_RATIO;
 import static org.sciborgs1155.robot.hood.HoodConstants.STATOR_LIMIT;
 
@@ -12,6 +12,7 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import org.sciborgs1155.lib.FaultLogger;
 
 public class RealHood implements HoodIO {
   private final SparkFlex hoodMotor;
@@ -33,6 +34,8 @@ public class RealHood implements HoodIO {
     config.idleMode(IdleMode.kBrake);
 
     hoodMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    FaultLogger.register(hoodMotor);
   }
 
   @Override
