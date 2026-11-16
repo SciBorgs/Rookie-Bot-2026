@@ -62,7 +62,7 @@ public class Drive extends SubsystemBase implements AutoCloseable {
   private final PIDController leftPidController =
       new PIDController(DrivePID.kP, DrivePID.kI, DrivePID.kD);
   private final PIDController rightPIDController =
-      new PIDController(DrivePID.kP, DrivePID.kI, DrivePID.kP);
+      new PIDController(DrivePID.kP, DrivePID.kI, DrivePID.kD);
   private final PIDController headingPID =
       new PIDController(HeadingPID.kP, HeadingPID.kI, HeadingPID.kD);
 
@@ -74,12 +74,10 @@ public class Drive extends SubsystemBase implements AutoCloseable {
 
   private final DifferentialDriveKinematics kinematics;
 
-  
   /** Create Method (For Now) */
   public static Drive create() {
     return new Drive();
-
-  } 
+  }
 
   /* Sets Motor configs  */
   public Drive() {
