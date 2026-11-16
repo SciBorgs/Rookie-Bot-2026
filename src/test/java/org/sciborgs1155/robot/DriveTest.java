@@ -12,10 +12,11 @@ import org.sciborgs1155.robot.drive.Drive;
 
 public class DriveTest {
 
+  private Drive drive;
   @BeforeEach
   public void setup() {
     setupTests();
-    Drive drive = Drive.create();
+    drive = Drive.create();
   }
 
   @AfterEach

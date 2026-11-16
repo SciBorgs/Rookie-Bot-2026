@@ -49,10 +49,10 @@ import org.sciborgs1155.robot.drive.DriveConstants.HeadingPID;
 @Logged
 public class Drive extends SubsystemBase implements AutoCloseable {
 
-  private final SparkFlex rightLeader = new SparkFlex(RIGHT_LEADER, MotorType.kBrushless);
-  private final SparkFlex rightFollower = new SparkFlex(RIGHT_FOLLOWER, MotorType.kBrushless);
   private final SparkFlex leftLeader = new SparkFlex(LEFT_LEADER, MotorType.kBrushless);
+  private final SparkFlex rightLeader = new SparkFlex(RIGHT_LEADER, MotorType.kBrushless);
   private final SparkFlex leftFollower = new SparkFlex(LEFT_FOLLOWER, MotorType.kBrushless);
+  private final SparkFlex rightFollower = new SparkFlex(RIGHT_FOLLOWER, MotorType.kBrushless);
 
   private final RelativeEncoder leftEncoder = leftLeader.getEncoder();
   private final RelativeEncoder rightEncoder = rightLeader.getEncoder();
@@ -64,7 +64,7 @@ public class Drive extends SubsystemBase implements AutoCloseable {
   private final PIDController rightPIDController =
       new PIDController(DrivePID.kP, DrivePID.kI, DrivePID.kP);
   private final PIDController headingPID =
-      new PIDController(HeadingPID.kP, HeadingPID.kP, HeadingPID.kP);
+      new PIDController(HeadingPID.kP, HeadingPID.kI, HeadingPID.kD);
 
   private final DifferentialDrivetrainSim driveSim;
 
@@ -74,11 +74,18 @@ public class Drive extends SubsystemBase implements AutoCloseable {
 
   private final DifferentialDriveKinematics kinematics;
 
+  
+  /** Create Method (For Now) */
+  public static Drive create() {
+    return new Drive();
+
+  } 
+
   /* Sets Motor configs  */
   public Drive() {
     SparkFlexConfig globalConfig = new SparkFlexConfig(); // for every motor (universal)
-    SparkFlexConfig rightLeaderConfig = new SparkFlexConfig();
     SparkFlexConfig leftLeaderConfig = new SparkFlexConfig();
+    SparkFlexConfig rightLeaderConfig = new SparkFlexConfig();
     SparkFlexConfig leftFollowerConfig = new SparkFlexConfig();
     SparkFlexConfig rightFollowerConfig = new SparkFlexConfig();
 
@@ -252,7 +259,8 @@ public class Drive extends SubsystemBase implements AutoCloseable {
    * @param targetAngle Direction drive should point at
    */
   public void pointAtAngle(double vx, double targetAngle) {
-    double forwardSpeed = vx * MAX_SPEED.in(MetersPerSecond);
+    double forwardSpeed =
+        vx * MAX_SPEED.in(MetersPerSecond); // Might need to change the speed limit
 
     Rotation2d heading = heading();
     double angle = heading.getRadians();
@@ -264,10 +272,8 @@ public class Drive extends SubsystemBase implements AutoCloseable {
   }
 
   @Override
-  public void close() throws Exception {
+  public void close() {
     leftLeader.close();
-    leftFollower.close();
-    rightLeader.close();
     rightFollower.close();
   }
 }
