@@ -47,7 +47,7 @@ import org.sciborgs1155.robot.drive.DriveConstants.FF;
 import org.sciborgs1155.robot.drive.DriveConstants.HeadingPID;
 
 @Logged
-public class Drive extends SubsystemBase {
+public class Drive extends SubsystemBase implements AutoCloseable {
 
   private final SparkFlex rightLeader = new SparkFlex(RIGHT_LEADER, MotorType.kBrushless);
   private final SparkFlex rightFollower = new SparkFlex(RIGHT_FOLLOWER, MotorType.kBrushless);
@@ -261,5 +261,13 @@ public class Drive extends SubsystemBase {
     ChassisSpeeds speeds = new ChassisSpeeds(forwardSpeed, 0.0, rotation);
 
     setChassisSpeeds(speeds);
+  }
+
+  @Override
+  public void close() throws Exception {
+    leftLeader.close();
+    leftFollower.close();
+    rightLeader.close();
+    rightFollower.close();
   }
 }
