@@ -23,7 +23,7 @@ public class SimHood implements HoodIO {
   public SimHood() {
     simHood =
         new SingleJointedArmSim(
-            DCMotor.getKrakenX60(1),
+            DCMotor.getNeoVortex(1),
             GEAR_RATIO,
             MOI,
             HOOD_RADIUS.in(Meters),

@@ -128,6 +128,11 @@ public class Hood extends SubsystemBase implements AutoCloseable {
     return controller.getSetpoint().position;
   }
 
+  @Logged
+  public double getGoal() {
+    return controller.getGoal().position;
+  }
+
   /**
    * @return the velcoity of the hood
    */

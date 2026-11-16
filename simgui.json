@@ -23,6 +23,8 @@
       "/Robot/drive/rearRight/turnFeedback": "PIDController",
       "/Robot/drive/rotationController": "PIDController",
       "/Robot/drive/translationController": "ProfiledPIDController",
+      "/SmartDashboard//Robot/hood/measurement": "Mechanism2d",
+      "/SmartDashboard//Robot/hood/setpoint": "Mechanism2d",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Drive Field": "Field2d",
       "/SmartDashboard/PathPlanner": "Alerts",
@@ -31,6 +33,14 @@
       "/SmartDashboard/Robot/hood/dynamic forward": "Command",
       "/SmartDashboard/Robot/hood/quasistatic backward": "Command",
       "/SmartDashboard/Robot/hood/quasistatic forward": "Command",
+      "/SmartDashboard/Robot/rotation/dynamic backward": "Command",
+      "/SmartDashboard/Robot/rotation/dynamic forward": "Command",
+      "/SmartDashboard/Robot/rotation/quasistatic backward": "Command",
+      "/SmartDashboard/Robot/rotation/quasistatic forward": "Command",
+      "/SmartDashboard/Robot/translation/dynamic backward": "Command",
+      "/SmartDashboard/Robot/translation/dynamic forward": "Command",
+      "/SmartDashboard/Robot/translation/quasistatic backward": "Command",
+      "/SmartDashboard/Robot/translation/quasistatic forward": "Command",
       "/SmartDashboard/Scheduler": "Scheduler",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
       "/SmartDashboard/drive dynamic backward": "Command",
@@ -55,7 +65,8 @@
       "/SmartDashboard/turn quasistatic forward": "Command",
       "Robot/autos": "String Chooser",
       "Robot/drive/rotationController": "PIDController",
-      "Robot/drive/translationController": "ProfiledPIDController"
+      "Robot/drive/translationController": "ProfiledPIDController",
+      "Robot/hood/controller": "ProfiledPIDController"
     },
     "windows": {
       "/Robot/drive/field2d": {
