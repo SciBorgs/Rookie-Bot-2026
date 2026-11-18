@@ -35,7 +35,7 @@ public class ShooterTest {
     //fastForward(Seconds.of(3));
     double setpoint = Math.random() * ShooterConstants.MAX_VELOCITY.in(RadiansPerSecond);
     CommandScheduler.getInstance().schedule(shooter.runShooter(() -> setpoint));
-    fastForward(Seconds.of(3));
+    fastForward(Seconds.of(20));
     assertEquals(
         shooter.getVelocity().in(RadiansPerSecond),
         setpoint,

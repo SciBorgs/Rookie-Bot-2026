@@ -28,12 +28,12 @@ public class ShooterConstants {
 
   /* For Flywheel */
   public static class VelocityControl {
-    public static final double P = 0.03;
+    public static final double P = 2.0;
     public static final double I = 0.0;
     public static final double D = 0.0;
 
     public static final double S = 0.0;
-    public static final double V = 0.016981;
-    public static final double A = 0.0021296;
+    public static final double V = 0.022135;
+    public static final double A = 0.0;
   }
 }
