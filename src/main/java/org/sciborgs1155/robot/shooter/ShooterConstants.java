@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 
@@ -18,7 +19,7 @@ public class ShooterConstants {
 
   public static final AngularVelocity VELOCITY_TOLERANCE = RadiansPerSecond.of(1);
   public static final AngularVelocity IDLE_VELOCITY = RadiansPerSecond.of(5);
-  public static final AngularVelocity MAX_VELOCITY = RPM.of(7230);
+  public static final AngularVelocity MAX_VELOCITY = RPM.of(Units.radiansPerSecondToRotationsPerMinute(542)); // originally 7230, shooter can't exceed 542 radianspersec?
   public static final double MAX_VOLTAGE = 12.0;
 
   // floor center of robot: -13.502in,-17.654in,0 (Z-axis is vertical when viewed at front)
@@ -28,12 +29,12 @@ public class ShooterConstants {
 
   /* For Flywheel */
   public static class VelocityControl {
-    public static final double P = 2.0;
+    public static final double P = 5.0;
     public static final double I = 0.0;
     public static final double D = 0.0;
 
     public static final double S = 0.0;
     public static final double V = 0.022135;
-    public static final double A = 0.0;
+    public static final double A = 1.0;
   }
 }

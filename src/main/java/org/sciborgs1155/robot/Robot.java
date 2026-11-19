@@ -11,6 +11,7 @@ import static org.sciborgs1155.robot.Constants.DEADBAND;
 import static org.sciborgs1155.robot.Constants.PERIOD;
 import static org.sciborgs1155.robot.Constants.TUNING;
 import static org.sciborgs1155.robot.drive.DriveConstants.*;
+import static org.sciborgs1155.robot.shooter.ShooterConstants.MAX_VELOCITY;
 
 import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.epilogue.Epilogue;
@@ -197,7 +198,7 @@ public class Robot extends CommandRobot {
         .onTrue(Commands.runOnce(() -> speedMultiplier = Constants.SLOW_SPEED_MULTIPLIER))
         .onFalse(Commands.runOnce(() -> speedMultiplier = Constants.FULL_SPEED_MULTIPLIER));
     
-    driver.a().whileTrue(shooter.runShooter(100*speedMultiplier));
+    driver.a().whileTrue(shooter.runShooter(MAX_VELOCITY.in(RadiansPerSecond)));
     // TODO: Add any additional bindings.
   }
 
