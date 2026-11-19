@@ -11,6 +11,7 @@ import static org.sciborgs1155.robot.Constants.DEADBAND;
 import static org.sciborgs1155.robot.Constants.PERIOD;
 import static org.sciborgs1155.robot.Constants.TUNING;
 import static org.sciborgs1155.robot.drive.DriveConstants.*;
+import static org.sciborgs1155.robot.shooter.ShooterConstants.MAX_VELOCITY;
 
 import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.epilogue.Epilogue;
@@ -39,6 +40,7 @@ import org.sciborgs1155.robot.Ports.OI;
 import org.sciborgs1155.robot.commands.Alignment;
 import org.sciborgs1155.robot.commands.Autos;
 import org.sciborgs1155.robot.drive.Drive;
+import org.sciborgs1155.robot.shooter.Shooter;
 import org.sciborgs1155.robot.vision.Vision;
 
 /**
@@ -58,6 +60,7 @@ public class Robot extends CommandRobot {
   // SUBSYSTEMS
   private final Drive drive = Drive.create();
   private final Vision vision = Vision.create();
+  private final Shooter shooter = Shooter.create();
 
   // COMMANDS
   private final Alignment align = new Alignment(drive);
@@ -195,6 +198,7 @@ public class Robot extends CommandRobot {
         .onTrue(Commands.runOnce(() -> speedMultiplier = Constants.SLOW_SPEED_MULTIPLIER))
         .onFalse(Commands.runOnce(() -> speedMultiplier = Constants.FULL_SPEED_MULTIPLIER));
 
+    driver.a().whileTrue(shooter.runShooter(MAX_VELOCITY.in(RadiansPerSecond)));
     // TODO: Add any additional bindings.
   }
 
@@ -228,6 +232,7 @@ public class Robot extends CommandRobot {
     super.close();
     try {
       drive.close();
+      shooter.close();
     } catch (Exception e) {
     }
   }
