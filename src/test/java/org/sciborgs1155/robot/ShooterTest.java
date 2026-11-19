@@ -32,7 +32,7 @@ public class ShooterTest {
 
   @RepeatedTest(5)
   public void randVelocity() throws Exception {
-    //fastForward(Seconds.of(3));
+    // fastForward(Seconds.of(3));
     double setpoint = Math.random() * ShooterConstants.MAX_VELOCITY.in(RadiansPerSecond);
     CommandScheduler.getInstance().schedule(shooter.runShooter(() -> setpoint));
     fastForward(Seconds.of(10));
@@ -40,6 +40,6 @@ public class ShooterTest {
         shooter.getVelocity().in(RadiansPerSecond),
         setpoint,
         VELOCITY_TOLERANCE.in(RadiansPerSecond));
-        //1000);
+    // 1000);
   }
 }

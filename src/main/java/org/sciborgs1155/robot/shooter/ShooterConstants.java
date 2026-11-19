@@ -19,7 +19,10 @@ public class ShooterConstants {
 
   public static final AngularVelocity VELOCITY_TOLERANCE = RadiansPerSecond.of(1);
   public static final AngularVelocity IDLE_VELOCITY = RadiansPerSecond.of(5);
-  public static final AngularVelocity MAX_VELOCITY = RPM.of(Units.radiansPerSecondToRotationsPerMinute(542)); // originally 7230, shooter can't exceed 542 radianspersec?
+  public static final AngularVelocity MAX_VELOCITY =
+      RPM.of(
+          Units.radiansPerSecondToRotationsPerMinute(
+              542)); // originally 7230, shooter can't exceed 542 radianspersec?
   public static final double MAX_VOLTAGE = 12.0;
 
   // floor center of robot: -13.502in,-17.654in,0 (Z-axis is vertical when viewed at front)
