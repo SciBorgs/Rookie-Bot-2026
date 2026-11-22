@@ -32,7 +32,7 @@ public class RealWheel implements WheelIO {
     config = new SparkFlexConfig();
     config.smartCurrentLimit((int) STATOR_CURRENT_LIMIT.in(Amps));
     config.idleMode(IdleMode.kCoast);
-    config.encoder.velocityConversionFactor(Math.PI * 2 / 60);
+    config.encoder.velocityConversionFactor((GEAR_RATIO * Math.PI * 2 / 60) / GEAR_RATIO);
 
     wheelMotorLeader.configure(
         config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
