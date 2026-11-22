@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
+import static org.sciborgs1155.lib.LoggingUtils.log;
 import static org.sciborgs1155.robot.Constants.TUNING;
 import static org.sciborgs1155.robot.hood.HoodConstants.DEFAULT_ANGLE;
 import static org.sciborgs1155.robot.hood.HoodConstants.MAX_ACCEL;
@@ -33,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import org.sciborgs1155.lib.Tuning;
 import org.sciborgs1155.robot.Robot;
@@ -215,6 +217,9 @@ public class Hood extends SubsystemBase implements AutoCloseable {
       ff.setKg(hoodG.get());
       ff.setKv(hoodV.get());
       ff.setKa(hoodA.get());
+      log(
+          "/Robot/hood/command",
+          Optional.ofNullable(getCurrentCommand()).map(Command::getName).orElse("none"));
     }
   }
 }

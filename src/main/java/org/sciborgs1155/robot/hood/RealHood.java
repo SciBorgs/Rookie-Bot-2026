@@ -53,7 +53,7 @@ public class RealHood implements HoodIO {
 
   @Override
   public double velocity() {
-    return encoder.getVelocity();
+    return (encoder.getVelocity() / GEAR_RATIO) * (2 * Math.PI) / 60.0;
   }
 
   @Override
