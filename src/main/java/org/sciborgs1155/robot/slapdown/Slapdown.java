@@ -2,8 +2,11 @@ package org.sciborgs1155.robot.slapdown;
 
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Volts;
+import static org.sciborgs1155.lib.LoggingUtils.log;
 import static org.sciborgs1155.robot.Constants.TUNING;
 import static org.sciborgs1155.robot.slapdown.SlapdownConstants.*;
+
+import java.util.Optional;
 
 import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.epilogue.Logged;
@@ -118,14 +121,14 @@ public class Slapdown extends SubsystemBase implements AutoCloseable {
    * @return slap down intake arm
    */
   public Command extend() {
-    return goTo(MIN_ANGLE.in(Radians));
+    return goTo(MIN_ANGLE.in(Radians)).withName("Extend");
   }
 
   /**
    * @return bring up intake arm
    */
   public Command retract() {
-    return goTo(MAX_ANGLE.in(Radians));
+    return goTo(MAX_ANGLE.in(Radians)).withName("Retract");
   }
 
   /**
@@ -182,6 +185,10 @@ public class Slapdown extends SubsystemBase implements AutoCloseable {
       ff.setKv(tuningV.get());
       ff.setKs(tuningS.get());
     }
+    log(
+        "/Robot/slapdown/command",
+        Optional.ofNullable(getCurrentCommand()).map(Command::getName).orElse("none"));
+
   }
 
   @Override
