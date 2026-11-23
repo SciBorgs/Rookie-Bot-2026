@@ -87,6 +87,15 @@ public class Robot extends CommandRobot {
   }
 
   @Override
+  public void close() {
+    try {
+      drive.close();
+    } finally {
+      super.close();
+    }
+  }
+
+  @Override
   public void robotPeriodic() {
     Tracer.startTrace("commands");
     CommandScheduler.getInstance().run();

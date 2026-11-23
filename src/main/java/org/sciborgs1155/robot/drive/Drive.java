@@ -53,7 +53,7 @@ import org.sciborgs1155.robot.drive.DriveConstants.FF;
 import org.sciborgs1155.robot.drive.DriveConstants.HeadingPID;
 
 @Logged
-public class Drive extends SubsystemBase {
+public class Drive extends SubsystemBase implements AutoCloseable {
 
   public static final DoubleEntry headingKP =
       Tuning.entry("/tuning/drive/heading/P", DriveConstants.HeadingPID.kP);
@@ -148,6 +148,20 @@ public class Drive extends SubsystemBase {
     leftEncoder.setPosition(0);
     rightEncoder.setPosition(0);
     gyro.reset();
+  }
+
+  /** Releases hardware resources so another drivetrain can be created in the same process. */
+  @Override
+  public void close() {
+    rightLeader.close();
+    rightFollower.close();
+    leftLeader.close();
+    leftFollower.close();
+    gyro.close();
+    leftPidController.close();
+    rightPIDController.close();
+    headingPID.close();
+    field2d.close();
   }
 
   /**
