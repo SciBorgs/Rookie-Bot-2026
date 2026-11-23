@@ -34,13 +34,13 @@ public class HoodConstants {
   public static final double MAX_VOLTAGE = 12.0;
 
   public static class ControlConstants {
-    public static final double P = 6;
+    public static final double P = 1.5;
     public static final double I = 0;
-    public static final double D = .05;
+    public static final double D = .2;
 
     public static final double S = 0;
-    public static final double V = 0.1;
-    public static final double G = 0.65;
+    public static final double V = 0;
+    public static final double G = 1.425;
     public static final double A = 0;
   }
 }

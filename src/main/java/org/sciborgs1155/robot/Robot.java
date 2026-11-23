@@ -59,7 +59,7 @@ public class Robot extends CommandRobot {
 
   // SUBSYSTEMS
   private final Drive drive = Drive.create();
-  private final Vision vision = Vision.create();
+  private final Vision vision = Vision.none();
   private final Hood hood = Hood.create();
 
   // COMMANDS
