@@ -120,4 +120,10 @@ public class Robot extends CommandRobot {
               operator.getHID().setRumble(rumbleType, 0);
             });
   }
+
+  @Override
+  public void close() {
+    drive.close();
+    super.close();
+  }
 }
