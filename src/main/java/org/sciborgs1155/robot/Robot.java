@@ -1,5 +1,6 @@
 package org.sciborgs1155.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
@@ -39,6 +40,7 @@ import org.sciborgs1155.robot.Ports.OI;
 import org.sciborgs1155.robot.commands.Alignment;
 import org.sciborgs1155.robot.commands.Autos;
 import org.sciborgs1155.robot.drive.Drive;
+import org.sciborgs1155.robot.hood.Hood;
 import org.sciborgs1155.robot.vision.Vision;
 
 /**
@@ -57,7 +59,8 @@ public class Robot extends CommandRobot {
 
   // SUBSYSTEMS
   private final Drive drive = Drive.create();
-  private final Vision vision = Vision.create();
+  private final Vision vision = Vision.none();
+  private final Hood hood = Hood.create();
 
   // COMMANDS
   private final Alignment align = new Alignment(drive);
@@ -195,7 +198,7 @@ public class Robot extends CommandRobot {
         .onTrue(Commands.runOnce(() -> speedMultiplier = Constants.SLOW_SPEED_MULTIPLIER))
         .onFalse(Commands.runOnce(() -> speedMultiplier = Constants.FULL_SPEED_MULTIPLIER));
 
-    // TODO: Add any additional bindings.
+    driver.x().whileTrue(hood.goTo(Degrees.of(45)));
   }
 
   /**
@@ -228,6 +231,7 @@ public class Robot extends CommandRobot {
     super.close();
     try {
       drive.close();
+      hood.close();
     } catch (Exception e) {
     }
   }
