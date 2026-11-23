@@ -38,7 +38,7 @@ public class DriveConstants {
   // Coefficient of friction between the drive wheel and the carpet.
   public static final double WHEEL_COF = 1.0;
   // Velocity Tolerance
-  public static final LinearVelocity VELOCITY_TOLERANCE = MetersPerSecond.of(0.25);
+  public static final LinearVelocity VELOCITY_TOLERANCE = MetersPerSecond.of(0.5);
 
   public static final Translation2d[] wheelInfo = {
     new Translation2d(0.0, 1.0), new Translation2d(0.0, -1)

@@ -146,9 +146,9 @@ public class Drive extends SubsystemBase implements AutoCloseable {
     final double leftFeedforward = feedforward.calculate(realLeftSpeed);
     final double rightFeedforward = feedforward.calculate(realRightSpeed);
 
-    final double leftPID = leftPidController.calculate(leftEncoder.getVelocity(), realLeftSpeed);
+    final double leftPID = leftPidController.calculate(leftVelocity(), realLeftSpeed);
     final double rightPID =
-        rightPIDController.calculate(rightEncoder.getVelocity(), realRightSpeed);
+        rightPIDController.calculate(rightVelocity(), realRightSpeed);
 
     double leftVoltage = leftPID + leftFeedforward;
     double rightVoltage = rightPID + rightFeedforward;
@@ -216,8 +216,8 @@ public class Drive extends SubsystemBase implements AutoCloseable {
    * @return the robot chasssis speeds
    */
   public ChassisSpeeds robotRelativeChassisSpeeds() {
-    double leftMotorVelocity = leftEncoder.getVelocity();
-    double rightMotorVelocity = rightEncoder.getVelocity();
+    double leftMotorVelocity = leftVelocity();
+    double rightMotorVelocity = rightVelocity();
     return kinematics.toChassisSpeeds(
         new DifferentialDriveWheelSpeeds(leftMotorVelocity, rightMotorVelocity));
   }
@@ -269,9 +269,20 @@ public class Drive extends SubsystemBase implements AutoCloseable {
     setChassisSpeeds(speeds);
   }
 
+  public double leftVelocity(){
+    return Robot.isReal() ? leftEncoder.getVelocity() : driveSim.getLeftVelocityMetersPerSecond();
+  }
+
+  public double rightVelocity() {
+    return Robot.isReal() ? rightEncoder.getVelocity() : driveSim.getRightVelocityMetersPerSecond();
+  }
+
   @Override
   public void close() {
     leftLeader.close();
+    leftFollower.close();
+    rightLeader.close();
     rightFollower.close();
+    gyro.close();
   }
 }
