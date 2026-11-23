@@ -17,9 +17,9 @@ import edu.wpi.first.units.measure.Voltage;
 public class SlapdownConstants {
   public static final Current CURRENT_LIMIT = Amps.of(30);
 
-  public static final double P = 10;
-  public static final double I = 0;
-  public static final double D = 0;
+  public static final double P = 20.1;
+  public static final double I = 5.3;
+  public static final double D = 1;
 
   public static final double S = 0;
   public static final double V = 0;
@@ -31,7 +31,7 @@ public class SlapdownConstants {
   public static final Time TIME_OUT = Seconds.of(1);
 
   public static final AngularVelocity MAX_VELOCITY = RadiansPerSecond.of(5);
-  public static final AngularAcceleration MAX_ACCELERATION = RadiansPerSecondPerSecond.of(7);
+  public static final AngularAcceleration MAX_ACCELERATION = RadiansPerSecondPerSecond.of(30);
   public static final TrapezoidProfile.Constraints CONSTRAINTS =
       new TrapezoidProfile.Constraints(
           MAX_VELOCITY.in(RadiansPerSecond), MAX_ACCELERATION.in(RadiansPerSecondPerSecond));
