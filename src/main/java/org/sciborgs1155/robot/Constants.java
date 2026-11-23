@@ -44,7 +44,7 @@ public class Constants {
   public static RobotType ROBOT_TYPE = RobotType.FULL;
 
   /** States if we are in tuning mode. Ideally, keep it at false when not used. */
-  public static boolean TUNING = false;
+  public static boolean TUNING = true;
 
   // TODO: UPDATE ALL OF THESE VALUES.
   /** Describes physical properites of the robot. */
@@ -64,4 +64,5 @@ public class Constants {
 
   // The name of seperate canivore, set to rio if no seperate canivore
   public static final CANBus DRIVE_CANIVORE = new CANBus("drivetrain");
+  public static final CANBus INTAKE_CANIVORE = new CANBus("intake");
 }
