@@ -147,8 +147,7 @@ public class Drive extends SubsystemBase implements AutoCloseable {
     final double rightFeedforward = feedforward.calculate(realRightSpeed);
 
     final double leftPID = leftPidController.calculate(leftVelocity(), realLeftSpeed);
-    final double rightPID =
-        rightPIDController.calculate(rightVelocity(), realRightSpeed);
+    final double rightPID = rightPIDController.calculate(rightVelocity(), realRightSpeed);
 
     double leftVoltage = leftPID + leftFeedforward;
     double rightVoltage = rightPID + rightFeedforward;
@@ -269,7 +268,7 @@ public class Drive extends SubsystemBase implements AutoCloseable {
     setChassisSpeeds(speeds);
   }
 
-  public double leftVelocity(){
+  public double leftVelocity() {
     return Robot.isReal() ? leftEncoder.getVelocity() : driveSim.getLeftVelocityMetersPerSecond();
   }
 
