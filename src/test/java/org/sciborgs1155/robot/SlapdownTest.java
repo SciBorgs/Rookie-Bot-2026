@@ -19,7 +19,6 @@ public class SlapdownTest {
   /** sets up slapdown */
   @BeforeEach
   public void setup() {
-    setup();
     slapdown = Slapdown.create();
   }
 

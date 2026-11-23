@@ -37,12 +37,13 @@ public class SlapdownConstants {
           MAX_VELOCITY.in(RadiansPerSecond), MAX_ACCELERATION.in(RadiansPerSecondPerSecond));
 
   public static final DCMotor GEARBOX = DCMotor.getKrakenX44(1);
-  public static final double GEARING = 27; // ratio of gearing
-  public static final double MOI = 0.2135396026; // moment of inertia
-  public static final Distance LENGTH = Inches.of(18.5);
-  public static final Angle MIN_ANGLE = Degrees.of(9.7);
-  public static final Angle MAX_ANGLE = Degrees.of(83.7);
+  // 14 -> 60
+  public static final double GEARING = (14 / 60) * (14 / 60) * (16 / 36); // ratio of gearing
+  public static final double MOI = 0.21; // moment of inertia
+  public static final Distance LENGTH = Inches.of(14.684065);
+  public static final Angle MIN_ANGLE = Degrees.of(5.216360);
+  public static final Angle MAX_ANGLE = Degrees.of(66.609146);
   public static final Angle START_ANGLE = MAX_ANGLE;
 
-  public static final Angle POSITION_TOLERANCE = Radians.of(0.05);
+  public static final Angle POSITION_TOLERANCE = Radians.of(0.8);
 }
