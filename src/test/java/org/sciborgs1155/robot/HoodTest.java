@@ -37,16 +37,16 @@ public class HoodTest {
   public void orientation() {
     fastForward(Seconds.of(3));
     double val = Math.random();
-    CommandScheduler.getInstance()
-        .schedule(
-            (hood.goTo(
-                    () ->
-                        MathUtil.clamp(
+
+    double target =  MathUtil.clamp(
                             val * MAX_ANGLE.in(Radians),
                             MIN_ANGLE.in(Radians),
-                            MAX_ANGLE.in(Radians))))
-                .withDeadline(Commands.waitSeconds(4)));
+                            MAX_ANGLE.in(Radians));
+    CommandScheduler.getInstance()
+        .schedule(
+            (hood.goTo(() -> target)
+                .withDeadline(Commands.waitSeconds(4))));
     fastForward(Seconds.of(3));
-    assertEquals(val * MAX_ANGLE.in(Radians), hood.angle(), POSITION_TOLERANCE.in(Radians));
+    assertEquals(target, hood.angle(), POSITION_TOLERANCE.in(Radians));
   }
 }
